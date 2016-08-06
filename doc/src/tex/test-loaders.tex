@@ -1,0 +1,49 @@
+\subsection{TestLoaders}
+\index{Applications!TestLoaders}
+\index{Testing Applications!TestLoaders}
+
+$Revision: 1.4 $
+
+\api{TestLoaders} is another testing applications of {\marf}.
+It generalizes the testing machinery of \api{TestWaveLoader} for 
+all possible loaders we may have. For now, it tests functionality of
+the \api{WAVLoader} and \api{SineLoader} of {\marf}, the only two
+implemented loaders; the others give non-implemented exceptions instead. 
+
+From user's point of view, \api{TestLoaders} provides with usage, loader types, input sample, output
+sample, and output textual file command-line options.
+By entering \texttt{--help}, or \texttt{-h}, or when there are no arguments, the usage information will be displayed.
+Entering \texttt{--version}, the \api{TestLoaders}' version and {\marf}'s version is displayed.
+The usage info explains the arguments used in \api{TestLoaders}.
+The first argument is a type of loader that is a mandatory argument.
+The second argument is input file name that is mandatory for all loaders except for \api{SineLoader}.
+The third and forth arguments are the output wave sample file and output textual sample file names of the loaded 
+input sample. The names of the output files are optional arguments. If user does not provide any or both of
+the last two arguments, the output files will be saved in the file names derived from the original.
+
+\noindent
+Complete usage information:
+
+\vspace{15pt}
+\hrule
+\input{test-loaders-usage}
+\hrule
+\vspace{15pt}
+
+The application is made to exercise the following {\marf} modules.
+The main modules for testing are in the \api{marf.Storage.Loaders} package.
+The \api{OptionProcessor} module in the \api {marf.util} helps handling the different loader types according
+to the users input argument. The \api{Sample} and the \api{SampleLoader} modules in the \api{marf.Storage} help \api{WAVLoader} 
+prepare loading input files. \api{Sample} maintains and processes incoming sample data. \api{SampleLoader}
+provides sample loading interface for all the {\marf} loaders. It must be overridden by a concrete sample loader.
+The modules work together to load in and write back a sample,
+and save the loaded sample into a file, to save loaded input data into a data file referenced by \texttt{oDatFile}, 
+and to output sample's duration and size to STDOUT. While for loading sine samples, it needs \api{SineLoader} implementation,
+and instead of saving data file, it saves a csv file referenced by \texttt{oDatFile}.
+
+The output of \api{TestLoaders} saves the loaded wave sample in a newly named output wave file.
+Its output also saves the input file data into a textual file.
+\api{TestLoaders} gives both users and programmers direct information of the results of MARF loaders.
+Input sample can be compared with the expected output in the \file{expected} folder to detect any errors.
+
+% EOF

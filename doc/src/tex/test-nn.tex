@@ -1,0 +1,39 @@
+\subsection{TestNN}
+\index{Applications!TestNN}
+\index{Testing Applications!TestNN}
+
+$Revision: 1.1 $
+
+\api{TestNN} is one a testing applications in {\marf}
+that aims to test how the neural network algorithm described in \xs{sect:nnet} works in
+\api{Classification}.
+
+From user's point of view, \api{TestNN} provides with usage and loaders
+command-line options. By entering \texttt{--help} or \texttt{-h}
+the usage information will be displayed.
+
+\noindent
+Complete usage information:
+
+\vspace{15pt}
+\hrule
+\input{test-nn-usage}
+\hrule
+\vspace{15pt}
+
+The application is made to exercise the {\marf}'s implementation of the
+artificial neural network algorithm located in the \api{marf.Classification.NeuralNetwork} package.
+Additionally, the following {\marf} modules are utilized:
+
+\begin{enumerate}
+\item
+\api{marf.util.OptionProcessor}
+
+\item
+\api{marf.util.Arrays}
+
+\item
+\api{marf.util.Debug}
+\end{enumerate}
+
+% EOF

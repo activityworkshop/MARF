@@ -1,0 +1,35 @@
+\subsection{Diff Distance}
+\label{sect:diff-distance}
+\index{Distance!Diff}
+\index{Classification!Diff Distance}
+
+$Revision: 1.2 $
+
+\subsubsection{Summary}
+
+\begin{itemize}
+\item Implementation: \api{marf.Classification.Distance.DiffDistance}
+\item Depends on: \api{marf.Classification.Distance.Distance}
+\item Used by: \api{test}, \api{marf.MARF}, \api{SpeakerIdentApp}
+\end{itemize}
+
+\subsubsection{Theory}
+
+When Serguei Mokhov invented this classifier in May 2005, the original idea
+was based on the way the \tool{diff} UNIX utility works. Later, for
+performance enhancements it was modified. The essence of the diff distance is to
+count how one input vector is different from the other in terms of
+elements correspondence. If the Chebyshev distance between the two
+corresponding elements is greater than some error $e$, then this
+distance is accounted for plus some additional distance penalty $p$
+is added. Both factors $e$ and $p$ can vary depending on desired
+configuration. If the two elements are equal or pretty close
+(the difference is less than $e$) then a small ``bonus'' of $e$ is subtracted
+from the distance.
+
+$$ d(x,y) = \sum_{i}{|x_i-y_i| + p, \mathit{if} |x_i-y_i| > e, \mathit{or} (-e)} $$
+
+\noindent
+where $x$ and $y$ are feature vectors of the same length.
+
+% EOF

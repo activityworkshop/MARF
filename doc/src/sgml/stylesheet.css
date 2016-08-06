@@ -1,0 +1,130 @@
+/*
+ * stylesheet.css
+ * Styles for the online docs
+ *
+ * $Header: /cvsroot/marf/marf/doc/src/sgml/stylesheet.css,v 1.2 2002/12/11 19:29:25 mokhov Exp $
+ */
+
+body
+{
+	color: #000000;
+	background: #FFFFFF;
+}
+
+a:link    
+{
+	color: #0000DC
+}
+
+a:visited 
+{
+	color: #0000DC
+}
+
+a:hover   
+{
+	color: #FFA500
+}
+
+h1 h2
+{
+	color: #61002B;
+	font-family: "Verdana", Arial, sans-serif;
+}	
+
+h3
+{
+	color: #666699;
+	font-family: "Verdana", Arial, sans-serif;
+	font-size: 27px;
+}
+
+h4
+{
+	color: #666699;
+	font-family: "Verdana", Arial, sans-serif;
+}
+
+hr
+{
+	color: #000099
+}
+
+p
+{
+	color: #110011;
+	font-family: "Verdana", Arial, sans-serif;
+}
+
+li
+{
+	color: #660033;
+	font-family: "Verdana", Arial, sans-serif;
+}
+
+tr
+{
+    color: #110011;
+    font-family: "Verdana", Arial, sans-serif;
+}
+
+
+/* center titles */
+
+body.book h1.title, body.set h1.title
+{
+	text-align: center;
+	font-size: 250%;
+	font-family: sans-serif;
+	color: #020167;
+}
+
+body.book h3.corpauthor, body.set h3.corpauthor
+{
+	text-align: center;
+	font-style: italic;
+	font-weight: normal;
+}
+
+body.book .copyright, body.set .copyright
+{
+	text-align: center;
+}
+
+/* decoration for formal examples */
+
+div.example
+{
+	padding-left: 15px;
+	border-style: solid;
+	border-width: 0px;
+	border-left-width: 2px;
+	border-color: black;
+	margin: 0.5ex;
+}
+
+/* less dense spacing of TOC */
+
+.set .toc dl dt, .book .toc dl dt
+{
+	padding-top: 1.5ex;
+	padding-bottom: 1.5ex;
+}
+
+.set .toc dl dl dt, .book .toc dl dl dt
+{
+	padding-top: 0ex;
+	padding-bottom: 0ex;
+}
+
+.screen, .synopsis, .programlisting
+{
+	margin-left: 4ex;
+}
+
+/* miscellaneous */
+
+.navheader th	{ font-style: italic; }
+.comment	{ color: red; }
+
+/* EOF */

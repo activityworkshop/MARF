@@ -1,0 +1,97 @@
+\subsection{Artificial Neural Network}
+\label{sect:nnet}
+\index{Artificial Neural Network}
+\index{Neural Network}
+\index{Methodology!Artificial Neural Network}
+\index{Methodology!Neural Network}
+\index{Algorithm!Artificial Neural Network}
+\index{Algorithm!Neural Network}
+
+
+This section presents implementation of the Neural Network Classification module.
+
+One method of classification used is an Artificial Neural
+Network. Such a network is meant to represent the neuronal
+organization in organisms. Its use as a classification method lies is
+in the training of the network to output a certain value given a
+particular input \cite{artificialintelligence}.
+
+\subsubsection{Theory}
+
+A neuron consists of a set of inputs with associated weights, a
+threshold, an activation function ($f(x)$) and an output value. The
+output value will propagate to further neurons (as input values) in
+the case where the neuron is not part of the ``output'' layer of the
+network. The relation of the inputs to the activation function is as
+follows:
+
+$output \longleftarrow f(in)$
+
+where $in = \displaystyle\sum_{i=0}^{n}(w_{i} \cdot a_{i}) - t$, ``vector'' $a$ is the
+input activations, ``vector'' $w$ is the associated weights and $t$ is the
+threshold of the network. The following activation function was used:
+
+$sigmoid(x; c) = \frac{1}{(1 + e^{-cx})}$
+
+where $c$ is a constant. The advantage of this function is that it is
+differentiable over the region $(-\infty,+\infty)$ and has derivative:
+
+$\frac{d(sigmoid(x; c))}{dx} = c \cdot sigmoid(x; c) \cdot (1 - sigmoid(x; c))$
+
+The structure of the network used was a Feed-Forward Neural
+Network. This implies that the neurons are organized in sets,
+representing layers, and that a neuron in layer $j$, has inputs from
+layer $j-1$ and output to layer $j+1$ only. This structure facilitates the
+evaluation and the training of a network. For instance, in the
+evaluation of a network on an input vector $I$, the output of neuron in
+the first layer is calculated, followed by the second layer, and so
+on.
+
+\subsubsection{Training}
+
+Training in a Feed-Forward Neural Network is done through the an
+algorithm called Back-Propagation Learning. It is based on the error
+of the final result of the network. The error the propagated backward
+throughout the network, based on the amount the neuron contributed to
+the error. It is defined as follows:
+
+$w_{i,j} \longleftarrow \beta w_{i,j} + \alpha \cdot a_{j} \cdot \Delta_{i}$
+
+where
+
+$\Delta_{i} = Err_{i} \cdot \frac{df}{dx(in_{i})}$  for neuron $i$ in the output layer
+
+and
+
+$\Delta_{i} = \frac{df}{dt(in_{i})} \cdot \displaystyle\sum_{j=0}^{n}(\Delta_{j})$ for neurons in other layers
+
+The parameters $\alpha$ and $\beta$ are used to avoid local minima in
+the training optimization process. They weight the combination of the
+old weight with the addition of the new change. Usual values for these
+are determined experimentally.
+
+The Back-Propagation training method was used in conjunction with
+epoch training. Given a set of training input vectors $Tr$, the
+Back-Propagation training is done on each run. However, the new weight
+vectors for each neuron, ``vector'' $w'$, are stored and not used. After
+all the inputs in $Tr$ have been trained, the new weights are committed
+and a set of test input vectors $Te$, are run, and a mean error is
+calculated. This mean error determines whether to continue epoch
+training or not.
+
+\subsubsection{Usage as a Classifier}
+
+As a classifier, a Neural Network is used to map feature vectors to
+speaker identifiers. The neurons in the input layer correspond to each
+feature in the feature vector. The output of the network is the binary
+interpretation of the output layer. Therefore the Neural Network has
+an input layer of size $m$, where $m$ is the size of all feature vectors
+and the output layer has size $\lceil(\log_{2}(n))\rceil$, where $n$ is the maximum
+speaker identifier.
+
+A network of this structure is trained with the set of input vectors
+corresponding to the set of training samples for each speaker. The
+network is epoch trained to optimize the results. This fully trained
+network is then used for classification in the recognition process.
+
+% EOF

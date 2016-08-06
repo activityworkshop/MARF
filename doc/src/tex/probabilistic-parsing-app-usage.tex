@@ -1,0 +1,30 @@
+\begin{verbatim}
+
+Probabilistic Parsing
+Serguei A. Mokhov, mokhov@cs.concordia.ca
+April 2003 - 2006
+
+
+Usage:
+    java ProbabilisticParsingApp --help | -h
+        : to display this help and exit
+
+    java ProbabilisticParsingApp --version
+        : to display version and exit
+
+    java ProbabilisticParsingApp --train [ OPTIONS ] <grammar-file>
+        : to compile grammar from the <grammar-file>
+
+    java ProbabilisticParsingApp --parse [ OPTIONS ]
+        : to parse sentences from standard input
+
+Where options are of the following:
+
+    --debug  - enable debugging (more verbose output)
+    -case    - make it case-sensitive
+    -num     - parse numerical values
+    -quote   - consider quotes and count quoted strings as one token
+    -eos     - make typical ends of sentences (<?>, <!>, <.>) significant
+
+
+\end{verbatim}

@@ -1,0 +1,56 @@
+\section{Preprocessing}
+\label{sect:preprocessing}
+\index{Preprocessing}
+\index{Methodology!Preprocessing}
+
+\noindent
+\rule{7.0in}{.013in}
+
+$Revision: 1.20 $
+
+This section outlines the preprocessing mechanisms considered
+and implemented in {\marf}. We present you with the API and structure in \xf{fig:preprocessing}, along with
+the description of the methods.
+
+\begin{figure}
+	\centering
+	\includegraphics[angle=90,height=660pt]{../graphics/arch/preprocessing.png}
+	\caption{Preprocessing}
+	\label{fig:preprocessing}
+\end{figure}
+
+\input{raw}
+
+\input{normalization}
+
+
+\subsection{Endpointing}
+\index{Preprocessing!Endpointing}
+\index{Endpointing}
+\index{Methodology!Endpointing}
+
+The Endpointing algorithm got implemented in {\marf} as follows.
+By the {\em end-points} we mean the local minimums and maximums
+in the amplitude changes. A variation of that is whether to
+consider the sample edges and continuous data points (of the same
+value) as end-points. In {\marf}, all these four cases
+are considered as end-points by default with an option to
+enable or disable the latter two cases via setters or the \api{ModuleParams}
+facility. The endpointing algorithm is implemented in \api{Endpoint}
+of the \api{marf.Preprocessing.Endpoint} package and appeared in 0.3.0.5.
+
+\input{fft-filter}
+
+\input{low-pass}
+
+\input{high-pass}
+
+\input{bandpass-filter}
+
+\input{high-frequency-boost}
+
+\input{high-pass-boost}
+
+\input{noise-removal}
+
+% EOF

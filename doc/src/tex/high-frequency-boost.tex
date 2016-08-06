@@ -1,0 +1,20 @@
+\subsection{High Frequency Boost}
+\index{High Frequency Boost}
+\index{Filters!High Frequency Boost}
+
+$Revision: 1.11 $
+
+This filter was also implemented on top of the FFT filter to boost the high-end
+frequencies. The frequencies boosted after approx. 1000~Hz by a factor
+of $5\pi$, heuristically determined, and then re-normalized. See \xf{fig:high-boost}.
+The implementation of the high-frequency boost preprocessor can be found in
+\api{marf.Preprocessing.FFTFilter.HighFrequencyBoost}.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=400pt]{../graphics/graphs/high-frequency-boost.png}
+	\caption{High frequency boost filter applied to aihua5.wav.}
+	\label{fig:high-boost}
+\end{figure}
+
+% EOF

@@ -1,0 +1,218 @@
+\chapter{Applications}
+\label{chapt:apps}
+\index{Applications}
+\index{MARF!Applications}
+
+$Revision: 1.18 $
+
+This chapter describes the applications that employ {\marf}
+for one purpose or another. Most of them are our own applications
+that demonstrate how to use various {\marf}'s features. Others
+are either research or internal projects of their own. If you
+use {\marf} or its derivative in your application and would like
+to be listed here, please let us know at \url{marf-devel@sf.lists.net}.
+
+
+%
+% Internal Research Applications
+%
+
+\section{MARF Research Applications}
+\index{MARF!Research Applications}
+
+%
+% SpeakerIdentApp
+%
+
+\subsection{SpeakerIdentApp - Text-Independent Speaker Identification Application}
+\index{Applications!SpeakerIdentApp}
+\index{Research Applications!SpeakerIdentApp}
+
+\api{SpeakerIdentApp} is an application for text-independent
+speaker identification that exercises the most of the {\marf}'s
+features.
+\api{SpeakerIdentApp} is broadly presented through
+the rest of this manual.
+
+
+%
+% ZipfLawApp
+%
+
+\input{zipf-law-app}
+
+
+%
+% LangIdentApp
+%
+
+\input{lang-ident-app}
+
+
+%
+% ProbabilisticParsingApp
+%
+
+\input{probabilistic-parsing-app}
+
+
+%
+% Internal Testing Applications
+%
+
+\section{MARF Testing Applications}
+\index{MARF!Testing Applications}
+
+%
+% TestFilters
+%
+
+\input{test-filters}
+
+
+%
+% TestLPC
+%
+
+\input{test-lpc}
+
+
+%
+% TestFFT
+%
+
+\input{test-fft}
+
+
+%
+% TestWaveLoader
+%
+
+\input{test-wave-loader}
+
+
+%
+% TestLoaders
+%
+
+\input{test-loaders}
+
+
+%
+% MathTestApp
+%
+
+\input{math-test-app}
+
+
+%
+% TestPlugin
+%
+
+\input{test-plugin}
+
+
+%
+% TestPlugin
+%
+
+\input{test-nn}
+
+
+%
+% External Applications
+%
+
+\section{External Applications}
+\index{MARF!External Applications}
+
+%
+% GIPSY
+%
+
+\subsection{GIPSY}
+\index{Applications!GIPSY}
+\index{External Applications!GIPSY}
+
+{\gipsy} stands for General Intensional Programming System \cite{gipsy}, which is
+a distributed research, development, and investigation platform about intensional and hybrid
+programming languages. {\gipsy} is a world on its own developed at Concordia University and
+for more information on the system please see \cite{gipsy} and \cite{mokhovmcthesis05}.
+{\gipsy} makes use of a variety of {\marf}'s utility and storage modules, as of this
+writing this includes:
+
+\begin{itemize}
+\item
+	\api{BaseThread} for most threading part of the {\gipsy} for multithreaded
+	compilation and execution.
+\item
+	\api{ExpandedThreadGroup} to group a number of compiler or executor threads
+	and have a group control over them.
+\item
+	\api{Debug} for, well, debugging
+\item
+	\api{Logger} to log compiler and executor activities
+\item
+	\api{StorageManager} for binary serialization
+\item
+	\api{OptionProcessor} for option processing in five core {\gipsy} utilities
+\item
+	\api{Arrays} for common arrays functionality
+\end{itemize}
+
+There is a provision to also use {\marf}'s NLP modules.
+
+
+%
+% ENCSAssetsDesktop
+%
+
+\subsection{ENCSAssetsDesktop}
+\label{sect:encs-assets-desktop}
+\index{Applications!ENCSAssetsDesktop}
+\index{External Applications!ENCSAssetsDesktop}
+
+This is a private little application developed for the Engineering and Computer Science
+faculty of Concordia University's Faculty Information Systems team. The application
+synchronize inventory data between a Palm device database and a relational database
+powering an online inventory application. This application primarily exercises:
+
+\begin{itemize}
+\item
+    \api{BaseThread} for most threading part of the {\gipsy} for multithreaded
+    compilation and execution.
+\item
+    \api{ExpandedThreadGroup} to group a number of compiler or executor threads
+    and have a group control over them.
+\item
+    \api{Arrays} for common arrays functionality
+\item
+	\api{ByteUtils} for any-type-to-byte-array-and-back conversion.
+\end{itemize}
+
+
+%
+% ENCSAssets
+%
+
+\subsection{ENCSAssets}
+\index{Applications!ENCSAssets}
+\index{External Applications!ENCSAssets}
+
+This is a web frontend to an inventory database developed by the same team as
+in \xs{sect:encs-assets-desktop}. It primarily exercises the threading
+and arrays parts of {\marf}, namely \api{BaseThread} and \api{Arrays}.
+
+%
+% ENCSAssetsCron
+%
+
+\subsection{ENCSAssetsCron}
+\index{Applications!ENCSAssetsCron}
+\index{External Applications!ENCSAssetsCron}
+
+This is a cron-oriented frontend to an inventory database developed by the same team as
+in \xs{sect:encs-assets-desktop}. It primarily exercises the \api{OptionProcessor}
+of {\marf}.
+
+% EOF

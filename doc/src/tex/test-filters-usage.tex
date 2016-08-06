@@ -1,0 +1,24 @@
+\begin{verbatim}
+
+Usage:
+
+    java TestFilters PREPROCESSOR LOADER [ SAMPLEFILE ]
+
+    java TestFilters --help | -h
+        displays this help and exits
+
+    java TestFilters --version
+        displays application and MARF versions
+
+Where PREPROCESSOR is one of the following:
+    --high           use high-pass filter
+    --band           use band-pass filter
+    --low            use low-pass filter
+    --boost          use high-frequency-boost preprocessor
+    --highpassboost  use high-pass-and-boost preprocessor
+
+Where LOADER is one of the following:
+    --sine    use SineLoader (generated sine wave)
+    --wave    use WAVLoader; requires a SAMPLEFILE argument
+
+\end{verbatim}

@@ -1,0 +1,73 @@
+\section{Brief History of MARF}
+\index{MARF!History}
+
+$Revision: 1.13 $
+
+The {\marf} project was initiated in September 26, 2002 by four students of
+Concordia University, Montr\'eal, Canada as their course project for Pattern Recognition under
+guidance of Dr. C.Y. Suen. This included Ian Cl\'ement, Stephen Sinclair,
+Jimmy Nicolacopoulos, and Serguei Mokhov.
+
+\subsection{Developers Emeritus}
+
+\begin{itemize}
+\item
+Ian's primary contributions were the
+LPC and Neural Network algorithms support with the \api{Spectrogram} dump.
+
+\item
+Steve has done an extensive
+research and implementation of the FFT algorithm for feature extraction
+and filtering and Euclidean Distance with the \api{WaveGrapher} class.
+
+\item
+Jimmy was focused on implementation of the WAVE file format
+loader and other storage issues.
+
+\item
+Serguei designed the entire MARF framework and architecture,
+originally implemented general distance classifier and its Chebyshev, Minkowski,
+and Mahalanobis incarnations along with normalization of the sample data. Serguei
+designed the Exceptions Framework of MARF and was involved into the integration
+of all the modules and testing applications to use {\marf}.
+\end{itemize}
+
+\subsection{Contributors}
+
+\begin{itemize}
+\item
+	Shuxin `Susan' Fan contributed to development and maintenance of some test applications
+	(e.g. \api{TestFilters}) and initial adoption of the JUnit framework \cite{junit} within {\marf}.
+	She has also finalized some utility modules (e.g. \api{marf.util.Arrays})
+	till completion and performed {\marf} code auditing and ``inventory''.
+	Shuxin has also added NetBeans project files to the build system of {\marf}.
+
+\end{itemize}
+
+\subsection{Current Status and Past Releases}
+
+Now it's a project on its own, being maintained and developed as we have some spare time for it.
+When the course was over, Serguei Mokhov is the primary maintainer of the
+project. He rewrote \api{Storage} support and polished all of {\marf} during
+two years and added various utility modules and NLP support and implementation of new
+algorithms and applications. Serguei maintains this manual, the web site and most of
+the sample database collection. He also made all the releases of the project
+as follows:
+
+\begin{itemize}
+\item 0.3.0-devel-20060226 (0.3.0.5), Sunday, February 26, 2006
+\item 0.3.0-devel-20050817 (0.3.0.4), Wednesday, August 17, 2005
+\item 0.3.0-devel-20050730 (0.3.0.3), Saturday, July 30, 2005
+\item 0.3.0-devel-20050606 (0.3.0.2), Monday, June 6, 2005
+\item 0.3.0-devel-20040614 (0.3.0.1), Monday, June 14, 2004
+\item 0.2.1, Monday, February 17, 2003
+\item 0.2.0, Monday, February 10, 2003
+\item 0.1.2, December 17, 2002 - Final Project Deliverable
+\item 0.1.1, December 8, 2002 - Demo
+\end{itemize}
+
+\noindent
+The project is currently geared towards completion planned TODO items on {\marf} and
+its applications.
+
+% EOF

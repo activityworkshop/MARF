@@ -1,0 +1,35 @@
+\begin{verbatim}
+
+Usage:
+
+    java TestPlugin [ LOADER ] [ PREP ] [ FEAT ] [ OPTIONS ]
+
+       or
+
+    java -jar TestPlugin.jar [ LOADER ] [ PREP ] [ FEAT ] [ OPTIONS ]
+
+Where LOADER options one of the following:
+
+    --uwav         unrestricted WAV loader (the default plugin)
+    --sine         sine-wave 'loader'
+
+Where PREPprocessing options one of the following:
+
+    --random       random preprocessing (the default plugin)
+    --raw          no preprocessing
+
+Where FEATure extraction options one of the following:
+
+    --hashadd      the hash-add plugin as feature extraction (default)
+    --minmax       use min-max amplitudes as feature extraction
+    --fft          use FFT as feature extraction
+    --lpc          use LPC as feature extraction
+
+Where options are one of the following:
+
+    --wavegraph    dump CSV-formatted wave-graph values
+    --help | -h    displays this help and exits
+    --version      displays application and MARF versions
+    --debug        run tests with the debug mode enabled
+
+\end{verbatim}

@@ -1,0 +1,39 @@
+\subsection{Feature Extraction Aggregation}
+\label{sect:aggregator}
+\index{Feature Extraction Aggragation}
+\index{Feature Extraction!Feature Extraction Aggragation}
+
+$Revision: 1.2 $
+
+\subsubsection{Description}
+
+This method appeared in {\marf} as of 0.3.0.5.
+This class by itself does not do any feature extraction, but
+instead allows concatenation of the results of several actual feature
+extractors to be combined in a single result. This should give the
+classification modules more discriminatory power (e.g. when combining
+the results of FFT and F0 together).
+\api{FeatureExtractionAggregator} itself still implements
+the \api{FeatureExtraction} API in order to be used in the main
+pipeline of \api{MARF}.
+
+The aggregator expects \api{ModuleParams} to be set to the
+enumeration constants of a module to be invoked followed by that module's
+enclosed instance \api{ModuleParams}. As of this implementation,
+that enclosed instance of \api{ModuleParams} isn't really used, so
+the {\bf main limitation} of the aggregator is that all the aggregated
+feature extractors act with their default settings. This will happen until
+the pipeline is re-designed a bit to include this capability.
+
+The aggregator clones the incoming preprocessed sample for each
+feature extractor and runs each module in a separate thread. A the
+end, the results of each tread are collected in the same order as
+specified by the initial \api{ModuleParams} and returned
+as a concatenated feature vector. Some meta-information is available
+if needed.
+
+\subsubsection{Implementation}
+
+Class: \api{marf.FeatureExtraction.FeatureExtractionAggregator}.
+
+% EOF

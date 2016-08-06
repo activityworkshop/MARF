@@ -1,0 +1,21 @@
+\subsection{High-Pass High Frequency Boost Filter}
+\index{High-Pass High Frequency Boost Filter}
+\index{Filters!High-Pass High Frequency Boost Filter}
+
+$Revision: 1.2 $
+
+For experimentation we said what would be very useful to do is
+to test a high-pass filter along with high-frequency boost.
+While there is no immediate class that does this, \api{MARF}
+now chains the former and the latter via the new addition
+to the preprocessing framework (in 0.3.0-devel-20050606)
+where a constructor of one preprocessing module takes up another allowing
+a preprocessing pipeline on its own. The results of this
+experiment can be found in the Consolidated Results section.
+While they did not yield a better recognition performance,
+it was a good try to see. More tweaking and trying is
+required to make a final decision on this approach as there
+is an issue with the re-normalization of the entire input
+instead of just the boosted part.
+
+% EOF

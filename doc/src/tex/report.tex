@@ -1,0 +1,80 @@
+\documentclass[letterpaper,11pt]{report}
+
+% For draft mode:
+% \documentclass[draft,letterpaper,11pt]{report}
+
+\title{Modular Audio Recognition Framework v.0.3.0.5 (0.3.0-devel-20060226)\\and its\\Applications}
+
+{\author
+	{\bf
+		{The MARF Research and Development Group}\\\hline\\
+%		Represented by:\\\\
+%		Ian Cl\'ement\\
+%		Serguei A. Mokhov\\
+%		Dimitrios Nicolacopoulos\\
+%		Stephen Sinclair\\\\\\\\\\
+		Montr\'eal, Qu\'ebec, Canada\\\\\\
+	}
+}
+
+\date{\input{date}}
+
+\usepackage{graphicx}
+\usepackage{latexsym}
+\usepackage{makeidx}
+\usepackage{url}
+
+\makeindex
+
+\topmargin      -18pt
+\headsep        20pt
+\textheight     660pt
+\footskip       0pt
+\parskip        4pt plus 3pt minus 2pt
+
+\textwidth      504pt
+\oddsidemargin  -18pt
+\evensidemargin -18pt
+\parindent      20pt
+
+\pagenumbering{arabic}
+
+\renewcommand{\baselinestretch}{1.20}
+
+\input{../styles/styles}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{3}
+
+\pagestyle{myheadings}
+\markright{MARF - v.0.3.0.5 (0.3.0-devel-20060226)\hfill Programmer's Manual \hfill}
+
+%\includeonly{toc,installation}
+%\includeonly{toc,apps}
+
+\begin{document}
+
+	\begin{titlepage}
+		\maketitle
+	\end{titlepage}
+
+	\include{toc}
+	\include{intro}
+	\include{build}
+	\include{installation}
+	\include{architecture}
+	\include{methodology}
+	\include{statistic-processing}
+	\include{nlp}
+	\include{gui}
+	\include{experimentation}
+	\include{results}
+	\include{apps}
+	\include{conclusions}
+	\include{references}
+	\include{appendix}
+
+	\printindex
+\end{document}
+
+% EOF

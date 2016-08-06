@@ -1,0 +1,31 @@
+\section{Spectrogram}
+
+$Revision: 1.4 $
+
+Sometimes it is useful to visualize the data we are
+playing with. One of the typical thing when dealing with
+sounds, specifically voice, people are interested in
+spectrograms of frequency distributions. The \api{Spectrogram}
+class was designed to handle that and produce spectrograms
+from both FFT and LPC algorithms and simply draw them. We did not
+manage to make it a true GUI component yet, but instead we made
+it to dump the spectrograms into PPM-format image files to be
+looked at using some graphical package. Two examples of
+such spectrograms are in the Appendix \ref{appx:spectra}.
+
+We are just taking all the \verb+Output[]+ for the spectrogram. It's
+supposed to be only half (\cite{shaughnessy2000}).
+We took a hamming window of the waveform at $1/2$ intervals of 128
+samples (ie: 8 kHz, 16 ms). By half intervals we mean that the second half
+of the window was the first half of the next. O'Shaughnessy in \cite{shaughnessy2000} says this is a
+good way to use the window. Thus, any streaming of waveform must consider
+this.
+
+What we did for both the FFT spectrogram and LPC determination was to
+multiply the signal by the window and do a \api{doFFT()} or a \api{doLPC()} coefficient
+determination on the resulting array of $N$ windowed samples. This gave us
+an approximation of the stable signal at $s(i \cdot N/2)$.
+Or course, we will have to experiment with windows and see which one is better, but
+there may be no definitive best.
+
+% EOF

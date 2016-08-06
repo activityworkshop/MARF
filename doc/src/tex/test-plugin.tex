@@ -1,0 +1,36 @@
+\subsection{TestPlugin}
+\index{Applications!TestPlugin}
+\index{Testing Applications!TestPlugin}
+
+$Revision: 1.2 $
+
+The \api{TestPlugin} testing application in {\marf}
+tests and serves as an example of how to write
+\api{SampleLoader}, \api{Preprocessing}, \api{FeatureExtraction}, and
+\api{Classification} plugins to be used by the main
+\api{MARF}'s pipeline.
+
+\noindent
+Complete usage information:
+
+\vspace{15pt}
+\hrule
+\input{test-fft-usage}
+\hrule
+\vspace{15pt}
+
+The application is made to exercise the {\marf}'s
+interfaces \api{ISampleLoader}, \api{IPreprocessing}, \\\api{IFeatureExtraction}, and
+\api{IClassification} along with the \api{MARF} itself. These interfaces
+are implemented in the variety of ways. The sample loader is nearly identical
+to the functionality of \api{WAVLoader} except that it yanks out checks
+for sample format making it ``unrestricted'' (for illustratory purposes).
+Random preprocessing is used to multiply the incoming amplitudes by
+a pseudo-random Gausian distribution. The feature extraction is then
+performed by convering the incoming variable-length input into chunks of
+fixed size elements of which are added pairwise. Finally, the classification
+does summing, logical AND, OR, and XOR ``hashing'' and applying a modulus
+of the number of speakers we have. The actual samples are either the real
+wave samples or a generated sine wave used.
+
+% EOF

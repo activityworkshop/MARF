@@ -1,0 +1,1920 @@
+\subsection{Language Identification Application}
+\index{Language Identification}
+\index{Language Identification!Application}
+\index{Applications!Language Identification}
+
+$Revision: 1.27 $
+
+Originally written on March 17, 2003.
+
+\subsubsection{The Program}
+
+The Mini-User Manual is provided in the \xs{sect:lang-ident-app-manual}. The source
+is provided in the electronic form only from the release tarballs or the CVS repository.
+
+NOTE: in the code there are a lot of files. Not all of them might
+be of a great interest to you since
+some of them are stubs right now and don't provide much functionality in them
+or the functionality is not linked anyhow to the main application.
+These files are:
+
+\begin{verbatim}
+./marf/nlp/Collocations:
+    ChiSquareTest.java
+    CollocationWindow.java
+    TTest.java
+
+./marf/Stats/StatisticalEstimators:
+    GLI.java
+    KatzBackoff.java
+    SLI.java
+
+./marf/util/comparators:
+    RankComparator.java
+
+./marf/nlp/Stemming:
+    StemmingEN.java
+    Stemming.java
+\end{verbatim}
+
+
+\subsubsection{Hypotheses}
+\index{Language Identification!Hypotheses}
+
+\paragraph{Identifying Non-Latin-Script-Based Languages}
+
+The methodology, if implemented correctly, should work
+for natural languages that use non-Latin scripts for
+their writing. Of course, to test this, such scripts
+will have to be romanized (either transcribed or transliterated
+using Latin, more precisely, ASCII characters).
+
+\paragraph{Identifying Programming Languages}
+\index{Language Identification!Programming Languages}
+
+I have thought of if the proposed methodology works well for natural
+languages, it would probably work at least as good for the programming
+languages.
+
+\paragraph{Sophisticated Statistical Estimators Should Work Better}
+
+``Good'' (or ``better'' if you will) statistical estimators presented in \xc{chapt:statitstic-processing}
+should give better results (higher language recognition rate) over simpler ones.
+By ``simpler'' we mean the MLE and Add-* family. By more sophisticated we mean Witten-Bell,
+Good-Turing, and the combination of the Statistical Estimators.
+
+\paragraph{Zipf's Law Can Also Be Effective in Language Identification}
+\index{Language Identification!Zipf's Law}
+\index{Zipf's Law!Language Identification}
+
+Zipf's Law can be reasonably effective and very ``cheap'' in language identification
+task. This one is yet to be verified.
+
+\subsubsection{Initial Experiments Setup}
+
+\paragraph{Languages}
+
+Several natural and programming languages in were used in the experiments.
+
+\paragraph*{Natural Lanugages (NLs)}
+
+\begin{itemize}
+\item English (en - ISO 2-letter code code \cite{iso-codes})
+\item French (fr, desaccented)
+\item Spanish (es, desaccented)
+\item Italian (it)
+\item Arabic (ar, transcribed in ASCII according to the qalam rules \cite{qalam})
+\item Hebrew (he, transcribed in ASCII)
+\item Bulgarian (bg, transcribed in ASCII)
+\item Russian (ru, transcribed in ASCII)
+\end{itemize}
+
+\paragraph*{Programming Languages (PLs)}
+
+\begin{itemize}
+\item {\C}/{\cpp} (together, since {\C} is a proper subset of {\cpp})
+\item {\java}
+\item {\perl}
+\end{itemize}
+
+\paragraph*{Statistical Estimators Implemented}
+
+\begin{itemize}
+\item MLE in \api{MLE}
+\item Add-One in \api{AddOne}
+\item Add-Delta (ELE) in \api{AddDelta}
+\item Witten-Bell in \api{WittenBell}
+\item Good-Turing in \api{GoodTuring}
+\end{itemize}
+
+\paragraph*{N-gram Models}
+
+\begin{itemize}
+\item Unigram
+\item Bigram
+\item Trigram
+\end{itemize}
+
+\paragraph{Corpora}
+
+\paragraph*{English}
+
+The English language corpora is (not very surprisingly) was the biggest one.
+To simplify the training process, we combined them all in one file
+\file{en.txt}. It includes
+\cite{probst95, ulysses, greif, speak, fannyhill, lysistrata, canterby, defoe, rousseau, tasso}.
+Additionally, a few chapters of ``The Little Prince''.
+Total size of the combined file is 7Mb.
+
+\paragraph*{French}
+
+For French we used few chapters of ``Le Petit Prince''.
+The totals combined size is 12k, \file{fr.txt}.
+
+\paragraph*{Spanish}
+
+Like the French corpora, the Spanish one includes several
+chapters of ``Le Petit Prince'' in Spanish (from the same source).
+The total size is 12k, \file{es.txt}.
+
+\paragraph*{Arabic}
+
+We have compiled a few surah from transliterated Quran (\cite{quran})
+as well as a couple of texts transcribed by Michelle Khalif\'e
+from a proverb \cite{jeha} and a passage from a newspaper in Arabic \cite{arnews}.
+Total size: 208k, \file{ar.txt}.
+
+\paragraph*{Hebrew}
+
+We used a few poems written by their author (\cite{hepoems}) in ASCII alphabet.
+Total size is 37k, \file{he.txt}.
+
+\paragraph*{Russian}
+
+Latinized classics (one whole book) was used (see \cite{ohotnik}).
+Total size is 877k, \file{ru.txt}.
+
+\paragraph*{Bulgarian}
+
+A few transcribed poems were used for training from \cite{bgpoems}.
+Total size: 21k, \file{bg.txt}.
+
+\paragraph*{Italian}
+
+We used the ``Pinocchio'' book \cite{pinocchio} of the size of 245k, \file{it.txt}.
+
+\paragraph*{C/C++}
+
+Various \file{.c} and \file{.cpp} files were used from a variety of projects
+and examples for the ``COMP444 - System Software Design'', ``COMP471 - Computer Graphics'',
+``COMP361'', and ``COMP229 - System Software courses''. The total size is 137k, \file{cpp.txt}.
+
+\paragraph*{Java}
+
+As Java ``corpora'' we used the sources of this application at some point in the
+development cycle and source files for the MARF project itself.
+The total size is 260k, \file{java.txt}.
+
+\paragraph*{Perl}
+
+For {\perl}, we used many of Serguei's scripts written to help with marking of
+assignments and accept electronic submissions as well as a couple tools
+for CVS written in {\perl} from the Internet (Google keywords: \tool{cvs2cl.pl} and \tool{cvs2html.pl}).
+Size: 299k, \file{perl.txt}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Methodology}
+
+\paragraph{Add-Delta Family}
+
+Add-Delta is defined as:
+
+$P(\mbox{ngram}) = \frac{C_{\mbox{ngram}} + \delta}{N + \delta \cdot V}$
+
+\noindent
+where $V$ is a vocabulary size, $N$ is the number of n-grams that start with {\em ngram}.
+By implementing this general Add-Delta smoothing we get MLE, ELE, and Add-One ``for free''
+as special cases of Add-Delta:
+
+\begin{itemize}
+\item $\delta = 0$ is MLE
+\item $\delta = 1$ is Add One
+\item $\delta = 0.5$ is ELE
+\end{itemize}
+
+\paragraph{Witten-Bell and Good Turing}
+
+These two estimators were implemented as given in hopes to get a better
+recognition rate over the Add-Delta family.
+
+\subsubsection{Difficulties Encountered}
+
+During the experimentations we faced several problems, some of which
+are worth mentioning.
+
+\paragraph{``Bag-of-Languages'' and Alphabets}
+
+From this point now on, by an {\em alphabet} in this document we mean something more than what people understand
+by the language alphabet. In our case an alphabet may include
+characters other than letters, such as numbers, punctuation, even
+a blank sometimes, all being derived from a training corpus.
+
+Initially, we attempted to treat programming languages as if they
+were natural ones. That way, from the developer's standpoint we deal with
+them all uniformly. This assumption could be viewed as cheating
+to some extent however because programming languages have a lot larger
+alphabets that are necessary lexical parts of the language in addition
+to the statements written using ASCII letters. Therefore, this gives a lot of
+discriminatory power as compared to the NLs when these characters are
+inputted by an user. Treating PLs as using
+only ASCII Latin base should lead to a lot
+of confusion with English (and sometimes other NLs) because most of the keywords
+are English words in addition to literal text strings and comments present within the code.
+
+Among NLs that were transcribed or transliterated in Latin there are alphabetical differences.
+For instance, in Arabic there are three h-like sounds that have no
+English equivalent, so sometimes numbers 3, 7, and 5 are used for that purpose (or in more
+standard LAiLA notation \cite{qalam} capitals are used instead. To be
+more fair to others, we let numerals to be a part of the alphabet as well.
+Analogous problem existed when using capitals for different sounds as opposed
+to direct lowercase transliteration in Arabic making lowercasing
+a not necessarily good idea.
+
+Russian and Bulgarian (transcribed from Cyrillic scripts) use
+(') and some other symbols (like ([) or (]) in Bulgarian) to represent
+certain letters or sounds; hence, they always have to be a part of the
+alphabet.
+This has caused some problems again, and I thought of another separation that is
+needed: Latin-based, Cyrillic-based, and Semitic-based languages,
+and our ``bag-of-languages'' approach might no do so well. (We, however, just split
+PLs, Latin-based and non-Latin as the end result.)
+
+Even for Latin-based languages that can be a problem. For example, the
+letter $k$ does not exist in Spanish or Italian (it may if referred to
+the foreign words, such as ``kilogram'' or proper names but is not used otherwise).
+So are $w$ and $x$ and maybe some others. The same
+with French~--~the letters $k$ and $w$ are very rare (so they didn't happen to be in ``Le Petit
+Prince'' corpus used, for example).
+
+\paragraph{Alphabet Normalization}
+
+We {\em do} get different alphabet sizes
+of my corpora for a language. The alphabets are derived from the corpora
+themselves, so depending on the size some characters that appear in
+one corpora might not appear in another. Thus, when we perform classification
+task for a given sentence, the models compared may be with differently-sized
+alphabets thereby returning a probability of 0.0 for the n-gram's characters that
+have not been present yet in a given trained model. This can
+be viewed as a non-uniform smoothing of the models and implies necessity
+of the normalization of the alphabets of all the language models after
+accounting for n-grams has been made, and only then smooth.
+
+Language model normalization in has not been implemented yet. Such normalization, however, will
+provoke a problem of data sparseness similar to the one described below.
+This presents a problem for smoothing techniques, because some counts
+we get, $N$ of either n-grams or (n-1)-grams, will have values of 0.0 and
+division by 0.0 will become a problem.
+
+\paragraph{N-grams with $n > 2$}
+
+The implemented maximum so far is $n = 3$, but it is a general problem for any $n$.
+The problem stems from
+the excessive data sparseness of the models for $n > 2$. Taking for
+example MLE~---~it won't be able to cope with it properly without
+special care because $N$ there is now a two-dimensional matrix,
+which can easily be 0.0 in places and the division by zero is unavoidable.
+Analogous problem exists in the Good-Turing smoothing.
+To solve this we have said if $N = 0$ make $N=1$. Maybe by doing
+so (as this is a quite a kludge) we have created more trouble,
+but that was the ``design decision'' in the first implementation.
+
+\subsubsection{Experiments}
+
+\paragraph{Bag-of-Languages and the Language Split}
+
+We came up with a few testing sentences/statements for all languages
+(can be found in the \file{test.langs} file, see \xf{fig:lang-ident-sentences}).
+Then, based on my random observations above we conducted more guided experiments.
+
+\begin{figure}\small
+\hrule\vskip4pt
+\input{test.langs.tex}
+\caption{Sample sentences in various languages used for testing. Was used in ``Bag-of-Languages'' experiments.}
+\label{fig:lang-ident-sentences}
+\vskip4pt\hrule
+\end{figure}
+
+\begin{figure}\small
+\hrule\vskip4pt
+\input{test.latin.langs.tex}
+\caption{Subset of the sample sentences in languages with Latin base.}
+\label{fig:lang-ident-latin}
+\vskip4pt\hrule
+\end{figure}
+
+The sentences from the \xf{fig:lang-ident-sentences} were used as-is to pipe to
+the program for classification for the bag-of-languages approach. This
+file has been split into parts (see \xf{fig:lang-ident-latin}, \xf{fig:lang-ident-nonlatin},
+and \xf{fig:lang-ident-pls}) to try out other approaches as well (see \xs{sect:lang-ident-training}).
+
+\begin{figure}\small
+\hrule\vskip4pt
+\input{test.non-latin.langs.tex}
+\caption{Subset of the sample sentences in languages with non-Latin base.}
+\label{fig:lang-ident-nonlatin}
+\vskip4pt\hrule
+\end{figure}
+
+\begin{figure}\small
+\hrule\vskip4pt
+\input{test.pls.langs.tex}
+\caption{Subset of the sample statements in programming languages.}
+\label{fig:lang-ident-pls}
+\vskip4pt\hrule
+\end{figure}
+
+\paragraph{Tokenization}
+
+We used two types of tokenizer, {\bf restricted} and {\bf unrestricted} to experiment with
+the diverse alphabets.
+The ``restricted tokenizer'' means lowercase-folded ASCII characters and numbers (more corresponding
+to the original requirements). The ``unrestricted tokenizer''
+means additional characters are allowed and it is case-sensitive.
+In both tokenizers blanks are discarded.
+An implementation of these tokenizer settings via command-line options is still a TODO,
+so we were simply changing the code and recompiling. The code has an unrestricted tokenizer
+(\file{NLPStreamTokenizer.java} under \file{marf/nlp/util}).
+
+
+\subsubsection{Training}
+\label{sect:lang-ident-training}
+
+We trained language models to include the following:
+
+\begin{itemize}
+\item all the languages (both NLs and PLs) with the restricted tokenizer
+\item all the languages with the unrestricted tokenizer
+\item latin-based NLs (English, French, Spanish, and Italian) with the restricted tokenizer
+\item non-latin-based romanized NLs (Arabic, Hebrew, Russian, and Bulgarian) with the unrestricted tokenizer
+\item PLs ({\java}, {\C}/{\cpp}, {\perl}) with the unrestricted tokenizer.
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Results}
+
+\paragraph{Brief Summary}
+
+(Brief because there's more elaborate Conclusion section).
+
+So far, the results are good in places, sometimes pitiful.
+Trigrams alone generally were very poor and slow for us.
+Unigrams and bigrams performed quite well, however.
+
+More detailed results can be observed in the \xa{sect:lang-classification-results}.
+Below are the numbers as a recognition rate of the
+sentences presented earlier for every language model.
+Note that numbers by themselves may not convey
+enough information, one has to look at the detailed results further
+to actually realize that the number of samples is debatable
+to be good and so are the training corpora is not
+uniform. One might also want to look which languages
+get confused with each other.
+
+\paragraph{Summary of Recognition Rates}
+
+\vspace{15pt}
+\hrule
+\vspace{15pt}
+
+Language Model:
+
+\begin{itemize}
+\item ``Bag-of-Languages''
+\item Unrestricted tokenizer
+\end{itemize}
+
+\begin{verbatim}
+                 unigram  bigram  trigram
+
+MLE              54.17%   16.67%  16.67%
+add-delta (ELE ) 58.33%   12.50%  16.67%
+add-one          58.33%   12.50%  16.67%
+Witten-Bell      16.67%   29.17%  16.67%
+Good-Turing      16.67%   12.50%  16.67%
+\end{verbatim}
+
+\vspace{15pt}
+\hrule
+\vspace{15pt}
+
+Language Model:
+
+\begin{itemize}
+\item NLs transcribed in ASCII (Arabic, Hebrew, Bulgarian, and Russian)
+\item Unrestricted tokenizer
+\end{itemize}
+
+\begin{verbatim}
+                 unigram  bigram  trigram
+
+MLE              66.67%   33.33%  33.33%
+add-delta (ELE)  77.78%   11.11%  55.56%
+add-one          77.78%   11.11%  55.56%
+Witten-Bell      55.56%   66.67%  33.33%
+Good-Turing      55.56%   55.56%  55.56%
+\end{verbatim}
+
+\vspace{15pt}
+\hrule
+\vspace{15pt}
+
+Language Model:
+
+\begin{itemize}
+\item PLs only ({\C}/{\cpp}, {\java}, and {\perl})
+\item Unrestricted tokenizer
+\end{itemize}
+
+\begin{verbatim}
+                 unigram  bigram  trigram
+
+MLE              33.33%   33.33%  33.33%
+add-delta (ELE)  33.33%   50.00%  33.33%
+add-one          33.33%   50.00%  33.33%
+Witten-Bell      33.33%   50.00%  33.33%
+Good-Turing      33.33%   33.33%  33.33%
+\end{verbatim}
+
+\vspace{15pt}
+\hrule
+\vspace{15pt}
+
+Language Model:
+
+\begin{itemize}
+\item Latin-based Langauges only (English, French, Spanish, and Italian)
+\item Restricted tokenizer
+\end{itemize}
+
+\begin{verbatim}
+                 unigram  bigram  trigram
+
+MLE              77.78%   33.33%  44.44%
+add-delta (ELE)  77.78%   44.44%  55.56%
+add-one          77.78%   55.56%  55.56%
+Witten-Bell      44.44%   44.44%  44.44%
+Good-Turing      44.44%   44.44%  55.56%
+\end{verbatim}
+
+\vspace{15pt}
+\hrule
+\vspace{15pt}
+
+Language Model:
+
+\begin{itemize}
+\item ``Bag-of-Languages''
+\item Restricted tokenizer
+\end{itemize}
+
+\begin{verbatim}
+                 unigram  bigram  trigram
+
+MLE              62.50%   16.67%  16.67%
+add-delta (ELE)  62.50%    4.17%  12.50%
+add-one          62.50%    8.33%  12.50%
+Witten-Bell      16.67%   33.33%  16.67%
+Good-Turing      16.67%   20.83%  25.00%
+\end{verbatim}
+
+
+%\subsubsection{Sample Interactive Run}
+
+%\scriptsize
+%\input{lang-ident-app-sample-run}
+%\normalsize
+
+
+\subsubsection{Conclusions}
+
+\paragraph{Concrete Points}
+
+\begin{itemize}
+
+\item
+The best results we've got so far from simpler language models;
+especially using languages with the Latin base only.
+
+\item
+The methodology did work for non-Latin languages as well. Not 100\% of the time,
+but around 60\%, but this is a start.
+
+\item
+Witten-Bell and Good-Turing performed rather poorly in our tests in general.
+We think we need a lot larger corpora to test out Witten-Bell and Good-Turing
+smoothing more thoroughly. This can be confirmed by some of the results
+where Good-Turing gave us all English and English is the biggest
+corpus we've got.
+
+\item
+Identification of the Latin-based languages among themselves was the best one.
+It worked OK in the bag-of-languages approach.
+
+\item
+The strict tokenizer and bag-of-languages were surprisingly good (or at least
+better than we expected).
+
+\item
+Recognition of the programming languages according to the conducted
+experiments can be qualified as ``so-so'' when PLs are compared to
+each other only. They were recognized slightly better in the bag-of-languages
+approach (due to the larger alphabets).
+
+\end{itemize}
+
+\paragraph{Generalities}
+
+Some of the hypotheses didn't hold (``better techniques would do better'' and
+``PLs can be identified as easily as NLs''),
+some didn't have time allotted to them yet (``try out Zipf's Law for the purpose
+of the language identification'').
+
+In the next releases, we want to experiment with more things, for example,
+cross-validation and held-out estimation as well as
+linear interpolations and Katz Backoff.
+
+
+\subsubsection{Mini User Manual}
+\label{sect:lang-ident-app-manual}
+
+\paragraph{System Requirements}
+
+The application was primarily developed under Linux, so there's
+a \file{Makefile} and a testing shell script to simplify some routine tasks.
+For JVM, any JDK 1.4.* and above will do. \tool{tcsh} would be nice
+to have to be able to run the batch script. Since the application
+itself is written in {\java}, it's not bound to specific architecture,
+thus may be compiled and run without the makefiles and scripts
+on virtually any operating system.
+
+\paragraph{How To Run It}
+
+In order for the below to work you'd need some corpora in
+the same directory as the application. (Check the reference
+section for the corpora used in the experiments.)
+There are thousands of ways how to run the program. Some of them are listed below.
+
+\paragraph{Using the Shell Scripts}
+
+There are two scripts out there -- \tool{training.sh} and \tool{testing.sh}.
+The former is used to do batch training on all the languages and all the models,
+the latter to perform batch-testing of the models. They hide the complexity
+of typing many options to the users. If you are ever to use them, tweak
+them appropriately for the specific languages and n-gram models if you don't
+all all-or-nothing testing.
+
+The scripts are written using the \tool{tcsh} syntax; hence, \tool{tcsh} should be
+present. The scripts ensure
+that the program was compiled first, by invoking \tool{make}, then
+in several \verb+for()+ loops feed all the options and filenames to the application.
+
+Type:
+
+\noindent
+\verb+./training.sh+
+
+to train the models.
+
+\noindent
+\verb+./testing.sh+
+
+to test the models. NOTE: to start testing right away, you need the \file{*.gzbin} files
+(pre-trained models) which should be copied from a \file{training-*} directory
+of your choice to the application's directory.
+
+\paragraph{Running The LangIdentApp Application}
+\label{sect:lang-ident-app}
+
+You can run the application itself without any wrapping scripts
+and provide options to it. This is a command-line application,
+so there is no GUI associated with it yet (next release). To run the application
+you have to compile it first. You can use either \tool{make} with no
+arguments to compile or use a standard Java compiler.
+
+\noindent
+\tool{make}
+
+or
+
+\noindent
+\verb+javac -cp marf.jar:. LangIdentApp.java+
+
+After having compiled the application, you can run it with the JVM.
+There are several required options:
+
+\begin{itemize}
+\item
+\verb+-char+ makes sure we deal with characters instead of strings of characters as a part of an n-gram
+
+\item
+one of the statistical estimators (see below); if none present, it won't pick any default one
+
+\item
+language parameter (it may seem awkward to require it for identification, but this will fixed,
+so for now use anything for it, like ``foo''). Thus, the ``language'' is a typically two-to-four letter
+abbrieviation of the language you are trying to train on (w.g. ``en'', ``es'', ``java'', etc.).
+
+\item
+corpus - a path to the corpus file for training. For testing just use ``bar''.
+\end{itemize}
+
+If you want an interactive mode to enter sentences yourself, use the \verb+-interactive+
+option. E.g.:
+
+\verb+java -cp marf.jar:. LangIdentApp --ident -char -interactive -bigram -add-delta foo bar+
+
+Here are the options as per the application's output:
+
+\vspace{15pt}
+\hrule
+\input{lang-ident-app-usage}
+\hrule
+\vspace{15pt}
+
+If the filename isn't specified, that will be stated and the usage
+instructions above displayed.
+
+\subsubsection{List of Files}
+
+\paragraph{Directories}
+
+\begin{itemize}
+
+\item
+\file{marf/nlp} -- that's where most of the code is for for use by this application, the \api{marf.nlp} package.
+As discussed at the beginning, it has all the possible implementation files, but some of them are just
+unimplemented stubs.
+
+\item
+\file{index/} -- this directory contains indexing of file names of corpora per language
+(see \xs{sect:corpora-per-language})
+
+\item
+\file{test/} -- this directory contains testing files with sentences in various languages for testing
+(see \xs{sect:lang-test-sentences})
+
+\item
+\file{expected/} -- this directory contains expected output files for classification
+(see \xs{sect:lang-expected-classification})
+
+%\item
+%\file{corpora/} -- this directory contains all the corpora I had collected
+
+\item
+\file{training-*/} -- these directories contain all pre-trained models by us
+for the described experiments and will be supplied in the training-sets tarballs.
+
+\end{itemize}
+
+
+\paragraph{Corpora per Language}
+\label{sect:corpora-per-language}
+
+The below is the list of files of ``pointers''
+to the training corpora %under the \verb+/corpora+ directory
+for the corresponding languages.
+
+\begin{verbatim}
+ar.train.corpora
+bg.train.corpora
+cpp.train.corpora
+en.train.corpora
+es.train.corpora
+fr.train.corpora
+he.train.corpora
+it.train.corpora
+java.train.corpora
+perl.train.corpora
+ru.train.corpora
+\end{verbatim}
+
+
+\paragraph{Expected Results}
+\label{sect:lang-expected-classification}
+
+The below files present the ideal results of batch
+identification that correspond the \file{test.*.langs} files below,
+and can be compared to those produced by the \tool{testing.sh} script.
+
+\begin{verbatim}
+expected.langs
+expected.latin.langs
+expected.non-latin.langs
+expected.pls.langs
+\end{verbatim}
+
+
+\paragraph{Application}
+
+The application and its makefile.
+
+\begin{verbatim}
+LangIdentApp.java
+Makefile
+marf.jar
+\end{verbatim}
+
+
+\paragraph{Scripts}
+
+The wrapper scripts for batch training and testing.
+
+\begin{verbatim}
+testing.sh
+training.sh
+\end{verbatim}
+
+
+\paragraph{Test Sentences}
+\label{sect:lang-test-sentences}
+
+\begin{itemize}
+\item
+\file{test.langs} --- the bag-of-languages
+
+\item
+\file{test.latin.langs} --- English, French, Spanish, and Italian sentences
+
+\item
+\file{test.non-latin.langs} --- Arabic, Hebrew, Russian, and Bulgarian sentences
+
+\item
+\file{test.pls.langs} --- Programming Languages (a few statements in {\cpp}, {\java}, and {\perl})
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Classification Results}
+\label{sect:lang-classification-results}
+
+\paragraph{``Bag-of-Languages'', Unrestricted Tokenizer}
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+UNIGRAM, ADD-DELTA                                                 UNIGRAM, ADD-ONE
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1        Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2        Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [fr]             Language identified: [es]    Language identified: [fr]
+Language identified: [en]    Language identified: [en]    3        Language identified: [en]    Language identified: [en]    3
+Language identified: [ru]    Language identified: [ru]    4        Language identified: [ru]    Language identified: [ru]    4
+Language identified: [fr]    Language identified: [fr]    5        Language identified: [fr]    Language identified: [fr]    5
+Language identified: [ru]    Language identified: [ru]    6        Language identified: [ru]    Language identified: [ru]    6
+Language identified: [es]    Language identified: [es]    7        Language identified: [es]    Language identified: [es]    7
+Language identified: [he]    Language identified: [he]    8        Language identified: [he]    Language identified: [he]    8
+Language identified: [it]    Language identified: [it]    9        Language identified: [it]    Language identified: [it]    9
+Language identified: [ar]    Language identified: [ru]             Language identified: [ar]    Language identified: [ru]
+Language identified: [bg]    Language identified: [bg]    10       Language identified: [bg]    Language identified: [bg]    10
+Language identified: [java]  Language identified: [es]             Language identified: [java]  Language identified: [es]
+Language identified: [cpp]   Language identified: [perl]           Language identified: [cpp]   Language identified: [perl]
+Language identified: [cpp]   Language identified: [perl]           Language identified: [cpp]   Language identified: [perl]
+Language identified: [he]    Language identified: [he]    11       Language identified: [he]    Language identified: [he]    11
+Language identified: [java]  Language identified: [it]             Language identified: [java]  Language identified: [it]
+Language identified: [perl]  Language identified: [cpp]            Language identified: [perl]  Language identified: [cpp]
+Language identified: [ar]    Language identified: [ar]    12       Language identified: [ar]    Language identified: [ar]    12
+Language identified: [perl]  Language identified: [es]             Language identified: [perl]  Language identified: [es]
+Language identified: [ru]    Language identified: [ru]    13       Language identified: [ru]    Language identified: [ru]    13
+Language identified: [fr]    Language identified: [it]             Language identified: [fr]    Language identified: [it]
+Language identified: [ar]    Language identified: [bg]             Language identified: [ar]    Language identified: [bg]
+Language identified: [en]    Language identified: [en]    14       Language identified: [en]    Language identified: [en]    14
+
+Total                        24                           14       Total                        24                           14
+%                            58.33                                 %                            58.33
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+UNIGRAM, GOOD-TURING                                               UNIGRAM, MLE
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1        Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2        Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [en]             Language identified: [es]    Language identified: [fr]
+Language identified: [en]    Language identified: [en]    3        Language identified: [en]    Language identified: [en]    3
+Language identified: [ru]    Language identified: [en]             Language identified: [ru]    Language identified: [bg]
+Language identified: [fr]    Language identified: [en]             Language identified: [fr]    Language identified: [fr]    4
+Language identified: [ru]    Language identified: [en]             Language identified: [ru]    Language identified: [ru]    5
+Language identified: [es]    Language identified: [en]             Language identified: [es]    Language identified: [es]    6
+Language identified: [he]    Language identified: [en]             Language identified: [he]    Language identified: [he]    7
+Language identified: [it]    Language identified: [en]             Language identified: [it]    Language identified: [it]    8
+Language identified: [ar]    Language identified: [en]             Language identified: [ar]    Language identified: [ru]
+Language identified: [bg]    Language identified: [en]             Language identified: [bg]    Language identified: [bg]    9
+Language identified: [java]  Language identified: [en]             Language identified: [java]  Language identified: [es]
+Language identified: [cpp]   Language identified: [en]             Language identified: [cpp]   Language identified: [perl]
+Language identified: [cpp]   Language identified: [en]             Language identified: [cpp]   Language identified: [perl]
+Language identified: [he]    Language identified: [en]             Language identified: [he]    Language identified: [he]    10
+Language identified: [java]  Language identified: [en]             Language identified: [java]  Language identified: [it]
+Language identified: [perl]  Language identified: [en]             Language identified: [perl]  Language identified: [cpp]
+Language identified: [ar]    Language identified: [en]             Language identified: [ar]    Language identified: [ar]    11
+Language identified: [perl]  Language identified: [en]             Language identified: [perl]  Language identified: [es]
+Language identified: [ru]    Language identified: [en]             Language identified: [ru]    Language identified: [ru]    12
+Language identified: [fr]    Language identified: [en]             Language identified: [fr]    Language identified: [it]
+Language identified: [ar]    Language identified: [en]             Language identified: [ar]    Language identified: [bg]
+Language identified: [en]    Language identified: [en]    4        Language identified: [en]    Language identified: [en]    13
+
+Total                        24                           4        Total                        24                           13
+%                            16.67                                 %                            54.17
+\end{verbatim}
+\vskip4pt\hrule
+
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+UNIGRAM, WITTEN-BELL                                               BIGRAM, ADD-DELTA
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1        Language identified: [en]    Language identified: [bg]
+Language identified: [en]    Language identified: [en]    2        Language identified: [en]    Language identified: [fr]
+Language identified: [es]    Language identified: [en]             Language identified: [es]    Language identified: [es]    1
+Language identified: [en]    Language identified: [en]    3        Language identified: [en]    Language identified: [bg]
+Language identified: [ru]    Language identified: [en]             Language identified: [ru]    Language identified: [bg]
+Language identified: [fr]    Language identified: [en]             Language identified: [fr]    Language identified: [fr]    2
+Language identified: [ru]    Language identified: [en]             Language identified: [ru]    Language identified: [bg]
+Language identified: [es]    Language identified: [en]             Language identified: [es]    Language identified: [fr]
+Language identified: [he]    Language identified: [en]             Language identified: [he]    Language identified: [bg]
+Language identified: [it]    Language identified: [en]             Language identified: [it]    Language identified: [fr]
+Language identified: [ar]    Language identified: [en]             Language identified: [ar]    Language identified: [fr]
+Language identified: [bg]    Language identified: [en]             Language identified: [bg]    Language identified: [es]
+Language identified: [java]  Language identified: [en]             Language identified: [java]  Language identified: [fr]
+Language identified: [cpp]   Language identified: [en]             Language identified: [cpp]   Language identified: [perl]
+Language identified: [cpp]   Language identified: [en]             Language identified: [cpp]   Language identified: [cpp]   3
+Language identified: [he]    Language identified: [en]             Language identified: [he]    Language identified: [bg]
+Language identified: [java]  Language identified: [en]             Language identified: [java]  Language identified: [fr]
+Language identified: [perl]  Language identified: [en]             Language identified: [perl]  Language identified: [es]
+Language identified: [ar]    Language identified: [en]             Language identified: [ar]    Language identified: [bg]
+Language identified: [perl]  Language identified: [en]             Language identified: [perl]  Language identified: [fr]
+Language identified: [ru]    Language identified: [en]             Language identified: [ru]    Language identified: [bg]
+Language identified: [fr]    Language identified: [en]             Language identified: [fr]    Language identified: [es]
+Language identified: [ar]    Language identified: [en]             Language identified: [ar]    Language identified: [es]
+Language identified: [en]    Language identified: [en]    4        Language identified: [en]    Language identified: [bg]
+
+Total                        24                           4        Total                        24                           3
+%                            16.67                                 %                            12.50
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+BIGRAM,ADD-ONE                                                     BIGRAM, GOOD-TURING
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [bg]             Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [fr]             Language identified: [en]    Language identified: [perl]
+Language identified: [es]    Language identified: [es]    1        Language identified: [es]    Language identified: [perl]
+Language identified: [en]    Language identified: [bg]             Language identified: [en]    Language identified: [perl]
+Language identified: [ru]    Language identified: [bg]             Language identified: [ru]    Language identified: [perl]
+Language identified: [fr]    Language identified: [fr]    2        Language identified: [fr]    Language identified: [perl]
+Language identified: [ru]    Language identified: [bg]             Language identified: [ru]    Language identified: [perl]
+Language identified: [es]    Language identified: [fr]             Language identified: [es]    Language identified: [perl]
+Language identified: [he]    Language identified: [bg]             Language identified: [he]    Language identified: [perl]
+Language identified: [it]    Language identified: [fr]             Language identified: [it]    Language identified: [perl]
+Language identified: [ar]    Language identified: [fr]             Language identified: [ar]    Language identified: [perl]
+Language identified: [bg]    Language identified: [es]             Language identified: [bg]    Language identified: [perl]
+Language identified: [java]  Language identified: [fr]             Language identified: [java]  Language identified: [perl]
+Language identified: [cpp]   Language identified: [perl]           Language identified: [cpp]   Language identified: [perl]
+Language identified: [cpp]   Language identified: [cpp]   3        Language identified: [cpp]   Language identified: [perl]
+Language identified: [he]    Language identified: [bg]             Language identified: [he]    Language identified: [perl]
+Language identified: [java]  Language identified: [fr]             Language identified: [java]  Language identified: [perl]
+Language identified: [perl]  Language identified: [es]             Language identified: [perl]  Language identified: [perl]  2
+Language identified: [ar]    Language identified: [bg]             Language identified: [ar]    Language identified: [perl]
+Language identified: [perl]  Language identified: [fr]             Language identified: [perl]  Language identified: [perl]  3
+Language identified: [ru]    Language identified: [bg]             Language identified: [ru]    Language identified: [perl]
+Language identified: [fr]    Language identified: [es]             Language identified: [fr]    Language identified: [perl]
+Language identified: [ar]    Language identified: [es]             Language identified: [ar]    Language identified: [perl]
+Language identified: [en]    Language identified: [bg]             Language identified: [en]    Language identified: [perl]
+
+Total                        24                           3        Total                        24                           3
+%                            12.50                                 %                            12.50
+\end{verbatim}
+\vskip4pt\hrule
+
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+BIGRAM, MLE                                                        BIGRAM, WITTEN-BELL
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1        Language identified: [en]    Language identified: [java]
+Language identified: [en]    Language identified: [en]    2        Language identified: [en]    Language identified: [java]
+Language identified: [es]    Language identified: [en]             Language identified: [es]    Language identified: [es]    1
+Language identified: [en]    Language identified: [en]    3        Language identified: [en]    Language identified: [java]
+Language identified: [ru]    Language identified: [en]             Language identified: [ru]    Language identified: [java]
+Language identified: [fr]    Language identified: [en]             Language identified: [fr]    Language identified: [es]
+Language identified: [ru]    Language identified: [en]             Language identified: [ru]    Language identified: [java]
+Language identified: [es]    Language identified: [en]             Language identified: [es]    Language identified: [ar]
+Language identified: [he]    Language identified: [en]             Language identified: [he]    Language identified: [ar]
+Language identified: [it]    Language identified: [en]             Language identified: [it]    Language identified: [it]    2
+Language identified: [ar]    Language identified: [en]             Language identified: [ar]    Language identified: [ar]    3
+Language identified: [bg]    Language identified: [en]             Language identified: [bg]    Language identified: [java]
+Language identified: [java]  Language identified: [en]             Language identified: [java]  Language identified: [es]
+Language identified: [cpp]   Language identified: [en]             Language identified: [cpp]   Language identified: [java]
+Language identified: [cpp]   Language identified: [en]             Language identified: [cpp]   Language identified: [cpp]   4
+Language identified: [he]    Language identified: [en]             Language identified: [he]    Language identified: [ru]
+Language identified: [java]  Language identified: [en]             Language identified: [java]  Language identified: [java]  5
+Language identified: [perl]  Language identified: [en]             Language identified: [perl]  Language identified: [ru]
+Language identified: [ar]    Language identified: [en]             Language identified: [ar]    Language identified: [ar]    6
+Language identified: [perl]  Language identified: [en]             Language identified: [perl]  Language identified: [java]
+Language identified: [ru]    Language identified: [en]             Language identified: [ru]    Language identified: [ar]
+Language identified: [fr]    Language identified: [en]             Language identified: [fr]    Language identified: [java]
+Language identified: [ar]    Language identified: [en]             Language identified: [ar]    Language identified: [ar]    7
+Language identified: [en]    Language identified: [en]    4        Language identified: [en]    Language identified: [java]
+
+Total                        24                           4        Total                        24                           7
+%                            16.67                                 %                            29.17
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+TRIGRAM, ADD-DELTA                                                 TRIGRAM, ADD-ONE
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [he]             Language identified: [en]    Language identified: [he]
+Language identified: [en]    Language identified: [fr]             Language identified: [en]    Language identified: [fr]
+Language identified: [es]    Language identified: [fr]             Language identified: [es]    Language identified: [fr]
+Language identified: [en]    Language identified: [he]             Language identified: [en]    Language identified: [he]
+Language identified: [ru]    Language identified: [he]             Language identified: [ru]    Language identified: [he]
+Language identified: [fr]    Language identified: [fr]    1        Language identified: [fr]    Language identified: [fr]    1
+Language identified: [ru]    Language identified: [he]             Language identified: [ru]    Language identified: [he]
+Language identified: [es]    Language identified: [fr]             Language identified: [es]    Language identified: [fr]
+Language identified: [he]    Language identified: [ar]             Language identified: [he]    Language identified: [ar]
+Language identified: [it]    Language identified: [fr]             Language identified: [it]    Language identified: [fr]
+Language identified: [ar]    Language identified: [fr]             Language identified: [ar]    Language identified: [fr]
+Language identified: [bg]    Language identified: [fr]             Language identified: [bg]    Language identified: [fr]
+Language identified: [java]  Language identified: [fr]             Language identified: [java]  Language identified: [fr]
+Language identified: [cpp]   Language identified: [java]           Language identified: [cpp]   Language identified: [java]
+Language identified: [cpp]   Language identified: [java]           Language identified: [cpp]   Language identified: [java]
+Language identified: [he]    Language identified: [he]    2        Language identified: [he]    Language identified: [he]    2
+Language identified: [java]  Language identified: [fr]             Language identified: [java]  Language identified: [fr]
+Language identified: [perl]  Language identified: [es]             Language identified: [perl]  Language identified: [es]
+Language identified: [ar]    Language identified: [ar]    3        Language identified: [ar]    Language identified: [ar]    3
+Language identified: [perl]  Language identified: [fr]             Language identified: [perl]  Language identified: [fr]
+Language identified: [ru]    Language identified: [ar]             Language identified: [ru]    Language identified: [ar]
+Language identified: [fr]    Language identified: [fr]    4        Language identified: [fr]    Language identified: [fr]    4
+Language identified: [ar]    Language identified: [fr]             Language identified: [ar]    Language identified: [fr]
+Language identified: [en]    Language identified: [he]             Language identified: [en]    Language identified: [he]
+
+Total                        24                           4        Total                        24                           4
+%                            16.67                                 %                            16.67
+\end{verbatim}
+\vskip4pt\hrule
+
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+TRIGRAM, GOOD-TURING                                               TRIGRAM, MLE
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [he]             Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [he]             Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [ar]             Language identified: [es]    Language identified: [en]
+Language identified: [en]    Language identified: [he]             Language identified: [en]    Language identified: [en]    3
+Language identified: [ru]    Language identified: [he]             Language identified: [ru]    Language identified: [en]
+Language identified: [fr]    Language identified: [ar]             Language identified: [fr]    Language identified: [en]
+Language identified: [ru]    Language identified: [he]             Language identified: [ru]    Language identified: [en]
+Language identified: [es]    Language identified: [ar]             Language identified: [es]    Language identified: [en]
+Language identified: [he]    Language identified: [ar]             Language identified: [he]    Language identified: [en]
+Language identified: [it]    Language identified: [he]             Language identified: [it]    Language identified: [en]
+Language identified: [ar]    Language identified: [ar]    1        Language identified: [ar]    Language identified: [en]
+Language identified: [bg]    Language identified: [es]             Language identified: [bg]    Language identified: [en]
+Language identified: [java]  Language identified: [ru]             Language identified: [java]  Language identified: [en]
+Language identified: [cpp]   Language identified: [ar]             Language identified: [cpp]   Language identified: [en]
+Language identified: [cpp]   Language identified: [ar]             Language identified: [cpp]   Language identified: [en]
+Language identified: [he]    Language identified: [he]    2        Language identified: [he]    Language identified: [en]
+Language identified: [java]  Language identified: [he]             Language identified: [java]  Language identified: [en]
+Language identified: [perl]  Language identified: [ar]             Language identified: [perl]  Language identified: [en]
+Language identified: [ar]    Language identified: [ar]    3        Language identified: [ar]    Language identified: [en]
+Language identified: [perl]  Language identified: [ar]             Language identified: [perl]  Language identified: [en]
+Language identified: [ru]    Language identified: [ar]             Language identified: [ru]    Language identified: [en]
+Language identified: [fr]    Language identified: [he]             Language identified: [fr]    Language identified: [en]
+Language identified: [ar]    Language identified: [ar]    4        Language identified: [ar]    Language identified: [en]
+Language identified: [en]    Language identified: [he]             Language identified: [en]    Language identified: [en]    4
+
+Total                        24                           4        Total                        24                           4
+%                            16.67                                 %                            16.67
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+TRIGRAM, WITTEN-BELL
+
+Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    3
+Language identified: [ru]    Language identified: [en]
+Language identified: [fr]    Language identified: [en]
+Language identified: [ru]    Language identified: [en]
+Language identified: [es]    Language identified: [en]
+Language identified: [he]    Language identified: [en]
+Language identified: [it]    Language identified: [en]
+Language identified: [ar]    Language identified: [en]
+Language identified: [bg]    Language identified: [en]
+Language identified: [java]  Language identified: [en]
+Language identified: [cpp]   Language identified: [en]
+Language identified: [cpp]   Language identified: [en]
+Language identified: [he]    Language identified: [en]
+Language identified: [java]  Language identified: [en]
+Language identified: [perl]  Language identified: [en]
+Language identified: [ar]    Language identified: [en]
+Language identified: [perl]  Language identified: [en]
+Language identified: [ru]    Language identified: [en]
+Language identified: [fr]    Language identified: [en]
+Language identified: [ar]    Language identified: [en]
+Language identified: [ar]    Language identified: [en]    4
+
+Total                        24                           4
+%                            16.67
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\paragraph{Non-Latin-Based Languages, Unrestricted Tokenizer}
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+UNIGRAM, ADD-DELTA                                                 UNIGRAM, ADD-ONE
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [ru]    Language identified: [ru]    1        Language identified: [ru]    Language identified: [ru]    1
+Language identified: [ru]    Language identified: [ru]    2        Language identified: [ru]    Language identified: [ru]    2
+Language identified: [he]    Language identified: [he]    3        Language identified: [he]    Language identified: [he]    3
+Language identified: [ar]    Language identified: [ru]             Language identified: [ar]    Language identified: [ru]
+Language identified: [bg]    Language identified: [bg]    4        Language identified: [bg]    Language identified: [bg]    4
+Language identified: [he]    Language identified: [he]    5        Language identified: [he]    Language identified: [he]    5
+Language identified: [ar]    Language identified: [ar]    6        Language identified: [ar]    Language identified: [ar]    6
+Language identified: [ru]    Language identified: [ru]    7        Language identified: [ru]    Language identified: [ru]    7
+Language identified: [ar]    Language identified: [bg]             Language identified: [ar]    Language identified: [bg]
+
+Total                        9                            7        Total                        9                            7
+%                            77.78                                 %                            77.78
+\end{verbatim}
+\vskip4pt\hrule
+
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+UNIGRAM, GOOD-TURING                                               UNIGRAM, MLE
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [ru]    Language identified: [ru]    1        Language identified: [ru]    Language identified: [bg]
+Language identified: [ru]    Language identified: [ru]    2        Language identified: [ru]    Language identified: [ru]    1
+Language identified: [he]    Language identified: [ru]             Language identified: [he]    Language identified: [he]    2
+Language identified: [ar]    Language identified: [ru]             Language identified: [ar]    Language identified: [ru]
+Language identified: [bg]    Language identified: [bg]    3        Language identified: [bg]    Language identified: [bg]    3
+Language identified: [he]    Language identified: [ru]             Language identified: [he]    Language identified: [he]    4
+Language identified: [ar]    Language identified: [ar]    4        Language identified: [ar]    Language identified: [ar]    5
+Language identified: [ru]    Language identified: [ru]    5        Language identified: [ru]    Language identified: [ru]    6
+Language identified: [ar]    Language identified: [ru]             Language identified: [ar]    Language identified: [bg]
+
+Total                        9                            5        Total                        9                            6
+%                            55.56                                 %                            66.67
+\end{verbatim}
+\vskip4pt\hrule
+
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+UNIGRAM, WITTEN-BELL                                               BIGRAM, ADD-DELTA
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [ru]    Language identified: [ru]    1        Language identified: [ru]    Language identified: [bg]
+Language identified: [ru]    Language identified: [ru]    2        Language identified: [ru]    Language identified: [bg]
+Language identified: [he]    Language identified: [ru]             Language identified: [he]    Language identified: [bg]
+Language identified: [ar]    Language identified: [ru]             Language identified: [ar]    Language identified: [bg]
+Language identified: [bg]    Language identified: [bg]    3        Language identified: [bg]    Language identified: [bg]    1
+Language identified: [he]    Language identified: [ru]             Language identified: [he]    Language identified: [bg]
+Language identified: [ar]    Language identified: [ar]    4        Language identified: [ar]    Language identified: [bg]
+Language identified: [ru]    Language identified: [ru]    5        Language identified: [ru]    Language identified: [bg]
+Language identified: [ar]    Language identified: [ru]             Language identified: [ar]    Language identified: [bg]
+
+Total                        9                            5        Total                        9                            1
+%                            55.56                                 %                            11.11
+\end{verbatim}
+\vskip4pt\hrule
+
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+BIGRAM, ADD-ONE                                                    BIGRAM, GOOD-TURING
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [ru]    Language identified: [bg]             Language identified: [ru]    Language identified: [ru]    1
+Language identified: [ru]    Language identified: [bg]             Language identified: [ru]    Language identified: [ru]    2
+Language identified: [he]    Language identified: [bg]             Language identified: [he]    Language identified: [ar]
+Language identified: [ar]    Language identified: [bg]             Language identified: [ar]    Language identified: [ar]
+Language identified: [bg]    Language identified: [bg]    1        Language identified: [bg]    Language identified: [bg]    3
+Language identified: [he]    Language identified: [bg]             Language identified: [he]    Language identified: [ru]
+Language identified: [ar]    Language identified: [bg]             Language identified: [ar]    Language identified: [ar]    4
+Language identified: [ru]    Language identified: [bg]             Language identified: [ru]    Language identified: [ru]    5
+Language identified: [ar]    Language identified: [bg]             Language identified: [ar]    Language identified: [ru]
+
+Total                        9                            1        Total                        9                            5
+%                            11.11                                 %                            55.56
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+BIGRAM, MLE                                                        BIGRAM, WITTEN-BELL
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [ru]    Language identified: [ru]    1        Language identified: [ru]    Language identified: [ru]    1
+Language identified: [ru]    Language identified: [ru]    2        Language identified: [ru]    Language identified: [ru]    2
+Language identified: [he]    Language identified: [ru]             Language identified: [he]    Language identified: [ar]
+Language identified: [ar]    Language identified: [ru]             Language identified: [ar]    Language identified: [ar]    3
+Language identified: [bg]    Language identified: [ru]             Language identified: [bg]    Language identified: [bg]    4
+Language identified: [he]    Language identified: [ru]             Language identified: [he]    Language identified: [ru]
+Language identified: [ar]    Language identified: [ru]             Language identified: [ar]    Language identified: [ar]    5
+Language identified: [ru]    Language identified: [ru]    3        Language identified: [ru]    Language identified: [ar]
+Language identified: [ar]    Language identified: [ru]             Language identified: [ar]    Language identified: [ar]    6
+
+Total                        9                            3        Total                        9                            6
+%                            33.33                                 %                            66.67
+\end{verbatim}
+\vskip4pt\hrule
+
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+TRIGRAM, ADD-DELTA                                                 TRIGRAM, ADD-ONE
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [ru]    Language identified: [he]             Language identified: [ru]    Language identified: [he]
+Language identified: [ru]    Language identified: [he]             Language identified: [ru]    Language identified: [he]
+Language identified: [he]    Language identified: [ar]             Language identified: [he]    Language identified: [ar]
+Language identified: [ar]    Language identified: [ar]    1        Language identified: [ar]    Language identified: [ar]    1
+Language identified: [bg]    Language identified: [bg]    2        Language identified: [bg]    Language identified: [bg]    2
+Language identified: [he]    Language identified: [he]    3        Language identified: [he]    Language identified: [he]    3
+Language identified: [ar]    Language identified: [ar]    4        Language identified: [ar]    Language identified: [ar]    4
+Language identified: [ru]    Language identified: [ar]             Language identified: [ru]    Language identified: [ar]
+Language identified: [ar]    Language identified: [ar]    5        Language identified: [ar]    Language identified: [ar]    5
+
+Total                        9                            5        Total                        9                            5
+%                            55.56                                 %                            55.56
+\end{verbatim}
+\vskip4pt\hrule
+
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+TRIGRAM, GOOD-TURING                                               TRIGRAM, MLE
+
+Ideal                        Actual                       Match    Ideal                        Actual                       Match
+
+Language identified: [ru]    Language identified: [he]             Language identified: [ru]    Language identified: [ru]    1
+Language identified: [ru]    Language identified: [he]             Language identified: [ru]    Language identified: [ru]    2
+Language identified: [he]    Language identified: [ar]             Language identified: [he]    Language identified: [ru]
+Language identified: [ar]    Language identified: [ar]    1        Language identified: [ar]    Language identified: [ru]
+Language identified: [bg]    Language identified: [bg]    2        Language identified: [bg]    Language identified: [ru]
+Language identified: [he]    Language identified: [he]    3        Language identified: [he]    Language identified: [ru]
+Language identified: [ar]    Language identified: [ar]    4        Language identified: [ar]    Language identified: [ru]
+Language identified: [ru]    Language identified: [ar]             Language identified: [ru]    Language identified: [ru]    3
+Language identified: [ar]    Language identified: [ar]    5        Language identified: [ar]    Language identified: [ru]
+
+Total                        9                            5        Total                        9                            3
+%                            55.56                                 %                            33.33
+\end{verbatim}
+\vskip4pt\hrule
+
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+TRIGRAM, WITTEN-BELL
+
+Ideal                        Actual                       Match
+
+Language identified: [ru]    Language identified: [ru]    1
+Language identified: [ru]    Language identified: [ru]    2
+Language identified: [he]    Language identified: [ru]
+Language identified: [ar]    Language identified: [ru]
+Language identified: [bg]    Language identified: [ru]
+Language identified: [he]    Language identified: [ru]
+Language identified: [ar]    Language identified: [ru]
+Language identified: [ru]    Language identified: [ru]    3
+Language identified: [ar]    Language identified: [ru]
+
+Total                        9                            3
+%                            33.33
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\paragraph{Programming Languages, Unrestricted Tokenizer}
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+UNIGRAM,ADD-DELTA                UNIGRAM,ADD-ONE
+
+Ideal                          Actual                         Match  Ideal                          Actual                         Match
+
+Language identified: [java]    Language identified: [java]    1      Language identified: [java]    Language identified: [java]    1
+Language identified: [cpp]     Language identified: [perl]           Language identified: [cpp]     Language identified: [perl]
+Language identified: [cpp]     Language identified: [perl]           Language identified: [cpp]     Language identified: [perl]
+Language identified: [java]    Language identified: [java]    2      Language identified: [java]    Language identified: [java]    2
+Language identified: [perl]    Language identified: [cpp]            Language identified: [perl]    Language identified: [cpp]
+Language identified: [perl]    Language identified: [cpp]            Language identified: [perl]    Language identified: [cpp]
+
+Total    6    2        Total    6    2
+%    33.33            %    33.33
+\end{verbatim}
+\vskip4pt\hrule
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+UNIGRAM,GOOD-TURING                UNIGRAM,MLE
+
+Ideal                          Actual                         Match  Ideal                          Actual                         Match
+
+Language identified: [java]    Language identified: [perl]           Language identified: [java]    Language identified: [java]    1
+Language identified: [cpp]     Language identified: [perl]           Language identified: [cpp]     Language identified: [perl]
+Language identified: [cpp]     Language identified: [perl]           Language identified: [cpp]     Language identified: [perl]
+Language identified: [java]    Language identified: [java]    1      Language identified: [java]    Language identified: [java]    2
+Language identified: [perl]    Language identified: [java]           Language identified: [perl]    Language identified: [cpp]
+Language identified: [perl]    Language identified: [perl]    2      Language identified: [perl]    Language identified: [cpp]
+
+Total    6    2        Total    6    2
+%    33.33            %    33.33
+\end{verbatim}
+\vskip4pt\hrule
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+UNIGRAM,WITTEN-BELL                                                  BIGRAM,ADD-DELTA
+
+Ideal                          Actual                         Match  Ideal                          Actual                         Match
+
+Language identified: [java]    Language identified: [perl]           Language identified: [java]    Language identified: [perl]
+Language identified: [cpp]     Language identified: [perl]           Language identified: [cpp]     Language identified: [perl]
+Language identified: [cpp]     Language identified: [perl]           Language identified: [cpp]     Language identified: [cpp]     1
+Language identified: [java]    Language identified: [java]    1      Language identified: [java]    Language identified: [perl]
+Language identified: [perl]    Language identified: [java]           Language identified: [perl]    Language identified: [perl]    2
+Language identified: [perl]    Language identified: [perl]    2      Language identified: [perl]    Language identified: [perl]    3
+
+Total                          6                              2      Total                          6                              3
+%                              33.33                                 %                              50.00
+\end{verbatim}
+\vskip4pt\hrule
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+BIGRAM,ADD-ONE                                                       BIGRAM,GOOD-TURING
+
+Ideal                          Actual                         Match  Ideal                          Actual                         Match
+
+Language identified: [java]    Language identified: [perl]           Language identified: [java]    Language identified: [perl]
+Language identified: [cpp]     Language identified: [perl]           Language identified: [cpp]     Language identified: [perl]
+Language identified: [cpp]     Language identified: [cpp]     1      Language identified: [cpp]     Language identified: [perl]
+Language identified: [java]    Language identified: [perl]           Language identified: [java]    Language identified: [perl]
+Language identified: [perl]    Language identified: [perl]    2      Language identified: [perl]    Language identified: [perl]    1
+Language identified: [perl]    Language identified: [perl]    3      Language identified: [perl]    Language identified: [perl]    2
+
+Total                          6                              3      Total                          6                              2
+%                              50.00                                 %                              33.33
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+BIGRAM,MLE                                                           BIGRAM,WITTEN-BELL
+
+Ideal                          Actual                         Match  Ideal                          Actual                         Match
+
+Language identified: [java]    Language identified: [java]    1      Language identified: [java]    Language identified: [java]    1
+Language identified: [cpp]     Language identified: [java]           Language identified: [cpp]     Language identified: [java]
+Language identified: [cpp]     Language identified: [java]           Language identified: [cpp]     Language identified: [cpp]     2
+Language identified: [java]    Language identified: [java]    2      Language identified: [java]    Language identified: [java]    3
+Language identified: [perl]    Language identified: [java]           Language identified: [perl]    Language identified: [java]
+Language identified: [perl]    Language identified: [java]           Language identified: [perl]    Language identified: [java]
+
+Total                          6                              2      Total                          6                              3
+%                              33.33                                 %                              50.00
+\end{verbatim}
+\vskip4pt\hrule
+
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+TRIGRAM,ADD-DELTA                                                    TRIGRAM,ADD-ONE
+
+Ideal                          Actual                         Match  Ideal                          Actual                         Match
+
+Language identified: [java]    Language identified: [java]    1      Language identified: [java]    Language identified: [java]    1
+Language identified: [cpp]     Language identified: [java]           Language identified: [cpp]     Language identified: [java]
+Language identified: [cpp]     Language identified: [java]           Language identified: [cpp]     Language identified: [java]
+Language identified: [java]    Language identified: [java]    2      Language identified: [java]    Language identified: [java]    2
+Language identified: [perl]    Language identified: [java]           Language identified: [perl]    Language identified: [java]
+Language identified: [perl]    Language identified: [java]           Language identified: [perl]    Language identified: [java]
+
+Total                          6                              2      Total                          6                              2
+%                              33.33                                 %                              33.33
+\end{verbatim}
+\vskip4pt\hrule
+
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+TRIGRAM,GOOD-TURING                                                  TRIGRAM,MLE
+
+Ideal                          Actual                         Match  Ideal                          Actual                         Match
+
+Language identified: [java]    Language identified: [perl]           Language identified: [java]    Language identified: [java]    1
+Language identified: [cpp]     Language identified: [perl]           Language identified: [cpp]     Language identified: [java]
+Language identified: [cpp]     Language identified: [perl]           Language identified: [cpp]     Language identified: [java]
+Language identified: [java]    Language identified: [perl]           Language identified: [java]    Language identified: [java]    2
+Language identified: [perl]    Language identified: [perl]    1      Language identified: [perl]    Language identified: [java]
+Language identified: [perl]    Language identified: [perl]    2      Language identified: [perl]    Language identified: [java]
+
+Total                          6                              2      Total                          6                              2
+%                              33.33                                 %                              33.33
+\end{verbatim}
+\vskip4pt\hrule
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+TRIGRAM,WITTEN-BELL
+
+Ideal                          Actual                         Match
+
+Language identified: [java]    Language identified: [java]    1
+Language identified: [cpp]     Language identified: [java]
+Language identified: [cpp]     Language identified: [java]
+Language identified: [java]    Language identified: [java]    2
+Language identified: [perl]    Language identified: [java]
+Language identified: [perl]    Language identified: [java]
+
+Total                          6                              2
+%                              33.33
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{Latin-Based Languages, Restricted Tokenizer}
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+unigram,add-delta                                                unigram,add-one
+
+Ideal                        Actual                       Match  Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1      Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2      Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [fr]           Language identified: [es]    Language identified: [fr]
+Language identified: [en]    Language identified: [en]    3      Language identified: [en]    Language identified: [en]    3
+Language identified: [fr]    Language identified: [fr]    4      Language identified: [fr]    Language identified: [fr]    4
+Language identified: [es]    Language identified: [es]    5      Language identified: [es]    Language identified: [es]    5
+Language identified: [it]    Language identified: [it]    6      Language identified: [it]    Language identified: [it]    6
+Language identified: [fr]    Language identified: [it]           Language identified: [fr]    Language identified: [it]
+Language identified: [en]    Language identified: [en]    7      Language identified: [en]    Language identified: [en]    7
+
+Total                        9                            7      Total                        9                            7
+%                            77.78                               %                            77.78
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+unigram,good-turing                                              unigram,mle
+
+Ideal                        Actual                       Match  Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1      Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2      Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [en]           Language identified: [es]    Language identified: [fr]
+Language identified: [en]    Language identified: [en]    3      Language identified: [en]    Language identified: [en]    3
+Language identified: [fr]    Language identified: [en]           Language identified: [fr]    Language identified: [fr]    4
+Language identified: [es]    Language identified: [en]           Language identified: [es]    Language identified: [es]    5
+Language identified: [it]    Language identified: [en]           Language identified: [it]    Language identified: [it]    6
+Language identified: [fr]    Language identified: [en]           Language identified: [fr]    Language identified: [it]
+Language identified: [en]    Language identified: [en]    4      Language identified: [en]    Language identified: [en]    7
+
+Total                        9                            4      Total                        9                            7
+%                            44.44                               %                            77.78
+\end{verbatim}
+\vskip4pt\hrule
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+unigram,witten-bell                                              bigram,add-one
+
+Ideal                        Actual                       Match  Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1      Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2      Language identified: [en]    Language identified: [es]
+Language identified: [es]    Language identified: [en]           Language identified: [es]    Language identified: [es]    2
+Language identified: [en]    Language identified: [en]    3      Language identified: [en]    Language identified: [en]    3
+Language identified: [fr]    Language identified: [en]           Language identified: [fr]    Language identified: [es]
+Language identified: [es]    Language identified: [en]           Language identified: [es]    Language identified: [fr]
+Language identified: [it]    Language identified: [en]           Language identified: [it]    Language identified: [es]
+Language identified: [fr]    Language identified: [en]           Language identified: [fr]    Language identified: [es]
+Language identified: [en]    Language identified: [en]    4      Language identified: [en]    Language identified: [en]    4
+
+Total                        9                            4      Total                        9                            4
+%                            44.44                               %                            44.44
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+bigram,add-one                                                   bigram,good-turing
+
+Ideal                        Actual                       Match  Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1      Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [es]           Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [es]    2      Language identified: [es]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    3      Language identified: [en]    Language identified: [en]    3
+Language identified: [fr]    Language identified: [es]           Language identified: [fr]    Language identified: [en]
+Language identified: [es]    Language identified: [es]    4      Language identified: [es]    Language identified: [fr]
+Language identified: [it]    Language identified: [es]           Language identified: [it]    Language identified: [en]
+Language identified: [fr]    Language identified: [es]           Language identified: [fr]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    5      Language identified: [en]    Language identified: [en]    4
+
+Total                        9                            5      Total                        9                            4
+%                            55.56                               %                            44.44
+\end{verbatim}
+\vskip4pt\hrule
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+bigram,mle                                                       bigram,witten-belll
+
+Ideal                        Actual                       Match  Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1      Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2      Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [en]           Language identified: [es]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    3      Language identified: [en]    Language identified: [en]    3
+Language identified: [fr]    Language identified: [en]           Language identified: [fr]    Language identified: [en]
+Language identified: [es]    Language identified: [en]           Language identified: [es]    Language identified: [es]
+Language identified: [it]    Language identified: [en]           Language identified: [it]    Language identified: [en]
+Language identified: [fr]    Language identified: [en]           Language identified: [fr]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    4      Language identified: [en]    Language identified: [en]    4
+
+Total                        9                            4      Total                        9                            4
+%                            44.44                               %                            44.44
+\end{verbatim}
+\vskip4pt\hrule
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+trigram,add-delta                                                trigram,add-one
+
+Ideal                        Actual                       Match  Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1      Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [es]           Language identified: [en]    Language identified: [es]
+Language identified: [es]    Language identified: [es]    2      Language identified: [es]    Language identified: [es]    2
+Language identified: [en]    Language identified: [en]    3      Language identified: [en]    Language identified: [en]    3
+Language identified: [fr]    Language identified: [es]           Language identified: [fr]    Language identified: [es]
+Language identified: [es]    Language identified: [es]    4      Language identified: [es]    Language identified: [es]    4
+Language identified: [it]    Language identified: [es]           Language identified: [it]    Language identified: [es]
+Language identified: [fr]    Language identified: [es]           Language identified: [fr]    Language identified: [es]
+Language identified: [en]    Language identified: [en]    5      Language identified: [en]    Language identified: [en]    5
+
+Total                        9                            5      Total                        9                            5
+%                            55.56                               %                            55.56
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+trigram,good-turing                                              trigram,mle
+
+Ideal                        Actual                       Match  Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1      Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [fr]           Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [fr]           Language identified: [es]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    2      Language identified: [en]    Language identified: [en]    3
+Language identified: [fr]    Language identified: [en]           Language identified: [fr]    Language identified: [en]
+Language identified: [es]    Language identified: [fr]           Language identified: [es]    Language identified: [en]
+Language identified: [it]    Language identified: [it]    3      Language identified: [it]    Language identified: [en]
+Language identified: [fr]    Language identified: [fr]    4      Language identified: [fr]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    5      Language identified: [en]    Language identified: [en]    4
+
+Total                        9                            5      Total                        9                            4
+%                            55.56                               %                            44.44
+\end{verbatim}
+\vskip4pt\hrule
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+trigram,witten-bell
+
+Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    3
+Language identified: [fr]    Language identified: [en]
+Language identified: [es]    Language identified: [en]
+Language identified: [it]    Language identified: [en]
+Language identified: [fr]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    4
+
+Total                        9                            4
+%                            44.44
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{``Bag-of-Languages'', Restricted Tokenizer}
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+unigram, add-delta                                                unigram, add-one
+
+Ideal                        Actual                       Match   Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1       Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2       Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [fr]            Language identified: [es]    Language identified: [fr]
+Language identified: [en]    Language identified: [en]    3       Language identified: [en]    Language identified: [en]    3
+Language identified: [ru]    Language identified: [ru]    4       Language identified: [ru]    Language identified: [ru]    4
+Language identified: [fr]    Language identified: [fr]    5       Language identified: [fr]    Language identified: [fr]    5
+Language identified: [ru]    Language identified: [ru]    6       Language identified: [ru]    Language identified: [ru]    6
+Language identified: [es]    Language identified: [es]    7       Language identified: [es]    Language identified: [es]    7
+Language identified: [he]    Language identified: [he]    8       Language identified: [he]    Language identified: [he]    8
+Language identified: [it]    Language identified: [it]    9       Language identified: [it]    Language identified: [it]    9
+Language identified: [ar]    Language identified: [ru]            Language identified: [ar]    Language identified: [ru]
+Language identified: [bg]    Language identified: [bg]    10      Language identified: [bg]    Language identified: [bg]    10
+Language identified: [java]  Language identified: [java]  11      Language identified: [java]  Language identified: [java]    11
+Language identified: [cpp]   Language identified: [en]            Language identified: [cpp]   Language identified: [en]
+Language identified: [cpp]   Language identified: [it]            Language identified: [cpp]   Language identified: [it]
+Language identified: [he]    Language identified: [he]    12      Language identified: [he]    Language identified: [he]    12
+Language identified: [java]  Language identified: [it]            Language identified: [java]  Language identified: [it]
+Language identified: [perl]  Language identified: [cpp]           Language identified: [perl]  Language identified: [cpp]
+Language identified: [ar]    Language identified: [ar]    13      Language identified: [ar]    Language identified: [ar]    13
+Language identified: [perl]  Language identified: [perl]  14      Language identified: [perl]  Language identified: [perl]    14
+Language identified: [ru]    Language identified: [he]            Language identified: [ru]    Language identified: [he]
+Language identified: [fr]    Language identified: [it]            Language identified: [fr]    Language identified: [it]
+Language identified: [ar]    Language identified: [bg]            Language identified: [ar]    Language identified: [bg]
+Language identified: [en]    Language identified: [en]    15      Language identified: [en]    Language identified: [en]    15
+
+Total                        24                           15      Total                        24                           15
+%                            62.50                                %                            62.50
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+unigram, good-turing                                              unigram, mle
+
+Ideal                        Actual                       Match   Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1       Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2       Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [en]            Language identified: [es]    Language identified: [fr]
+Language identified: [en]    Language identified: [en]    3       Language identified: [en]    Language identified: [en]    3
+Language identified: [ru]    Language identified: [en]            Language identified: [ru]    Language identified: [ru]    4
+Language identified: [fr]    Language identified: [en]            Language identified: [fr]    Language identified: [fr]    5
+Language identified: [ru]    Language identified: [en]            Language identified: [ru]    Language identified: [ru]    6
+Language identified: [es]    Language identified: [en]            Language identified: [es]    Language identified: [es]    7
+Language identified: [he]    Language identified: [en]            Language identified: [he]    Language identified: [he]    8
+Language identified: [it]    Language identified: [en]            Language identified: [it]    Language identified: [it]    9
+Language identified: [ar]    Language identified: [en]            Language identified: [ar]    Language identified: [ru]
+Language identified: [bg]    Language identified: [en]            Language identified: [bg]    Language identified: [bg]    10
+Language identified: [java]  Language identified: [en]            Language identified: [java]  Language identified: [java]    11
+Language identified: [cpp]   Language identified: [en]            Language identified: [cpp]   Language identified: [en]
+Language identified: [cpp]   Language identified: [en]            Language identified: [cpp]   Language identified: [it]
+Language identified: [he]    Language identified: [en]            Language identified: [he]    Language identified: [he]    12
+Language identified: [java]  Language identified: [en]            Language identified: [java]  Language identified: [it]
+Language identified: [perl]  Language identified: [en]            Language identified: [perl]  Language identified: [cpp]
+Language identified: [ar]    Language identified: [en]            Language identified: [ar]    Language identified: [ar]    13
+Language identified: [perl]  Language identified: [en]            Language identified: [perl]  Language identified: [perl]    14
+Language identified: [ru]    Language identified: [en]            Language identified: [ru]    Language identified: [he]
+Language identified: [fr]    Language identified: [en]            Language identified: [fr]    Language identified: [it]
+Language identified: [ar]    Language identified: [en]            Language identified: [ar]    Language identified: [bg]
+Language identified: [en]    Language identified: [en]    4       Language identified: [en]    Language identified: [en]    15
+
+Total                        24                           4       Total                        24                           15
+%                            16.67                                %                            62.50
+\end{verbatim}
+\vskip4pt\hrule
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+unigram, witten-bell                                              bigram,add-delta
+
+Ideal                        Actual                       Match   Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1       Language identified: [en]    Language identified: [bg]
+Language identified: [en]    Language identified: [en]    2       Language identified: [en]    Language identified: [es]
+Language identified: [es]    Language identified: [en]            Language identified: [es]    Language identified: [es]    1
+Language identified: [en]    Language identified: [en]    3       Language identified: [en]    Language identified: [he]
+Language identified: [ru]    Language identified: [en]            Language identified: [ru]    Language identified: [bg]
+Language identified: [fr]    Language identified: [en]            Language identified: [fr]    Language identified: [es]
+Language identified: [ru]    Language identified: [en]            Language identified: [ru]    Language identified: [bg]
+Language identified: [es]    Language identified: [en]            Language identified: [es]    Language identified: [bg]
+Language identified: [he]    Language identified: [en]            Language identified: [he]    Language identified: [bg]
+Language identified: [it]    Language identified: [en]            Language identified: [it]    Language identified: [es]
+Language identified: [ar]    Language identified: [en]            Language identified: [ar]    Language identified: [fr]
+Language identified: [bg]    Language identified: [en]            Language identified: [bg]    Language identified: [es]
+Language identified: [java]  Language identified: [en]            Language identified: [java]  Language identified: [es]
+Language identified: [cpp]   Language identified: [en]            Language identified: [cpp]   Language identified: [es]
+Language identified: [cpp]   Language identified: [en]            Language identified: [cpp]   Language identified: [perl]
+Language identified: [he]    Language identified: [en]            Language identified: [he]    Language identified: [bg]
+Language identified: [java]  Language identified: [en]            Language identified: [java]  Language identified: [es]
+Language identified: [perl]  Language identified: [en]            Language identified: [perl]  Language identified: [es]
+Language identified: [ar]    Language identified: [en]            Language identified: [ar]    Language identified: [bg]
+Language identified: [perl]  Language identified: [en]            Language identified: [perl]  Language identified: [es]
+Language identified: [ru]    Language identified: [en]            Language identified: [ru]    Language identified: [bg]
+Language identified: [fr]    Language identified: [en]            Language identified: [fr]    Language identified: [es]
+Language identified: [ar]    Language identified: [en]            Language identified: [ar]    Language identified: [bg]
+Language identified: [en]    Language identified: [en]    4       Language identified: [en]    Language identified: [bg]
+
+Total                        24                           4       Total                        24                           1
+%                            16.67                                %                            4.17
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+bigram,add-one                                                    bigram, good-turing
+
+Ideal                        Actual                       Match   Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [bg]            Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [es]            Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [es]    1       Language identified: [es]    Language identified: [en]
+Language identified: [en]    Language identified: [he]            Language identified: [en]    Language identified: [java]
+Language identified: [ru]    Language identified: [bg]            Language identified: [ru]    Language identified: [he]
+Language identified: [fr]    Language identified: [es]            Language identified: [fr]    Language identified: [en]
+Language identified: [ru]    Language identified: [bg]            Language identified: [ru]    Language identified: [ru]    3
+Language identified: [es]    Language identified: [es]    2       Language identified: [es]    Language identified: [ar]
+Language identified: [he]    Language identified: [bg]            Language identified: [he]    Language identified: [en]
+Language identified: [it]    Language identified: [es]            Language identified: [it]    Language identified: [ru]
+Language identified: [ar]    Language identified: [fr]            Language identified: [ar]    Language identified: [ru]
+Language identified: [bg]    Language identified: [es]            Language identified: [bg]    Language identified: [fr]
+Language identified: [java]  Language identified: [es]            Language identified: [java]  Language identified: [java]    4
+Language identified: [cpp]   Language identified: [es]            Language identified: [cpp]   Language identified: [fr]
+Language identified: [cpp]   Language identified: [perl]          Language identified: [cpp]   Language identified: [en]
+Language identified: [he]    Language identified: [bg]            Language identified: [he]    Language identified: [en]
+Language identified: [java]  Language identified: [es]            Language identified: [java]  Language identified: [ru]
+Language identified: [perl]  Language identified: [es]            Language identified: [perl]  Language identified: [en]
+Language identified: [ar]    Language identified: [bg]            Language identified: [ar]    Language identified: [java]
+Language identified: [perl]  Language identified: [es]            Language identified: [perl]  Language identified: [perl]    5
+Language identified: [ru]    Language identified: [bg]            Language identified: [ru]    Language identified: [en]
+Language identified: [fr]    Language identified: [es]            Language identified: [fr]    Language identified: [en]
+Language identified: [ar]    Language identified: [fr]            Language identified: [ar]    Language identified: [java]
+Language identified: [en]    Language identified: [bg]            Language identified: [en]    Language identified: [java]
+
+Total                        24                           2       Total                        24                           5
+%                            8.33                                 %                            20.83
+\end{verbatim}
+\vskip4pt\hrule
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+bigram, mle                                                       bigram, witten-bell
+
+Ideal                        Actual                       Match   Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1       Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2       Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [en]            Language identified: [es]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    3       Language identified: [en]    Language identified: [perl]
+Language identified: [ru]    Language identified: [en]            Language identified: [ru]    Language identified: [perl]
+Language identified: [fr]    Language identified: [en]            Language identified: [fr]    Language identified: [perl]
+Language identified: [ru]    Language identified: [en]            Language identified: [ru]    Language identified: [ru]    3
+Language identified: [es]    Language identified: [en]            Language identified: [es]    Language identified: [ar]
+Language identified: [he]    Language identified: [en]            Language identified: [he]    Language identified: [en]
+Language identified: [it]    Language identified: [en]            Language identified: [it]    Language identified: [ru]
+Language identified: [ar]    Language identified: [en]            Language identified: [ar]    Language identified: [ar]    4
+Language identified: [bg]    Language identified: [en]            Language identified: [bg]    Language identified: [cpp]
+Language identified: [java]  Language identified: [en]            Language identified: [java]  Language identified: [es]
+Language identified: [cpp]   Language identified: [en]            Language identified: [cpp]   Language identified: [perl]
+Language identified: [cpp]   Language identified: [en]            Language identified: [cpp]   Language identified: [en]
+Language identified: [he]    Language identified: [en]            Language identified: [he]    Language identified: [he]    5
+Language identified: [java]  Language identified: [en]            Language identified: [java]  Language identified: [ru]
+Language identified: [perl]  Language identified: [en]            Language identified: [perl]  Language identified: [en]
+Language identified: [ar]    Language identified: [en]            Language identified: [ar]    Language identified: [ar]    6
+Language identified: [perl]  Language identified: [en]            Language identified: [perl]  Language identified: [perl]    7
+Language identified: [ru]    Language identified: [en]            Language identified: [ru]    Language identified: [en]
+Language identified: [fr]    Language identified: [en]            Language identified: [fr]    Language identified: [en]
+Language identified: [ar]    Language identified: [en]            Language identified: [ar]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    4       Language identified: [en]    Language identified: [en]    8
+
+Total                        24                           4       Total                        24                           8
+%                            16.67                                %                            33.33
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+trigram, add-delta                                                trigram, add-one
+
+Ideal                        Actual                       Match   Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [bg]            Language identified: [en]    Language identified: [bg]
+Language identified: [en]    Language identified: [es]            Language identified: [en]    Language identified: [es]
+Language identified: [es]    Language identified: [es]    1       Language identified: [es]    Language identified: [es]    1
+Language identified: [en]    Language identified: [bg]            Language identified: [en]    Language identified: [bg]
+Language identified: [ru]    Language identified: [bg]            Language identified: [ru]    Language identified: [bg]
+Language identified: [fr]    Language identified: [es]            Language identified: [fr]    Language identified: [es]
+Language identified: [ru]    Language identified: [bg]            Language identified: [ru]    Language identified: [bg]
+Language identified: [es]    Language identified: [es]    2       Language identified: [es]    Language identified: [es]    2
+Language identified: [he]    Language identified: [ar]            Language identified: [he]    Language identified: [ar]
+Language identified: [it]    Language identified: [es]            Language identified: [it]    Language identified: [es]
+Language identified: [ar]    Language identified: [es]            Language identified: [ar]    Language identified: [es]
+Language identified: [bg]    Language identified: [es]            Language identified: [bg]    Language identified: [es]
+Language identified: [java]  Language identified: [es]            Language identified: [java]  Language identified: [es]
+Language identified: [cpp]   Language identified: [es]            Language identified: [cpp]   Language identified: [es]
+Language identified: [cpp]   Language identified: [es]            Language identified: [cpp]   Language identified: [es]
+Language identified: [he]    Language identified: [ru]            Language identified: [he]    Language identified: [ru]
+Language identified: [java]  Language identified: [es]            Language identified: [java]  Language identified: [es]
+Language identified: [perl]  Language identified: [es]            Language identified: [perl]  Language identified: [es]
+Language identified: [ar]    Language identified: [ar]    3       Language identified: [ar]    Language identified: [ar]    3
+Language identified: [perl]  Language identified: [es]            Language identified: [perl]  Language identified: [es]
+Language identified: [ru]    Language identified: [ar]            Language identified: [ru]    Language identified: [ar]
+Language identified: [fr]    Language identified: [es]            Language identified: [fr]    Language identified: [es]
+Language identified: [ar]    Language identified: [es]            Language identified: [ar]    Language identified: [es]
+Language identified: [en]    Language identified: [bg]            Language identified: [en]    Language identified: [bg]
+
+Total                        24                           3       Total                        24                           3
+%                            12.50                                %                            12.50
+\end{verbatim}
+\vskip4pt\hrule
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+trigram,good-turing                                               trigram,mle
+
+Ideal                        Actual                       Match   Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1       Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [fr]            Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [fr]            Language identified: [es]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    2       Language identified: [en]    Language identified: [en]    3
+Language identified: [ru]    Language identified: [en]            Language identified: [ru]    Language identified: [en]
+Language identified: [fr]    Language identified: [en]            Language identified: [fr]    Language identified: [en]
+Language identified: [ru]    Language identified: [en]            Language identified: [ru]    Language identified: [en]
+Language identified: [es]    Language identified: [fr]            Language identified: [es]    Language identified: [en]
+Language identified: [he]    Language identified: [ar]            Language identified: [he]    Language identified: [en]
+Language identified: [it]    Language identified: [it]    3       Language identified: [it]    Language identified: [en]
+Language identified: [ar]    Language identified: [fr]            Language identified: [ar]    Language identified: [en]
+Language identified: [bg]    Language identified: [fr]            Language identified: [bg]    Language identified: [en]
+Language identified: [java]  Language identified: [fr]            Language identified: [java]  Language identified: [en]
+Language identified: [cpp]   Language identified: [fr]            Language identified: [cpp]   Language identified: [en]
+Language identified: [cpp]   Language identified: [fr]            Language identified: [cpp]   Language identified: [en]
+Language identified: [he]    Language identified: [en]            Language identified: [he]    Language identified: [en]
+Language identified: [java]  Language identified: [fr]            Language identified: [java]  Language identified: [en]
+Language identified: [perl]  Language identified: [fr]            Language identified: [perl]  Language identified: [en]
+Language identified: [ar]    Language identified: [ar]    4       Language identified: [ar]    Language identified: [en]
+Language identified: [perl]  Language identified: [fr]            Language identified: [perl]  Language identified: [en]
+Language identified: [ru]    Language identified: [ar]            Language identified: [ru]    Language identified: [en]
+Language identified: [fr]    Language identified: [fr]    5       Language identified: [fr]    Language identified: [en]
+Language identified: [ar]    Language identified: [fr]            Language identified: [ar]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    6       Language identified: [en]    Language identified: [en]    4
+
+Total                        24                           6       Total                        24                           4
+%                            25.00                                %                            16.67
+\end{verbatim}
+\vskip4pt\hrule
+
+\clearpage
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+trigram,witten-bell
+
+Ideal                        Actual                       Match
+
+Language identified: [en]    Language identified: [en]    1
+Language identified: [en]    Language identified: [en]    2
+Language identified: [es]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    3
+Language identified: [ru]    Language identified: [en]
+Language identified: [fr]    Language identified: [en]
+Language identified: [ru]    Language identified: [en]
+Language identified: [es]    Language identified: [en]
+Language identified: [he]    Language identified: [en]
+Language identified: [it]    Language identified: [en]
+Language identified: [ar]    Language identified: [en]
+Language identified: [bg]    Language identified: [en]
+Language identified: [java]  Language identified: [en]
+Language identified: [cpp]   Language identified: [en]
+Language identified: [cpp]   Language identified: [en]
+Language identified: [he]    Language identified: [en]
+Language identified: [java]  Language identified: [en]
+Language identified: [perl]  Language identified: [en]
+Language identified: [ar]    Language identified: [en]
+Language identified: [perl]  Language identified: [en]
+Language identified: [ru]    Language identified: [en]
+Language identified: [fr]    Language identified: [en]
+Language identified: [ar]    Language identified: [en]
+Language identified: [en]    Language identified: [en]    4
+
+Total                        24                           4
+%                            16.67
+\end{verbatim}
+\vskip4pt\hrule
+
+\normalsize
+
+% EOF

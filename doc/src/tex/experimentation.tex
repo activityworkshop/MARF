@@ -1,0 +1,81 @@
+\chapter{Sample Data and Experimentation}
+\index{Sample Data}
+\index{Experiments}
+
+$Revision: 1.21 $
+
+\input{data}
+
+\section{Comparison Setup}
+
+The main idea was to compare combinations (in {\marf}: {\it configurations})
+of different methods and variations within them in terms of recognition
+rate performance. That means that having several preprocessing modules, several feature
+extraction modules, and several classification modules, we can (and did)
+try all their possible combinations.
+
+That includes:
+
+\begin{enumerate}
+	\item Preprocessing: No-filtering, normalization, low-pass, high-pass,
+	      band-pass, and high-frequency boost, high-pass and boost filters,
+	      and endpointing.
+	\item Feature Extraction: FFT/LPC/Min-Max/Random algorithms comparison.
+	\item Classification: Distance classifiers, such as Chebyshev, Euclidean,
+	      Minkowski, Mahalanobis, and Diff distances, as well as Neural Network and Random
+	      classification.
+\end{enumerate}
+
+
+For this purpose we have written a \api{SpeakerIdentApp}, a command-line application
+(so far, but GUI is planned) for TI speaker identification. We ran it for every possible configuration
+with the following shell script, namely \tool{testing.sh}:
+
+\vspace{15pt}
+\hrule
+{\scriptsize \input{testing-sh}}
+\hrule
+\vspace{15pt}
+
+The above script is for Linux/UNIX environments. To run a similar script
+from Windows, use \tool{testing.bat} for classification and the \tool{retrain}
+shortcut for re-training and classification. These have been completed
+during the development of the 0.3.0 series.
+
+See the results section (\ref{sect:results}) for results analysis.
+
+\section{What Else Could/Should/Will Be Done}
+
+There is a lot more that we realistically could do, but due to lack of time, these things
+are not in yet. If you would like to contribute, let us know, meanwhile we'll keep working
+at our speed.
+
+\subsection{Combination of Feature Extraction Methods}
+
+For example, assuming we use a combination of LPC coefficients and F0
+estimation, we could compare the results of different combinations of
+these, and discuss them later. Same with the
+Neural Nets (modifying number of layers and number or neurons, etc.).
+
+We could also do a 1024 FFT analysis and compare it against a 128 FFT
+analysis.  (That is, the size of the resulting feature vector would be 512 or 64 respectively).
+With LPC, one can specify the number of coefficients you want, the more you
+have the more precise the analysis will be.
+
+\subsection{Entire Recognition Path}
+
+The \api{LPC} module is used to generate a mean vector of LPC coefficients for
+the utterance. \api{F0} is used to find the average fundamental frequency of the
+utterance. The results are concatenated to form the output vector, in a
+particular order. The classifier would take into account the weighting of
+the features: Neural Network would do so implicitly if it benefits the speaker
+matching, and stochastic can be modified to give more weight to the F0 or
+vice versa, depending on what we see best (i.e.: the covariance matrix in the
+Mahalanobis distance (\ref{sect:mahalanobis})).
+
+\subsection{More Methods}
+
+Things like $F_0$, stochastic, and some other methods have not made to this release.
+More detailed on this aspect, please refer to the TODO list in the Appendix.
+
+% EOF

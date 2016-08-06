@@ -1,0 +1,44 @@
+\subsection{TestWaveLoader}
+\index{Applications!TestWaveLoader}
+\index{Testing Applications!TestWaveLoader}
+
+$Revision: 1.5 $
+
+\api{TestWaveLoader} is one of the testing applications in {\marf}. It tests functionality of
+the \api{WAVLoader} of {\marf}.
+
+From user's point of view, \api{TestWaveLoader} provides with usage, input wave sample, output wave
+sample, and output textual file command-line options.
+By entering \texttt{--help}, or \texttt{-h}, or
+when there are no arguments, the usage information will be displayed.
+It explains the arguments used in \api{TestWaveLoader}. The first argument is an input wave sample file whose name is a mandatory argument.
+The second and the third arguments are the output wave sample file and output textual sample file of the loaded input sample. The names of the output
+files are optional arguments. If user does not provide any or both of the last two arguments, the output files will be saved in the files provided by 
+\api{TestWaveLoader}.
+
+\noindent
+Complete usage information:
+
+\vspace{15pt}
+\hrule
+\input{test-wave-loader-usage}
+\hrule
+\vspace{15pt}
+
+The application is made to exercise the following {\marf} modules.
+The main module is the \api{WAVLoader} in the \api{marf.Storage.Loaders} package.
+the \api{Sample} and the \api{SampleLoader} modules in the \api{marf.Storage} help \api{WAVLoader} prepare loading wave files.
+\api{Sample} maintains and processes incoming sample data. \api{SampleLoader} provides sample loading interface for
+all the {\marf} loaders. It must be overridden by a concrete sample loader. 
+For loading wave samples, \api{SampleLoader} needs \api{WAVLoader} implementation.
+Three modules work together to load in and write back a wave sample whose name was
+provided by users in the first argument, to save the loaded sample into a newly-named wave file,
+to save loaded input data into a data file referenced by \texttt{oDatFile}, 
+and to output sample's duration and size to STDOUT.
+
+As we know, the output of \api{TestWaveLoader} saves the loaded wave sample in a newly named output wave file.
+Its output also saves the input file data into a textual file.
+\api{TestWaveLoader} gives both users and programmers direct information of the results of MARF wave loader.
+The output sample can be compared with the expected output in the \file{expected} folder to detect any errors.
+
+% EOF

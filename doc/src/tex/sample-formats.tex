@@ -1,0 +1,46 @@
+\section{Assorted File Format Notes}
+
+$Revision: 1.4 $
+
+
+	We decided to stick to Mono-8000Hz-16bit WAV files.  8-bit might be
+	okay too, but we could retain more precision with 16-bit files.  8000Hz is
+	supposed to be all you need to contain all frequencies of the vocal
+	spectrum
+	(according to Nyquist anyways...).  If we use 44.1 kHz we'll just be wasting
+	space and computation time.
+
+	There are also MP3 and ULAW and other file format loaders stubs which are unimplemented
+	as of this version of MARF.
+
+Also: I was just thinking I think I may have made a bit of a mistake
+downsampling to 8000Hz... I was saying that the voice ranges to about 8000Hz so
+that's all we should need for the samples, but then I realized that if you have
+an 8000Hz sample, it actually only represents 4000Hz, which would account for
+the difference I noticed.. but maybe we should be using 16KHz samples.  On the
+other hand, even at 4KHz the voice is still perfectly distinguishable...
+
+
+I tried the WaveLoader with one of the samples provided by Stephen
+(jimmy1.wav naturally!) and got some nice results! I graphed the PCM
+obtained from the getaudioData() function and noticed quite a difference
+from the PCM graph obtained with my ``test.wav". With ``test.wav", I was
+getting unexpected results as the graph (``rawpcm.xls") didn't resemble any
+wave form. This lead me to believe that I needed to convert the data on
+order to represent it in wave form (done in the ``getWaveform()" function).
+But after having tested the routine with ``jimmy1.wav", I got a beautiful
+wave-like graph with just the PCM data which makes more sense since PCM
+represents amplitude values! The reason for this is that my ``test.wav"
+sample was actually 8-bit mono (less info.) rather than 16-bit mono as with
+Stephen's samples. So basically, we don't need to do any ``conversion" if we
+use 16-bit mono samples and we can scrap the ``getWaveform()" function.
+I will come up with a ``Wave" class sometime this week which will take care
+of loading wave files and windowing audio data. Also, we should only read
+audio data that has actual sound, meaning that any silence (say -10 < db <
+10) should be discarded from the sample when extracting audio data.
+Just thinking out loud!
+
+I agree here.  I was thinking perhaps the threshold could be determined from
+the ``silence" sample.
+
+% EOF

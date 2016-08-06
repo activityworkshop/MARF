@@ -1,0 +1,139 @@
+\begin{verbatim}
+junebug.mokhov [a3] % java ProbabilisticParsingApp --parse
+
+Probabilistic Parsing
+Serguei A. Mokhov, mokhov@cs
+April 2003
+
+
+
+Entering interactive mode... Type \q to exit.
+sentence> my rabbit has a white smile
+my rabbit has a white smile
+
+Parse for the sentence [ my rabbit has a white smile ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (0.0020480000000000008) [ 0-5: my rabbit has a white smile ]
+        <NP> (0.04000000000000001) [ 0-1: my rabbit ]
+                <DET> (0.1) [ 0-0: my ]
+                <NOMINAL> (0.4) [ 1-1: rabbit ]
+        <VP> (0.06400000000000002) [ 2-5: has a white smile ]
+                <V> (0.8) [ 2-2: has ]
+                <NP> (0.08000000000000002) [ 3-5: a white smile ]
+                        <DET> (0.4) [ 3-3: a ]
+                        <NOMINAL> (0.2) [ 4-5: white smile ]
+                                <ADJ> (1.0) [ 4-4: white ]
+                                <NOMINAL> (0.2) [ 5-5: smile ]
+
+
+sentence> my rabbit has a smile
+my rabbit has a smile
+
+Parse for the sentence [ my rabbit has a smile ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (0.0020480000000000008) [ 0-4: my rabbit has a smile ]
+        <NP> (0.04000000000000001) [ 0-1: my rabbit ]
+                <DET> (0.1) [ 0-0: my ]
+                <NOMINAL> (0.4) [ 1-1: rabbit ]
+        <VP> (0.06400000000000002) [ 2-4: has a smile ]
+                <V> (0.8) [ 2-2: has ]
+                <NP> (0.08000000000000002) [ 3-4: a smile ]
+                        <DET> (0.4) [ 3-3: a ]
+                        <NOMINAL> (0.2) [ 4-4: smile ]
+
+
+sentence> my rabbit has a telephone
+my rabbit has a telephone
+
+There's no parse for [ my rabbit has a telephone ]
+
+sentence> the cat eats the rabbit
+the cat eats the rabbit
+
+Parse for the sentence [ the cat eats the rabbit ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (0.006400000000000002) [ 0-4: the cat eats the rabbit ]
+        <NP> (0.2) [ 0-1: the cat ]
+                <DET> (0.5) [ 0-0: the ]
+                <NOMINAL> (0.4) [ 1-1: cat ]
+        <VP> (0.04000000000000001) [ 2-4: eats the rabbit ]
+                <V> (0.2) [ 2-2: eats ]
+                <NP> (0.2) [ 3-4: the rabbit ]
+                        <DET> (0.5) [ 3-3: the ]
+                        <NOMINAL> (0.4) [ 4-4: rabbit ]
+
+
+sentence> a white cat has a white smile
+a white cat has a white smile
+
+Parse for the sentence [ a white cat has a white smile ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (0.008192000000000003) [ 0-6: a white cat has a white smile ]
+        <NP> (0.16000000000000003) [ 0-2: a white cat ]
+                <DET> (0.4) [ 0-0: a ]
+                <NOMINAL> (0.4) [ 1-2: white cat ]
+                        <ADJ> (1.0) [ 1-1: white ]
+                        <NOMINAL> (0.4) [ 2-2: cat ]
+        <VP> (0.06400000000000002) [ 3-6: has a white smile ]
+                <V> (0.8) [ 3-3: has ]
+                <NP> (0.08000000000000002) [ 4-6: a white smile ]
+                        <DET> (0.4) [ 4-4: a ]
+                        <NOMINAL> (0.2) [ 5-6: white smile ]
+                                <ADJ> (1.0) [ 5-5: white ]
+                                <NOMINAL> (0.2) [ 6-6: smile ]
+
+
+sentence> cat white my has rabbit
+cat white my has rabbit
+
+There's no parse for [ cat white my has rabbit ]
+
+sentence> smile rabbit eats my cat
+smile rabbit eats my cat
+
+There's no parse for [ smile rabbit eats my cat ]
+
+sentence> cat eats rabbit
+cat eats rabbit
+
+There's no parse for [ cat eats rabbit ]
+
+sentence> the cat eats the rabbit
+the cat eats the rabbit
+
+Parse for the sentence [ the cat eats the rabbit ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (0.006400000000000002) [ 0-4: the cat eats the rabbit ]
+        <NP> (0.2) [ 0-1: the cat ]
+                <DET> (0.5) [ 0-0: the ]
+                <NOMINAL> (0.4) [ 1-1: cat ]
+        <VP> (0.04000000000000001) [ 2-4: eats the rabbit ]
+                <V> (0.2) [ 2-2: eats ]
+                <NP> (0.2) [ 3-4: the rabbit ]
+                        <DET> (0.5) [ 3-3: the ]
+                        <NOMINAL> (0.4) [ 4-4: rabbit ]
+
+
+sentence> \q
+junebug.mokhov [a3] %
+\end{verbatim}

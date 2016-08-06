@@ -1,0 +1,85 @@
+\subsection{TestFilters}
+\index{Applications!TestFilters}
+\index{Testing Applications!TestFilters}
+
+$Revision: 1.6 $
+
+\api{TestFilters} is one of the testing applications in {\marf}. It tests how four types of
+FFT-filter-based preprocessors work with simulated or real wave type sound samples.
+From user's point of view, \api{TestFilters} provides with usage, preprocessors, and loaders
+command-line options.
+By entering \texttt{--help}, or \texttt{-h}, or
+when there are no arguments, the usage information will be displayed.
+It explains the arguments used in \api{TestFilters}. The first argument is the type of
+preprocessor/filter. These are high-pass filter (\texttt{--high}), low-pass filter (\texttt{--low});
+band-pass filter (\texttt{--band}); high frequency boost preprocessor (\texttt{--boost})
+to be chosen. Next argument is the type of loader to use to load initial testing sample.
+\api{TestFilters} uses two types of
+loaders, \api{SineLoader} and \api{WAVLoader}.
+Users should enter either \texttt{--sine} or \texttt{--wave} as the second argument
+to specify the desired loader. The argument \texttt{--sine} uses \api{SineLoader}
+that will generate a plain sine wave to be fed to the selected preprocessor.
+While the \texttt{--wave} argument uses \api{WAVLoader} to load a
+real wave sound sample. In the latter case, users need to input the third argument --
+sample file in the WAV format to feed to
+\api{WAVLoader}. After selecting all necessary arguments, user can run and get the output of
+\api{TestFilters} within seconds.
+
+\noindent
+Complete usage information:
+
+\vspace{15pt}
+\hrule
+\input{test-filters-usage}
+\hrule
+\vspace{15pt}
+
+The application is made to exercise the following {\marf} modules:
+
+The main are the FFT-based filters in the
+\api{marf.Preprocessing.FFTFilter.*} package.
+
+\begin{enumerate}
+\item
+\api{BandpassFilter}
+\item
+\api{HighFrequencyBoost}
+\item
+\api{HighPassFilter}
+\item
+\api{LowPassFilter}
+\end{enumerate}
+
+Additionally, some other units were employed in this application:
+
+\begin{enumerate}
+\item
+\api{marf.MARF}
+\item
+\api{marf.util.OptionProcessor}
+\item
+\api{marf.Storage.Sample}
+\item
+\api{marf.Storage.SampleLoader}
+\item
+\api{marf.Storage.WAVLoader}
+\item
+\api{marf.Preprocessing.Preprocessing}
+\end{enumerate}
+
+The main \api{MARF} module enumerates
+these preprocessing modules as \api{HIGH\_FREQUENCY\_BOOST\_FFT\_FILTER}, \api{BANDPASS\_FFT\_FILTER}, \api{LOW\_PASS\_FFT\_FILTER}, and
+\api{HIGH\_PASS\_FFT\_FILTER}, and incoming sample file format as \api{WAV}, \api{SINE}. \api{OptionProcessor} helps maintaining and
+validating command-line options. \api{Sample} maintains incoming and processed sample data. \api{SampleLoader} provides sample loading
+interface for all the MARF loaders. It must be overridden by a concrete sample loader such as \api{SineLoader} or \api{WAVLoader}.
+\api{Preprocessing} does
+general preprocessing such as \api{preprocess()} (overridden by the filters),
+\api{normalize()}, \api{removeNoise()} and \api{removeSilence()} out of which
+for this application the former two are used.
+In the end, above modules work together to test the work of the filters and produce
+the output to STDOUT.
+The output of \api{TestFilters} is the filtered data from the original signal fed to each
+of the preprocessors. It provides both users and programmers internal
+information of the effect of MARF preprocessors so they can be compared with the
+expected output in the \file{expected} folder to detect any errors if the underlying
+algorithm has been changed.

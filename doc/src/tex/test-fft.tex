@@ -1,0 +1,75 @@
+\subsection{TestFFT}
+\index{Applications!TestFFT}
+\index{Testing Applications!TestFFT}
+
+$Revision: 1.5 $
+
+\api{TestFFT} is one of the testing applications in {\marf}.
+It aims to test how the FFT (Fast Fourier Transform) algorithm works in
+\marf{FeatureExtraction} by loading simulated or real wave sound samples.
+
+From user's point of view, \api{TestFFT} provides with usage and loaders
+command-line options. By entering \texttt{--help}, or \texttt{-h}, or
+even no arguments, the usage information will be displayed. It explains
+the arguments used in \api{TestFFT}. Another argument is the type of
+loader. \api{TestFFT} uses two types of loaders, \api{Sineloader} and \api{WAVLoader}.
+Users can enter \texttt{--sine} or \texttt{--wave} as the second argument.
+The argument \texttt{--sine} uses \api{SineLoader} that will generate a
+plain sine wave to be fed to a generic preprocessor.
+If the argument \texttt{--wave} is specified, the application uses \api{WAVLoader}
+to load a wave sample from file. In the latter case, users need to supply
+one more argument -- sample file in the format of *.wav to be loaded by \api{WAVLoader}.
+After selecting all necessary arguments, user can run and get the output of \api{TestFFT} within seconds.
+
+\noindent
+Complete usage information:
+
+\vspace{15pt}
+\hrule
+\input{test-fft-usage}
+\hrule
+\vspace{15pt}
+
+
+The application is made to exercise the {\marf}'s
+FFT-based feature extraction algorithm located in the \api{marf.FeatureExtraction.FFT} package.
+Additionally, the following {\marf} modules are utilized:
+
+\begin{enumerate}
+\item
+\api{marf.MARF}
+
+\item
+\api{marf.util.OptionProcessor}
+
+\item
+\api{marf.Storage.Sample}
+
+\item
+\api{marf.Storage.SampleLoader}
+
+\item
+\api{marf.Storage.WAVLoader}
+
+\item
+\api{marf.Preprocessing.Dummy}
+\end{enumerate}
+
+The main \api{MARF} module enumerates incoming sample file format as
+\api{WAV}, \api{SINE}. \api{OptionProcessor} helps maintain and validate
+command-line options. \api{Sample} maintains and processed incoming
+sample data. \api{SampleLoader} provides sample loading interface for
+all the {\marf} loaders. It must be overridden by a concrete sample loader
+such as \api{SineLoader} or \api{WAVLoader}. \api{Preprocessing} does general
+preprocessing such with \api{preprocess()} (overridden by \api{Dummy}), \api{normalize()},
+\api{removeNoise()} and \api{removeSilence()} out of which for this application the
+former two are used. Then, processed data will be serve for an parameter of \api{FeatureExtraction.FFT.FFT}
+to extract sample's features. In the end, above modules work together to test the work of the FFT
+algorithm and produce the output to STDOUT.
+
+As we know, the output of \api{TestFFT} extracts the features data by FFT feature extraction algorithm.
+It gives both users and programmers direct information of the effect of MARF feature extraction,
+and can be compared with the expected output in the \file{expected} folder to detect any errors
+if the underlying algorithm has been changed.
+
+% EOF

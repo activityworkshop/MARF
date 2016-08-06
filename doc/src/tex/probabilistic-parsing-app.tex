@@ -1,0 +1,1369 @@
+%
+% $Id: probabilistic-parsing-app.tex,v 1.29 2006/02/26 23:38:46 mokhov Exp $
+%
+
+\subsection{CYK Probabilistic Parsing with \api{ProbabilisticParsingApp}}
+\index{CYK Probabilistic Parsing}
+\index{CYK Probabilistic Parsing!Application}
+\index{Applications!CYK Probabilistic Parsing}
+
+$Revision: 1.29 $
+
+Originally written on April 12, 2003.
+
+\subsubsection{Introduction}
+
+This section describes the implementation of the CYK probabilistic parsing
+algorithm \cite{cyk} implemented in {\java} and discusses the experiments, grammars used,
+the results, and difficulties encountered.
+
+\subsubsection{The Program}
+
+\paragraph{Manual and the Source Code}
+
+Mini User Manual along with instructions on how to run the application are provided
+in the \xs{sect:prob-manual}. The source code is provided in the electronic form only with few extracts
+in the presented in the document.
+
+\paragraph{Grammar File Format}
+
+Serguei has developed a ``grammar compiler'' for the Compiler Design course, and
+we have adapted it to accept probabilistic grammars. The grammar compiler reads a source
+grammar text file and compiles it (some rudimentary lexical and semantic checks are in place).
+As a result, a successfully ``compiled'' \api{Grammar} object
+has a set of terminals, non-terminals, and rules stored in a binary file.
+Parsers re-load this compiled grammar and do the main parsing of what they are supposed to parse.
+
+\begin{figure}
+\hrule\vskip4pt
+\begin{verbatim}
+<LHS> ::= PROBABILITY RHS %EOL
+
+#  single-line comment; shell style
+
+// single-line comment; C++ style
+
+/*
+ * multi-line comment; C style
+ */
+\end{verbatim}
+\caption{Grammar File Format}
+\label{fig:grammar-format}
+\vskip4pt\hrule
+\end{figure}
+
+
+The grammar file for the grammar file has the format presented in \xf{fig:grammar-format}. Description
+of the elements is below. The example of the grammar rules is in \xf{fig:grammar-example}.
+{\bf Whenever one changes the grammar, it has to be recompiled to take effect.}
+
+\begin{itemize}
+
+\item
+    \verb+<LHS>+ is a single non-terminal on the left-hand side of the rule.
+
+\item
+    \verb+::=+ is a rule
+    operator separating LHS and RHS.
+
+\item
+    \verb+PROBABILITY+ is a floating-point number indicating rule's
+    probability.
+
+\item
+    \verb+RHS+ for this particular assignment has to be in CNF, i.e. either \verb+<B> <C>+
+    or \verb+terminal+ with \verb+<A>+ and \verb+<B>+ being non-terminals.
+
+\item
+    All non-terminals have to be enclosed within the angle brackets \verb+<+ and \verb+>+.
+
+\item
+    All grammar rules have to terminated by \verb+%EOL+ that acts a semicolon in {\C}/{\cpp} or
+    {\java}. It indicates where to stop processing current rule and look for the next
+    (in case a rule spans several text lines).
+
+\item
+    Amount of white space between grammar elements doesn't matter much.
+
+\item
+    The grammar file has also a notion of comments. The grammar compiler accepts
+    shell-like single line comments when lines start with \verb+#+ as well as {\C} or {\cpp} comments
+    like \verb+//+ and \verb+/* */+ with the same effect as that of {\C} and {\cpp}.
+
+\end{itemize}
+
+
+\begin{figure}
+\hrule\vskip4pt
+\begin{verbatim}
+/*
+ * 80% of sentences are noun phrases
+ * followed by verb phrases.
+ */
+<S> ::= 0.8 <NP> <VP> %EOL
+
+// A very rare verb
+<V> ::= 0.0001 disambiguate %EOL
+
+# EOF
+\end{verbatim}
+\caption{Grammar File Example}
+\label{fig:grammar-example}
+\vskip4pt\hrule
+\end{figure}
+
+
+\paragraph{Data Structures}
+
+The main storage data structure is an instance of the \api{Grammar} class that holds
+vectors of
+terminals (see file \file{marf/nlp/Parsing/GrammarCompiler/Terminal.java}),
+non-terminals (see file \file{marf/nlp/Parsing/GrammarCompiler/NonTerminal.java}),
+and rules (see file \\\file{marf/nlp/Parsing/GrammarCompiler/ProbabilisticRule.java}).
+
+While the grammar is being parsed and compiled there are also
+various grammar tokens and their types involved.
+Since they are
+not very much relevant to the subject of this application we won't talk about them
+(examine the contents of the \file{marf/nlp/Parsing/} and \file{marf/nlp/Parsing/GrammarCompiler/}
+directories if you care).
+
+The CYK algorithm's data structures, the $\pi$ and \verb+back+ arrays,
+are represented as 3-dimensional array of doubles and vectors of back-indices
+respectively: \verb+double[][][] oParseMatrix+ and \verb+Vector[][][] aoBack+
+in \file{marf/nlp/Parsing/ProbabilisticParser.java}. There is also a vector of
+words of the incoming sentence to be parsed, \verb+Vector oWords+.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Methodology}
+
+We have experimented (not to full extent yet) with three grammars:
+{\em Basic}, {\em Extended}, and {\em Realistic}. Description of the grammars and how
+they were obtained is presented below. The set of testing sentences was initially
+based on the given (Basic) grammar to see whether the CYK algorithm indeed
+parses all syntactically valid sentences and rejects the rest. Then the
+sentence set was augmented from various sources (e.g. the paper Serguei presented
+and on top of his head). Finally, the original requirements were attempted to be used
+as a source of grammar.
+
+\paragraph{Basic Grammar}
+
+The basic grammar given in the requirements has been
+used at first to develop and debug the application.
+The basic grammar is in \xf{fig:basic-grammar}.
+
+\begin{figure}
+\hrule\vskip4pt
+\tiny
+\input{grammar.original.tex}
+\normalsize
+\caption{Original Basic Grammar}
+\label{fig:basic-grammar}
+\vskip4pt\hrule
+\end{figure}
+
+\paragraph{Extended Grammar}
+
+The basic grammar was extended with few rules
+from \cite{jurafsky}, p. 449.
+The probability scores are {\bf artificial} and
+adapted from the basic grammar and the book's grammar, and
+recomputed {\em approximately}\footnote{Preserving proportional relevance from all sources
+and making sure they all add up to 100\%} by hand.
+The extended grammar is in \xf{fig:extended-grammar}.
+Both basic and extended grammars used the same set of
+testing sentences presented in \xf{fig:test-sentences}.
+There is a number of sentences for which we have never come up
+with rules as initially intended, so there are no parses
+for the them in the output can be seen yet, a TODO.
+
+\begin{figure}
+\hrule\vskip4pt
+\tiny
+\input{grammar.extended.tex}
+\normalsize
+\caption{Extended Grammar}
+\label{fig:extended-grammar}
+\vskip4pt\hrule
+\end{figure}
+
+\begin{figure}
+\hrule\vskip4pt
+\input{test-sentences.tex}
+\caption{Input sentences for the Basic and Extended Grammars}
+\label{fig:test-sentences}
+\vskip4pt\hrule
+\end{figure}
+
+\paragraph{Realistic Grammar}\label{sect:realistic-grammar}
+
+Without having 100\% completed the extended grammar, we jumped
+to develop something more ``realistic'', the Realistic Grammar.
+Since the two previous grammars are quite artificial, to test
+out it on some more ``realistic'' data we came up with the
+best grammar we could
+from the sentences of the requirements (other than
+the sample grammar; the actual requirements were used).
+The sentences, some were expanded, are in \xf{fig:asmt-sentences},
+and the grammar itself is in \xf{fig:asmt-grammar}. Many of the rules
+of the form of \verb+A->BC+ still may not have truly correct probabilities
+corresponding to the paper due to the above two reasons.
+
+\begin{figure}
+\hrule\vskip4pt
+\input{asmt-sentences.tex}
+\caption{Requirements' sentences used as a parsed ``corpus''}
+\label{fig:asmt-sentences}
+\vskip4pt\hrule
+\end{figure}
+
+\begin{figure}
+\vskip4pt\hrule\vskip4pt
+\tiny
+\input{grammar.asmt.tex}
+\normalsize
+\caption{Realistic Grammar}
+\label{fig:asmt-grammar}
+\vskip4pt\hrule
+\end{figure}
+
+\paragraph{Grammar Restrictions}
+
+All incoming sentences, though case-sensitive, are required to be
+in the lower-case unless a given word is a proper noun or the
+pronoun {\it I}. The current system doesn't deal with punctuation
+either, so complex sentences that use commas, semicolons, and
+other punctuation characters may not (and appear not to) be
+parsed correctly (such punctuation is simply ignored).
+
+However, all the above restrictions can be solved just at the
+grammar level without touching a single line of code,
+but they were not dealt with yet in the first prototype.
+
+\paragraph{Difficulties Encountered}
+\label{sect:prob-app-troubles}
+
+\paragraph*{Learning Probabilistic Grammars}
+
+The major problem of this type of grammars is to learn them.
+This requires at least having a some decent POS tagger
+(e.g. in \cite{brill}) and decent knowledge of the English grammar
+and then sitting down and computing the probabilities
+of the rules manually. This is a very time-consuming
+and unjustified enormous effort for documents of relatively
+small size (let alone medium-size or million-word corpora).
+Hence, there is a need for automatic tools and/or pre-existing
+(and freely available!) treebanks to learn the grammars from.
+For example, we have spent two days developing grammar for a one-sheet
+document (see \xs{sect:realistic-grammar}) and the end result is that
+we can only parse 3 (three) sentences so far with it.
+
+\paragraph*{Chomsky Normal Form}
+
+Another problem is the conversion of existing grammars
+or maintaining the current grammar to make sure it is in the CNF
+as the CYK algorithm \cite{cyk} requires. This is a problem because
+for a human maintainer the number of rules grows, so it becomes
+less obvious what a initial rule was like, and there's always
+a possibility to create more undesired parses that way. We had
+to do that for the Extended and Realistic Grammars that were
+based on the grammar rules from the book \cite{jurafsky}.
+
+To illustrate the problem, the rules similar to the
+below have to be converted into CNF:
+
+\begin{verbatim}
+<A> -> <B>
+<A> -> t <C>
+<A> -> <B> <C> <D>
+<A> -> <B> <C> t <D> <E>
+\end{verbatim}
+
+The conversion implies creating new non-terminals augmenting
+the number of rules, which may be hard to trace later on when
+there are many.
+
+\begin{verbatim}
+<A>   -> <B> <A>
+<A>   -> <T> <C>
+<A>   -> <BC> <D>
+<A>   -> <BCT> <DE>
+<T>   -> t
+<BC>  -> <B> <C>
+<DE>  -> <D> <DE>
+<BCT> -> <BC> <T>
+\end{verbatim}
+
+The rule-set has been doubled in the above example. That creates
+a problem of distributing the probability to the new rules as
+well as the problem below.
+
+\paragraph*{Exponential Growth of Storage Requirements and Run Time}
+
+While playing with the Basic and Extended grammars, we didn't pay
+much attention to the run-time aspect of the algorithm (even though
+the number of the nested for-loops looked alerting) because
+it was a second or less for the sentence set in \xf{fig:test-sentences}.
+It became a problem, however, when we came up with the Realistic
+grammar. The run-time for this grammar has jumped to 16 (sixteen !!!)
+{\bf minutes} (!!!) in average for the sentence set in \xf{fig:asmt-sentences}.
+This was rather discouraging (unless the goal is not the speed but
+the most correct result at the hopefully near end). The problem stems
+from the algorithm's complexity and huge data sparseness for large grammars.
+One of the major reasons of the data sparseness problem is the CNF requirement as
+described above: the number of non-terminals grows rapidly largely
+increasing one of the dimensions of our $\pi$ and \verb+back+ arrays causing
+number of iteration of the parsing algorithm to increase exponentially (or it is
+at least cubic). And a lot of time is spent to find out that there's no
+a parse for a sentence (given all the words of the sentence in the grammar).
+
+\paragraph*{Data Sparseness and Smoothing}
+
+The bigger grammar is the more severe the data sparseness is in our arrays
+in this algorithm causing the above problem of the run-time and storage
+requirements. Smoothing techniques we previously implemented in \api{LangIdentApp}
+can be applied to at least get rid of zero-probabilities in the $\pi$ array, but we believe
+the smoothing might hurt rather than improve the parsing performance;
+yet we haven't tested this claim out yet (a TODO). A better way could be smooth
+the grammar rules' probabilities.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Results and Conclusions}
+
+\paragraph{Generalities}
+
+The algorithm does indeed seem to work and accept
+syntactically-valid sentences while rejecting the ungrammatical
+ones. Though to exhaust all the possible grammatical
+and ungrammatical sentences in testing would require a lot more time.
+There is also some disappointment
+with respect to the running time increase when
+the grammar grows and the other problems mentioned before.
+
+To overcome the run-time problem, we'd have to use some
+more sophisticated data structures than a plain 3D array
+of doubles, but this is like fighting with the disease, instead
+of its cause. The CYK algorithm has to be optimized
+or even re-born to allow more than just CNF grammars
+and be faster at the same time.
+
+The restrictions on the sentences mentioned earlier can all
+be overcome by just only tweaking the grammar (but increasing
+the run-time along the way).
+
+While most of the results of my test runs are in the further sections,
+below we present one interactive session sample as well
+as our favorite parse.
+
+\paragraph{Sample Interactive Run}
+
+\scriptsize
+\input{prob-app-sample-run}
+\normalsize
+
+
+\paragraph{Favorite Parse}
+
+As of this release, we were able to only parse the three sentences
+from the ``requirements corpus'' and below is the favorite:
+
+\begin{verbatim}
+<S> (7.381879524149979E-10) [ 0-7: describe your grammar and how you developed it ]
+    <S> (4.11319751814313E-4) [ 0-2: describe your grammar ]
+        <V> (0.206897) [ 0-0: describe ]
+        <NOMINAL> (0.039760823193600005) [ 1-2: your grammar ]
+            <ADJ> (0.439024) [ 1-1: your ]
+            <NOMINAL> (0.113208) [ 2-2: grammar ]
+    <ConjS> (1.7946815078995936E-5) [ 3-7: and how you developed it ]
+        <Conj> (0.92) [ 3-3: and ]
+        <S> (1.9507407694560798E-5) [ 4-7: how you developed it ]
+            <WhNP> (0.094285785) [ 4-5: how you ]
+                <WhWord> (0.5) [ 4-4: how ]
+                <Pronoun> (0.571429) [ 5-5: you ]
+            <VP> (0.002068965931032) [ 6-7: developed it ]
+                <V> (0.0344828) [ 6-6: developed ]
+                <Pronoun> (0.333333) [ 7-7: it ]
+\end{verbatim}
+
+
+\subsubsection{Mini User Manual}
+\label{sect:prob-manual}
+
+\paragraph{System Requirements}
+
+The program was mostly developed under Linux, so there's
+a \file{Makefile} and a testing shell script to simplify some routine tasks.
+For JVM, any JDK 1.4.* and above will do. \tool{bash} would be nice
+to have to be able to run the batch script. Since the application
+itself is written in {\java}, it's not bound to a specific architecture,
+thus may be compiled and run without the makefiles and scripts
+on virtually any operating system.
+
+\paragraph{How To Run It}
+
+There are thousands of ways how to run the program. Some of them are listed below.
+
+\paragraph*{Using the Shell Script}
+
+There is a script out there -- \tool{testing.sh}. It simply does compilation
+and batch processing for all the three grammars and two sets of test
+sentences in one run.
+The script is written using \tool{bash} syntax; hence, \tool{bash} should be
+present.
+
+Type:
+
+\noindent
+\verb+./testing.sh+
+
+or
+
+\noindent
+\verb+time ./testing.sh+
+
+to execute  the batch (and time it in the second case). And example
+of what one can get is below. NOTE: processing the first grammar, in
+\file{grammar.asmt.txt}, may take awhile (below it took us 16 minutes),
+so be aware of that fact (see the reasons in \xs{sect:prob-app-troubles}).
+
+E.g.:
+
+\begin{verbatim}
+junebug.mokhov [a3] % time ./testing.sh
+Making sure java files get compiled...
+javac -g ProbabilisticParsingApp.java
+Testing...
+Compiling grammar: grammar.asmt.txt
+Parsing...991.318u 1.511s 16:35.55 99.7%        0+0k 0+0io 5638pf+0w
+Done
+Look for parsing results in grammar.asmt.txt-parse.log
+
+Compiling grammar: grammar.extended.txt
+Parsing...1.591u 0.062s 0:01.82 90.6%   0+0k 0+0io 5637pf+0w
+Done
+Look for parsing results in grammar.extended.txt-parse.log
+
+Compiling grammar: grammar.original.txt
+Parsing...0.455u 0.066s 0:00.72 70.8%   0+0k 0+0io 5599pf+0w
+Done
+Look for parsing results in grammar.original.txt-parse.log
+
+Testing done.
+995.675u 1.906s 16:41.68 99.5%  0+0k 0+0io 42211pf+0w
+junebug.mokhov [a3] %
+\end{verbatim}
+
+\paragraph*{Running ProbabilisitcParsingApp}
+\label{sect:prob-parsing-app}
+
+You can run the application itself without any wrapping scripts
+and provide options to it. This is a command-line application,
+so there is no GUI associated with it yet. To run the application
+you have to compile it first. You can use either \tool{make} with no
+arguments to compile or use a standard Java compiler.
+
+Type:
+
+\noindent
+\verb+make+
+
+or
+
+\noindent
+\verb+javac -cp marf.jar:. ProbabilisitcParsingApp.java+
+
+After having compiled the application, you can run it with a JVM.
+There are mutually-exclusive required options:
+
+\begin{itemize}
+
+\item
+\verb+--train <grammar-file>+ -- to compile a grammar from the specified text file.
+This is the first thing you need to do before trying to parse any sentences. Once compiled,
+you don't need to recompile it each time you run the parser unless you made a fresh
+copy of the application or made changes to the grammar file or plan to use a grammar
+from another file.
+
+\item
+\verb+--parse+ -- to actually run the parser in the interactive mode (or batch mode, just use
+input file redirection with your test sentences). To run the parser successfully there should
+be compiled grammar first (see \verb+--train+).
+
+\end{itemize}
+
+E.g.:
+
+To compile the Basic Grammar:
+
+\verb+java -cp marf.jar:. ProbabilisitcParsingApp.java --train grammars/grammar.original.txt+
+
+To batch process the sentence set from a file:
+
+\verb+java -cp marf.jar:. ProbabilisitcParsingApp.java --parse < data/test-sentences.txt+
+
+To run the application interactively:
+
+\verb+java -cp marf.jar:. ProbabilisitcParsingApp.java --parse+
+
+\noindent
+Complete usage information:
+
+\vspace{15pt}
+\hrule
+\input{probabilistic-parsing-app-usage}
+\hrule
+\vspace{15pt}
+
+
+\paragraph{List of Files of Interest}
+
+\paragraph*{Directories}
+
+\begin{itemize}
+
+\item
+\file{marf/nlp/} -- that's where most of the code is for this application is, the \api{marf.nlp} package.
+
+\item
+\file{marf/nlp/Parsing/} -- that's where most of the Parsing code is for Probabilistic Grammars and
+Grammars in general
+
+\item
+\file{marf/nlp/Parsing/GrammarCompiler/} -- that's where the Grammar Compiler modules are
+
+\end{itemize}
+
+\paragraph*{The Application}
+
+The application, its makefile, and
+the wrapper script for batch training and testing.
+
+\begin{verbatim}
+ProbabilisticParsingApp.java
+Makefile
+testing.sh
+marf.jar
+\end{verbatim}
+
+\paragraph*{Grammars}
+
+\noindent
+\file{grammars/grammar.original.txt} -- The Basic Grammar
+
+\noindent
+\file{grammars/grammar.extended.txt} -- The Extended Grammar
+
+\noindent
+\file{grammars/grammar.asmt.txt} -- The Realistic Grammar
+
+
+\paragraph*{Test Sentences}
+
+\noindent
+\file{data/test-sentences.txt} -- the sample sentences from all over the place.
+
+\noindent
+\file{data/asmt-sentences.txt} -- the sentences derived from the requirements sheet.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Results}
+\label{sect:prob-parse-results}
+
+\paragraph{Basic Grammar}
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+
+Probabilistic Parsing
+Serguei A. Mokhov, mokhov@cs
+April 2003
+
+
+
+Entering interactive mode... Type \q to exit.
+sentence> my rabbit has a white smile
+
+Parse for the sentence [ my rabbit has a white smile ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (0.0020480000000000008) [ 0-5: my rabbit has a white smile ]
+    <NP> (0.04000000000000001) [ 0-1: my rabbit ]
+        <DET> (0.1) [ 0-0: my ]
+        <NOMINAL> (0.4) [ 1-1: rabbit ]
+    <VP> (0.06400000000000002) [ 2-5: has a white smile ]
+        <V> (0.8) [ 2-2: has ]
+        <NP> (0.08000000000000002) [ 3-5: a white smile ]
+            <DET> (0.4) [ 3-3: a ]
+            <NOMINAL> (0.2) [ 4-5: white smile ]
+                <ADJ> (1.0) [ 4-4: white ]
+                <NOMINAL> (0.2) [ 5-5: smile ]
+
+
+sentence> my rabbit has a smile
+
+Parse for the sentence [ my rabbit has a smile ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (0.0020480000000000008) [ 0-4: my rabbit has a smile ]
+    <NP> (0.04000000000000001) [ 0-1: my rabbit ]
+        <DET> (0.1) [ 0-0: my ]
+        <NOMINAL> (0.4) [ 1-1: rabbit ]
+    <VP> (0.06400000000000002) [ 2-4: has a smile ]
+        <V> (0.8) [ 2-2: has ]
+        <NP> (0.08000000000000002) [ 3-4: a smile ]
+            <DET> (0.4) [ 3-3: a ]
+            <NOMINAL> (0.2) [ 4-4: smile ]
+
+
+sentence> my rabbit has a telephone
+
+There's no parse for [ my rabbit has a telephone ]
+
+sentence> rabbit my a white has smile
+
+There's no parse for [ rabbit my a white has smile ]
+
+sentence> a slim blue refrigerator jumped gracefully out of the bottle
+
+There's no parse for [ a slim blue refrigerator jumped gracefully out of the bottle ]
+
+sentence> my smile has a rabbit
+
+Parse for the sentence [ my smile has a rabbit ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (0.0020480000000000008) [ 0-4: my smile has a rabbit ]
+    <NP> (0.020000000000000004) [ 0-1: my smile ]
+        <DET> (0.1) [ 0-0: my ]
+        <NOMINAL> (0.2) [ 1-1: smile ]
+    <VP> (0.12800000000000003) [ 2-4: has a rabbit ]
+        <V> (0.8) [ 2-2: has ]
+        <NP> (0.16000000000000003) [ 3-4: a rabbit ]
+            <DET> (0.4) [ 3-3: a ]
+            <NOMINAL> (0.4) [ 4-4: rabbit ]
+
+
+sentence> the cat eats my white rabbit
+
+Parse for the sentence [ the cat eats my white rabbit ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (0.0012800000000000005) [ 0-5: the cat eats my white rabbit ]
+    <NP> (0.2) [ 0-1: the cat ]
+        <DET> (0.5) [ 0-0: the ]
+        <NOMINAL> (0.4) [ 1-1: cat ]
+    <VP> (0.008000000000000002) [ 2-5: eats my white rabbit ]
+        <V> (0.2) [ 2-2: eats ]
+        <NP> (0.04000000000000001) [ 3-5: my white rabbit ]
+            <DET> (0.1) [ 3-3: my ]
+            <NOMINAL> (0.4) [ 4-5: white rabbit ]
+                <ADJ> (1.0) [ 4-4: white ]
+                <NOMINAL> (0.4) [ 5-5: rabbit ]
+
+
+sentence> a white smile eats the cat
+
+Parse for the sentence [ a white smile eats the cat ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (0.0025600000000000015) [ 0-5: a white smile eats the cat ]
+    <NP> (0.08000000000000002) [ 0-2: a white smile ]
+        <DET> (0.4) [ 0-0: a ]
+        <NOMINAL> (0.2) [ 1-2: white smile ]
+            <ADJ> (1.0) [ 1-1: white ]
+            <NOMINAL> (0.2) [ 2-2: smile ]
+    <VP> (0.04000000000000001) [ 3-5: eats the cat ]
+        <V> (0.2) [ 3-3: eats ]
+        <NP> (0.2) [ 4-5: the cat ]
+            <DET> (0.5) [ 4-4: the ]
+            <NOMINAL> (0.4) [ 5-5: cat ]
+
+
+sentence> my cat has a white rabbit
+
+Parse for the sentence [ my cat has a white rabbit ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (0.0040960000000000015) [ 0-5: my cat has a white rabbit ]
+    <NP> (0.04000000000000001) [ 0-1: my cat ]
+        <DET> (0.1) [ 0-0: my ]
+        <NOMINAL> (0.4) [ 1-1: cat ]
+    <VP> (0.12800000000000003) [ 2-5: has a white rabbit ]
+        <V> (0.8) [ 2-2: has ]
+        <NP> (0.16000000000000003) [ 3-5: a white rabbit ]
+            <DET> (0.4) [ 3-3: a ]
+            <NOMINAL> (0.4) [ 4-5: white rabbit ]
+                <ADJ> (1.0) [ 4-4: white ]
+                <NOMINAL> (0.4) [ 5-5: rabbit ]
+
+
+sentence> my cat has white rabbit
+
+There's no parse for [ my cat has white rabbit ]
+
+sentence> cat has a white rabbit
+
+There's no parse for [ cat has a white rabbit ]
+
+sentence> smile has my cat
+
+There's no parse for [ smile has my cat ]
+
+sentence> can you book TWA flights
+
+There's no parse for [ can you book TWA flights ]
+
+sentence> the lion jumped through the hoop
+
+There's no parse for [ the lion jumped through the hoop ]
+
+sentence> the trainer jumped the lion through the hoop
+
+There's no parse for [ the trainer jumped the lion through the hoop ]
+
+sentence> the butter melted in the pan
+
+There's no parse for [ the butter melted in the pan ]
+
+sentence> the cook melted the butter in the pan
+
+There's no parse for [ the cook melted the butter in the pan ]
+
+sentence> the rich love their money
+
+There's no parse for [ the rich love their money ]
+
+sentence> the rich love sometimes too
+
+There's no parse for [ the rich love sometimes too ]
+
+sentence> the contractor built the houses last summer
+
+There's no parse for [ the contractor built the houses last summer ]
+
+sentence> the contractor built last summer
+
+There's no parse for [ the contractor built last summer ]
+
+sentence>
+\end{verbatim}
+\vskip4pt\hrule
+
+\paragraph{Extended Grammar}
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+
+Probabilistic Parsing
+Serguei A. Mokhov, mokhov@cs
+April 2003
+
+
+
+Entering interactive mode... Type \q to exit.
+sentence> my rabbit has a white smile
+
+Parse for the sentence [ my rabbit has a white smile ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (1.915200000000001E-6) [ 0-5: my rabbit has a white smile ]
+    <NP> (0.0020000000000000005) [ 0-1: my rabbit ]
+        <DET> (0.05) [ 0-0: my ]
+        <NOMINAL> (0.2) [ 1-1: rabbit ]
+    <VP> (0.002736000000000001) [ 2-5: has a white smile ]
+        <V> (0.5) [ 2-2: has ]
+        <NP> (0.005760000000000002) [ 3-5: a white smile ]
+            <DET> (0.4) [ 3-3: a ]
+            <NOMINAL> (0.07200000000000002) [ 4-5: white smile ]
+                <ADJ> (0.8) [ 4-4: white ]
+                <NOMINAL> (0.1) [ 5-5: smile ]
+
+
+sentence> my rabbit has a smile
+
+Parse for the sentence [ my rabbit has a smile ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (2.6600000000000012E-6) [ 0-4: my rabbit has a smile ]
+    <NP> (0.0020000000000000005) [ 0-1: my rabbit ]
+        <DET> (0.05) [ 0-0: my ]
+        <NOMINAL> (0.2) [ 1-1: rabbit ]
+    <VP> (0.003800000000000001) [ 2-4: has a smile ]
+        <V> (0.5) [ 2-2: has ]
+        <NP> (0.008000000000000002) [ 3-4: a smile ]
+            <DET> (0.4) [ 3-3: a ]
+            <NOMINAL> (0.1) [ 4-4: smile ]
+
+
+sentence> my rabbit has a telephone
+
+There's no parse for [ my rabbit has a telephone ]
+
+sentence> rabbit my a white has smile
+
+There's no parse for [ rabbit my a white has smile ]
+
+sentence> a slim blue refrigerator jumped gracefully out of the bottle
+
+There's no parse for [ a slim blue refrigerator jumped gracefully out of the bottle ]
+
+sentence> my smile has a rabbit
+
+Parse for the sentence [ my smile has a rabbit ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (2.6600000000000012E-6) [ 0-4: my smile has a rabbit ]
+    <NP> (0.0010000000000000002) [ 0-1: my smile ]
+        <DET> (0.05) [ 0-0: my ]
+        <NOMINAL> (0.1) [ 1-1: smile ]
+    <VP> (0.007600000000000002) [ 2-4: has a rabbit ]
+        <V> (0.5) [ 2-2: has ]
+        <NP> (0.016000000000000004) [ 3-4: a rabbit ]
+            <DET> (0.4) [ 3-3: a ]
+            <NOMINAL> (0.2) [ 4-4: rabbit ]
+
+
+sentence> the cat eats my white rabbit
+
+Parse for the sentence [ the cat eats my white rabbit ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (9.576000000000004E-7) [ 0-5: the cat eats my white rabbit ]
+    <NP> (0.020000000000000004) [ 0-1: the cat ]
+        <DET> (0.5) [ 0-0: the ]
+        <NOMINAL> (0.2) [ 1-1: cat ]
+    <VP> (1.3680000000000005E-4) [ 2-5: eats my white rabbit ]
+        <V> (0.1) [ 2-2: eats ]
+        <NP> (0.0014400000000000005) [ 3-5: my white rabbit ]
+            <DET> (0.05) [ 3-3: my ]
+            <NOMINAL> (0.14400000000000004) [ 4-5: white rabbit ]
+                <ADJ> (0.8) [ 4-4: white ]
+                <NOMINAL> (0.2) [ 5-5: rabbit ]
+
+
+sentence> a white smile eats the cat
+
+Parse for the sentence [ a white smile eats the cat ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (3.8304000000000015E-6) [ 0-5: a white smile eats the cat ]
+    <NP> (0.005760000000000002) [ 0-2: a white smile ]
+        <DET> (0.4) [ 0-0: a ]
+        <NOMINAL> (0.07200000000000002) [ 1-2: white smile ]
+            <ADJ> (0.8) [ 1-1: white ]
+            <NOMINAL> (0.1) [ 2-2: smile ]
+    <VP> (0.0019000000000000004) [ 3-5: eats the cat ]
+        <V> (0.1) [ 3-3: eats ]
+        <NP> (0.020000000000000004) [ 4-5: the cat ]
+            <DET> (0.5) [ 4-4: the ]
+            <NOMINAL> (0.2) [ 5-5: cat ]
+
+
+sentence> my cat has a white rabbit
+
+Parse for the sentence [ my cat has a white rabbit ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (3.830400000000002E-6) [ 0-5: my cat has a white rabbit ]
+    <NP> (0.0020000000000000005) [ 0-1: my cat ]
+        <DET> (0.05) [ 0-0: my ]
+        <NOMINAL> (0.2) [ 1-1: cat ]
+    <VP> (0.005472000000000002) [ 2-5: has a white rabbit ]
+        <V> (0.5) [ 2-2: has ]
+        <NP> (0.011520000000000004) [ 3-5: a white rabbit ]
+            <DET> (0.4) [ 3-3: a ]
+            <NOMINAL> (0.14400000000000004) [ 4-5: white rabbit ]
+                <ADJ> (0.8) [ 4-4: white ]
+                <NOMINAL> (0.2) [ 5-5: rabbit ]
+
+
+sentence> my cat has white rabbit
+
+There's no parse for [ my cat has white rabbit ]
+
+sentence> cat has a white rabbit
+
+Parse for the sentence [ cat has a white rabbit ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (3.283200000000001E-5) [ 0-4: cat has a white rabbit ]
+    <NOMINAL> (0.2) [ 0-0: cat ]
+    <VP> (0.005472000000000002) [ 1-4: has a white rabbit ]
+        <V> (0.5) [ 1-1: has ]
+        <NP> (0.011520000000000004) [ 2-4: a white rabbit ]
+            <DET> (0.4) [ 2-2: a ]
+            <NOMINAL> (0.14400000000000004) [ 3-4: white rabbit ]
+                <ADJ> (0.8) [ 3-3: white ]
+                <NOMINAL> (0.2) [ 4-4: rabbit ]
+
+
+sentence> smile has my cat
+
+Parse for the sentence [ smile has my cat ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (2.8500000000000007E-6) [ 0-3: smile has my cat ]
+    <NOMINAL> (0.1) [ 0-0: smile ]
+    <VP> (9.500000000000002E-4) [ 1-3: has my cat ]
+        <V> (0.5) [ 1-1: has ]
+        <NP> (0.0020000000000000005) [ 2-3: my cat ]
+            <DET> (0.05) [ 2-2: my ]
+            <NOMINAL> (0.2) [ 3-3: cat ]
+
+
+sentence> can you book TWA flights
+
+Parse for the sentence [ can you book TWA flights ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (3.192E-5) [ 0-4: can you book TWA flights ]
+    <AuxNP> (0.09600000000000002) [ 0-1: can you ]
+        <Aux> (0.4) [ 0-0: can ]
+        <Pronoun> (0.4) [ 1-1: you ]
+    <VP> (0.0033249999999999994) [ 2-4: book TWA flights ]
+        <V> (0.1) [ 2-2: book ]
+        <NP> (0.034999999999999996) [ 3-4: TWA flights ]
+            <ProperNoun> (0.4) [ 3-3: TWA ]
+            <NOMINAL> (0.25) [ 4-4: flights ]
+
+
+sentence> the lion jumped through the hoop
+
+There's no parse for [ the lion jumped through the hoop ]
+
+sentence> the trainer jumped the lion through the hoop
+
+There's no parse for [ the trainer jumped the lion through the hoop ]
+
+sentence> the butter melted in the pan
+
+There's no parse for [ the butter melted in the pan ]
+
+sentence> the cook melted the butter in the pan
+
+There's no parse for [ the cook melted the butter in the pan ]
+
+sentence> the rich love their money
+
+There's no parse for [ the rich love their money ]
+
+sentence> the rich love sometimes too
+
+There's no parse for [ the rich love sometimes too ]
+
+sentence> the contractor built the houses last summer
+
+There's no parse for [ the contractor built the houses last summer ]
+
+sentence> the contractor built last summer
+
+There's no parse for [ the contractor built last summer ]
+
+sentence>
+\end{verbatim}
+\vskip4pt\hrule
+
+\paragraph{Realistic Grammar}
+
+\tiny
+\hrule\vskip4pt
+\begin{verbatim}
+
+Probabilistic Parsing
+Serguei A. Mokhov, mokhov@cs
+April 2003
+
+
+
+Entering interactive mode... Type \q to exit.
+sentence> you should submit a paper listing and report and an electronic version of your code
+
+There's no parse for [ you should submit a paper listing and report and an electronic version of your code ]
+
+sentence> implement the CYK algorithm to find the best parse for a given sentence
+
+There's no parse for [ implement the CYK algorithm to find the best parse for a given sentence ]
+
+sentence> your program should take as input a probabilistic grammar and a sentence and display the best parse tree along with its probability
+
+There's no parse for [ your program should take as input a probabilistic grammar and a sentence and display the best parse tree along with its probability ]
+
+sentence> you are not required to use a specific programming language
+
+There's no parse for [ you are not required to use a specific programming language ]
+
+sentence> Perl, CPP, C or Java are appropriate for this task
+WARNING: Non-word token encountered: Token[','], line 1
+WARNING: Non-word token encountered: Token[','], line 1
+
+There's no parse for [ Perl, CPP, C or Java are appropriate for this task ]
+
+sentence> as long as you explain it, your grammar can be in any format you wish
+WARNING: Non-word token encountered: Token[','], line 1
+
+There's no parse for [ as long as you explain it, your grammar can be in any format you wish ]
+
+sentence> your grammar can be in any format you wish as long as you explain it
+
+There's no parse for [ your grammar can be in any format you wish as long as you explain it ]
+
+sentence> experiment with your grammar
+
+There's no parse for [ experiment with your grammar ]
+
+sentence> is it restrictive enough
+
+There's no parse for [ is it restrictive enough ]
+
+sentence> does it refuse ungrammatical sentences
+
+Parse for the sentence [ does it refuse ungrammatical sentences ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (1.294887213288665E-8) [ 0-4: does it refuse ungrammatical sentences ]
+    <AuxNP> (0.01999998) [ 0-1: does it ]
+        <Aux> (0.1) [ 0-0: does ]
+        <Pronoun> (0.333333) [ 1-1: it ]
+    <VP> (6.474442540885865E-6) [ 2-4: refuse ungrammatical sentences ]
+        <V> (0.0344828) [ 2-2: refuse ]
+        <NOMINAL> (0.001104462402208) [ 3-4: ungrammatical sentences ]
+            <ADJ> (0.0243902) [ 3-3: ungrammatical ]
+            <NOMINAL> (0.0566038) [ 4-4: sentences ]
+
+
+sentence> does it cover all grammatical sentences
+
+Parse for the sentence [ does it cover all grammatical sentences ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (1.2948872132886648E-9) [ 0-5: does it cover all grammatical sentences ]
+    <AuxNP> (0.01999998) [ 0-1: does it ]
+        <Aux> (0.1) [ 0-0: does ]
+        <Pronoun> (0.333333) [ 1-1: it ]
+    <VP> (6.474442540885865E-7) [ 2-5: cover all grammatical sentences ]
+        <V> (0.0344828) [ 2-2: cover ]
+        <NP> (5.52231201104E-5) [ 3-5: all grammatical sentences ]
+            <PreDet> (0.5) [ 3-3: all ]
+            <NOMINAL> (0.001104462402208) [ 4-5: grammatical sentences ]
+                <ADJ> (0.0243902) [ 4-4: grammatical ]
+                <NOMINAL> (0.0566038) [ 5-5: sentences ]
+
+
+sentence> write a report to describe your code and your experimentation
+
+There's no parse for [ write a report to describe your code and your experimentation ]
+
+sentence> your report must describe the program
+
+There's no parse for [ your report must describe the program ]
+
+sentence> your report must describe the experiments
+
+There's no parse for [ your report must describe the experiments ]
+
+sentence> describe your code itself
+
+There's no parse for [ describe your code itself ]
+
+sentence> indicate the instructions necessary to run your code
+
+There's no parse for [ indicate the instructions necessary to run your code ]
+
+sentence> describe your choice of test sentences
+
+There's no parse for [ describe your choice of test sentences ]
+
+sentence> describe your grammar and how you developed it
+
+Parse for the sentence [ describe your grammar and how you developed it ] is below:
+
+SYNOPSIS:
+
+<NONTERMINAL> (PROBABILITY) [ SPAN: words of span ]
+
+<S> (7.381879524149979E-10) [ 0-7: describe your grammar and how you developed it ]
+    <S> (4.11319751814313E-4) [ 0-2: describe your grammar ]
+        <V> (0.206897) [ 0-0: describe ]
+        <NOMINAL> (0.039760823193600005) [ 1-2: your grammar ]
+            <ADJ> (0.439024) [ 1-1: your ]
+            <NOMINAL> (0.113208) [ 2-2: grammar ]
+    <ConjS> (1.7946815078995936E-5) [ 3-7: and how you developed it ]
+        <Conj> (0.92) [ 3-3: and ]
+        <S> (1.9507407694560798E-5) [ 4-7: how you developed it ]
+            <WhNP> (0.094285785) [ 4-5: how you ]
+                <WhWord> (0.5) [ 4-4: how ]
+                <Pronoun> (0.571429) [ 5-5: you ]
+            <VP> (0.002068965931032) [ 6-7: developed it ]
+                <V> (0.0344828) [ 6-6: developed ]
+                <Pronoun> (0.333333) [ 7-7: it ]
+
+
+sentence> what problems do you see with your current implementation
+
+There's no parse for [ what problems do you see with your current implementation ]
+
+sentence> what problems do you see with your current grammar
+
+There's no parse for [ what problems do you see with your current grammar ]
+
+sentence> how would you improve it
+
+There's no parse for [ how would you improve it ]
+
+sentence> both the code and the report must be submitted electronically and in paper
+
+There's no parse for [ both the code and the report must be submitted electronically and in paper ]
+
+sentence> in class, you must submit a listing of your program and results and the report
+WARNING: Non-word token encountered: Token[','], line 1
+
+There's no parse for [ in class, you must submit a listing of your program and results and the report ]
+
+sentence> through the electronic submission form you must submit the code of your program and results and an electronic version of your report
+
+There's no parse for [ through the electronic submission form you must submit the code of your program and results and an electronic version of your report ]
+
+sentence>
+\end{verbatim}
+\vskip4pt\hrule
+
+\normalsize
+
+
+\subsubsection{Code}
+\label{sect:prob-parse-code}
+
+The entire source code is provided in the electronic form, but
+here we provide the two methods extracted from
+\file{marf/nlp/Parsing/ProbabilisticParser.java} that are actual
+implementation of the CYK algorithm and the \verb+build_tree()+ function,
+named \api{parse()} and \file{dumpParseTree()} respectively.
+The code below has experienced minor clean-ups in the report
+version with most of the debug and error handling information removed. For the
+unaltered code please refer the above mentioned file itself.
+
+\paragraph{\texttt{ProbabilisticParser.parse() -- CYK}}
+
+\tiny
+\begin{verbatim}
+public boolean parse()
+throws SyntaxError
+{
+    // Restore grammar from the disk
+    restore();
+
+    // Split the string into words
+
+    this.oWords = new Vector();
+
+    int iTokenType;
+
+    while((iTokenType = this.oStreamTokenizer.nextToken()) != StreamTokenizer.TT_EOF)
+    {
+        switch(iTokenType)
+        {
+            case StreamTokenizer.TT_WORD:
+            {
+                this.oWords.add(new String(this.oStreamTokenizer.sval));
+                break;
+            }
+
+            case StreamTokenizer.TT_NUMBER:
+            default:
+            {
+                System.err.println("WARNING: Non-word token encountered: " + this.oStreamTokenizer);
+                break;
+            }
+        }
+    }
+
+    // CYK
+    Vector oNonTerminals = this.oGrammar.getNonTerminalList();
+
+    this.adParseMatrix = new double[this.oWords.size()][this.oWords.size()][oNonTerminals.size()];
+    this.aoBack        = new Vector[this.oWords.size()][this.oWords.size()][oNonTerminals.size()];
+
+    // Base case
+
+    for(int i = 0; i < this.oWords.size(); i++)
+    {
+        String strTerminal = this.oWords.elementAt(i).toString();
+
+        /*
+         * Fail-fast: if the terminal is not in the grammar (no rule 'A->wd' found ),
+         * there is no point to compute the parse
+         */
+        if(this.oGrammar.containsTerminal(strTerminal) == -1)
+        {
+            return false;
+        }
+
+        for(int A = 0; A < oNonTerminals.size(); A++)
+        {
+            ProbabilisticRule oRule = (ProbabilisticRule)this.oGrammar.getRule(strTerminal, A);
+
+            // Current pair: 'A->wd' does not form a Rule
+            if(oRule == null)
+            {
+                continue;
+            }
+
+            this.adParseMatrix[i][i][A] = oRule.getProbability();
+        }
+    }
+
+    /*
+     * Recursive case
+     * ('recursive' as authors call it, but it's implemented iteratively
+     * and me being just a copy-cat here)
+     */
+    for(int iSpan = 2; iSpan <= this.oWords.size(); iSpan++)
+    {
+        for(int iBegin = 0; iBegin < this.oWords.size() - iSpan + 1; iBegin++)
+        {
+            int iEnd = iBegin + iSpan - 1;
+
+            // For every split m of the incoming sentence ...
+            for(int m = iBegin; m <= iEnd - 1; m++)
+            {
+                // Check how the split divides B and C in A->BC
+                for(int iA = 0; iA < oNonTerminals.size(); iA++)
+                {
+                    for(int iB = 0; iB < oNonTerminals.size(); iB++)
+                    {
+                        for(int iC = 0; iC < oNonTerminals.size(); iC++)
+                        {
+                            ProbabilisticRule oRule = (ProbabilisticRule)this.oGrammar.getRule(iA, iB, iC);
+
+                            if(oRule == null)
+                            {
+                                continue;
+                            }
+
+                            double dProb =
+                                this.adParseMatrix[iBegin][m][iB] *
+                                this.adParseMatrix[m + 1][iEnd][iC] *
+                                oRule.getProbability();
+
+                            if(dProb > this.adParseMatrix[iBegin][iEnd][iA])
+                            {
+                                this.adParseMatrix[iBegin][iEnd][iA] = dProb;
+
+                                Vector oBackIndices = new Vector();
+
+                                oBackIndices.add(new Integer(m));
+                                oBackIndices.add(new Integer(iB));
+                                oBackIndices.add(new Integer(iC));
+
+                                this.aoBack[iBegin][iEnd][iA] = oBackIndices;
+                            }
+                        } // for C
+                    } // for B
+                } // for A
+            } // split
+        }
+    } // "recursive" case
+
+    // No parse
+    if(this.adParseMatrix[0][this.oWords.size() - 1][0] == 0)
+    {
+        return false;
+    }
+
+    return true;
+}
+\end{verbatim}
+\normalsize
+
+\paragraph{\texttt{ProbabilisticParser.dmpParseTree() -- build\_tree()}}
+
+\tiny
+\begin{verbatim}
+public void dumpParseTree(int piLevel, int i, int j, int piA)
+{
+    NonTerminal oLHS = (NonTerminal)this.oGrammar.getNonTerminalList().elementAt(piA);
+
+    indent(piLevel);
+
+    // Termination case
+
+    if(this.aoBack[i][j][piA] == null)
+    {
+        return;
+    }
+
+    // Recursive case
+
+    int m = ((Integer)this.aoBack[i][j][piA].elementAt(0)).intValue();
+    int iB = ((Integer)this.aoBack[i][j][piA].elementAt(1)).intValue();
+    int iC = ((Integer)this.aoBack[i][j][piA].elementAt(2)).intValue();
+
+    dumpParseTree(piLevel + 1, i, m, iB);
+    dumpParseTree(piLevel + 1,  m + 1, j, iC);
+}
+\end{verbatim}
+\normalsize
+
+% EOF

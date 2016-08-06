@@ -1,0 +1,362 @@
+\chapter{MARF Installation Instructions}
+\index{MARF!Installation}
+\index{Installation}
+
+$Revision: 1.11 $
+
+\noindent
+TODO: automatic sync with the \file{INSTALL} file.
+
+\section{Requirements}
+\index{Installation!Requirements}
+
+In general, any modern platform should be able to run {\marf} provided
+a Java Virtual machine (JRE 1.4 and above) is installed on it.
+The following software packages are required for building {\marf} from sources:
+
+\begin{itemize}
+
+\item
+	You need a Java compiler. Recent
+	versions of \tool{javac} are recommended.
+	You will need at least JDK 1.4 installed as JDKs lower than that
+	are no longer supported (a patch can be made however if there is really
+	a need for it). Additionally,
+	you would need \tool{javadoc} and \tool{jar} (also a part
+	of a JDK) if you want to build the appropriate API documentation
+	and the \file{.jar} files.
+
+\item
+	On Linux and UNIX the {\gnu} \tool{make} \cite{gmake} is required; other
+	\tool{make} programs will {\em not} work.
+	{\gnu} \tool{make} is often installed under
+	the name \file{gmake}; on some systems the GNU \tool{make} is the
+	default tool with the name \tool{make}. This document will always
+	refer to it by the name of ``make''. To see which make version you
+	are running, type \texttt{make -v}.
+
+\item
+	If you plan to run unit tests of {\marf} or use the \file{marf-debug-*.jar}
+	release, then you will also need the JUnit \cite{junit} framework's jar somewhere in
+	your CLASSPATH.
+
+% Obsolete:
+%\item
+%\api{NeuralNetwork} module requires the JAXP XML parser for JDK 1.3. You can get it at\\
+%\url{http://java.sun.com/xml/downloads/javaxmlpack.html}.
+%Click the ``Download now'' under the heading ``Java XML Pack - Summer 02 Update
+%Release''. This should be the right one.
+
+\end{itemize}
+
+
+%MARF INSTALLATION
+%=================
+
+\section{{\marf} Installation}
+
+There are several ways to ``install'' {\marf}.
+
+\begin{itemize}
+\item
+Download the latest \file{marf-$<$ver$>$.jar}
+\item
+Build it from sources
+	\begin{itemize}
+	\item
+	UNIXen
+	\item
+	Windows
+	\end{itemize}
+\end{itemize}
+
+
+\section{Downloading the Latest Jar Files}
+\label{sect:download-install-marf}
+\index{Installation!Binary}
+%-------------------------------------
+
+Just go to \url{http://marf.sf.net}, and download an appropriate \file{marf-$<$ver$>$.jar}
+from there.
+To install it, put the downloaded \file{.jar} file(s) somewhere from within
+the reach of your CLASSPATH or Java extensions directory, EXTDIRS.
+Et voila, since now on you can try to write some mini mind-blowing
+apps based on {\marf}. You can also get some demo applications,
+such as \api{SpeakerIdentApp} from the same exact web site
+to try out.
+This ``install'' is ``platform-independent''.
+
+As of MARF 0.3.0.5, there are several \file{.jar} files being released.
+Their number may increase based on the demand. The different jars contain
+various subsets of {\marf}'s code in addition to the full and complete
+code set that was always released in the past. The below is the description
+of the currently released jars:
+
+\begin{itemize}
+
+\item
+\file{marf-$<$ver$>$.jar} contains a complete set of {\marf}'s code
+excluding JUnit tests and debug information, optimized.
+
+\item
+\file{marf-debug-$<$ver$>$.jar} contains a complete set of {\marf}'s code
+including JUnit tests and debug information.
+
+\item
+\file{marf-util-$<$ver$>$.jar} contains a subset of {\marf}'s code
+corresponding primarily to the contents of the \api{marf.util} package, optimized.
+This binary release is useful for apps which rely only on the quite comprehensive set
+of general-purpose utility modules and nothing else. This jar is quite small
+in size.
+
+\item
+\file{marf-storage-$<$ver$>$.jar} contains a subset of {\marf}'s code
+corresponding primarily to the contents of the \api{marf.Storage} and some of the \api{marf.util} packages, optimized.
+This binary release is useful for apps which rely only on the set
+of general-purpose utility and storage modules.
+
+\item
+\file{marf-math-$<$ver$>$.jar} contains a subset of {\marf}'s code
+corresponding primarily to the contents of the \api{marf.math} and some of the \api{marf.util} packages, optimized.
+This binary release is useful for apps which rely only on the set
+of general-purpose utility and math modules.
+
+\item
+\file{marf-utilimathstor-$<$ver$>$.jar} contains a subset of {\marf}'s code
+corresponding primarily to the contents of the \api{marf.util}, \api{marf.math}, \api{marf.Stats}, and \api{marf.Storage} packages, optimized.
+This binary release is useful for apps which rely only on the set
+of general-purpose modules from these packages.
+
+\end{itemize}
+
+\section{Building From Sources}
+\index{Installation!From Sources}
+%---------------------
+
+You can grab the latest tarball of the current CVS,
+or pre-packaged \texttt{-src} release
+and compile it yourself producing the \file{.jar} file, which
+you will need to install as described in the \xs{sect:download-install-marf}.
+The {\marf} sources can be obtained
+from \url{http://marf.sf.net}. Extract:
+
+\begin{verbatim}
+    tar xvfz marf-src-<ver>.tar.gz
+\end{verbatim}
+
+\noindent
+or
+
+\begin{verbatim}
+    tar xvfj marf-src-<ver>.tar.bz2
+\end{verbatim}
+
+
+\noindent
+This will create a directory
+\file{marf-$<$ver$>$} under the current directory
+with the {\marf} sources.
+Change into that directory for the rest
+of the installation procedure.
+
+
+\subsection{UNIXen}
+\index{Installation!Linux}
+\index{Installation!UNIXen}
+
+We went with the makefile build approach. You will need
+GNU \tool{make} (sometimes called `\tool{gmake}') to use it. Assuming
+you have unpacked the sources, `cd' to
+\file{src} and type:
+
+\begin{verbatim}
+    make
+\end{verbatim}
+
+\noindent
+This will compile and build \file{marf-$<$ver$>$.jar} in the current directory.
+(Remember to use {\gnu} \tool{make}.)
+The last line displayed should be:
+
+\begin{verbatim}
+(-: MARF build has been successful :-)
+\end{verbatim}
+
+\noindent
+To install {\marf} enter:
+
+\begin{verbatim}
+    make install
+\end{verbatim}
+
+\noindent
+This will install the \file{.jar} file(s) in the pre-determined
+place in the \file{/usr/lib/marf} directory.
+
+\begin{verbatim}
+    make apidoc
+\end{verbatim}
+
+\noindent
+This will compile general API javadoc pages in \file{../../api}.
+
+\begin{verbatim}
+    make apidoc-dev
+\end{verbatim}
+
+\noindent
+This will compile developer's API javadoc pages in \file{../../api-dev}.
+Both APIs can be compiled at once by using \texttt{make api}.
+Of course, you can compile w/o the makefile and use \tool{javac},
+\tool{jar}, and \tool{javadoc} directly if you really want to.
+
+\subsection{Windows}
+\index{Installation!Windows}
+
+We also used JBuilder \cite{jbuilder} from version 5 through to 2005, so there is a project file
+\file{marf.jpx} in this directory. If you have JBuilder you can use
+this project file to build \file{marf.jar}. There are also Eclipse \cite{eclipse} and
+NetBeans \cite{netbeans} project files rooted at \file{.project} and \file{.classpath}
+for Eclipse that you can import and \file{build.xml} and
+\file{nbproject/*.*} for NetBeans.
+Otherwise, you are stuck
+with \tool{javac}/\tool{java}/\tool{jar} command-line tools for the moment.
+
+\subsection{Cygwin / under Windows}
+\index{Installation!Cygwin}
+
+Follow pretty much the same steps as for UNIXen build above. You
+might need to hack Makefiles or a corresponding environment variable
+to support ``;'' directory separator
+and quoting instead of ``:''.
+
+
+\section{Configuration}
+
+Typically, {\marf} does not really need much more configuration
+tweaking for itself other than having a JDK or a JRE installed
+to run it. The applications that use {\marf} should however be
+able to find \file{marf.jar} by either setting the CLASSPATH
+environment variable to point where the jar is or mention it
+explicitly on the command line (or otherwise JVM argument)
+with the \texttt{-cp} or \texttt{-classpath} options.
+
+\subsection{Environment Variables}
+
+\subsubsection{CLASSPATH}
+\index{CLASSPATH}
+
+Similarly to a commonly-used PATH variable, CLASSPATH tells where to
+find \file{.class} or \file{.jar} files if they are not present
+in the standard, known to the JVM default directories. This is a
+colon-separated (``:'') for Linux/Windows and semicolon-separated (``;'')
+for Windows/Cygwin list of directories with \file{.class} files
+or explicitly mentioned \file{.jar}, \file{.war}, or \file{.zip}
+archives containing \file{.class} files.
+
+{\marf} itself does not depend on any non-default classes or
+Java archives, so it requires no CLASSPATH by itself (except when used
+with unit testing with JUnit \cite{junit}, the \file{junit.jar} must
+be somewhere in CLASSPATH). However,
+applications wishing to use {\marf} should point their CLASSPATH
+to where find it unless it is in one of the default known to the JVM
+places.
+
+\subsubsection{EXTDIRS}
+\index{EXTDIRS}
+
+This variable typically lists a set of directories for Java
+extensions where to find them. If you didn't place a pointer
+in your CLASSPATH, you can place it in your EXTDIRS instead.
+
+\subsection{Web Applications}
+
+\subsubsection{Tomcat}
+\index{Tomcat}
+
+If for some reason you decide to use one of the {\marf}'s jars
+in a web app, the web app servlet/JSP container such as Tomcat
+\cite{tomcat} is capable of setting the CLASSPATH itself as long
+as the jar(s) are in one of the \file{shared/lib} or 
+\file{webapp/$<$your application here$>$/WEB-INF/lib} directories.
+
+\subsection{JUnit}
+
+If you intend to run unit tests or use \file{marf-debug*.jar} 
+JUnit \cite{junit} has to be ``visible'' to {\marf} and the apps
+through CLASSPATH.
+
+%MARF UPGRADE
+%============
+
+\section{{\marf} Upgrade}
+\index{upgrading}
+\index{Installation!Upgrade}
+
+Normally, an upgrade would simply mean just yanking old \file{.jar} out,
+and plugging the new one in, UNLESS you depend on certain parts
+of {\marf}'s experimental/legacy API.
+
+It is important to note that {\marf}'s API is still stabilizing,
+especially for the newer modules (e.g. NLP). Even older modules still
+get affected as the {\marf} is still flexible in that. Thus,
+the API changes do in fact happen every release insofar, for the
+better (not always incompatible). This, however, also means that the serialized version
+of the \api{Serializable} classes also change, so the corresponding
+data needs to be retrained until an upgrade utility is available.
+Therefore, please check the versions, \file{ChangeLog}, class revisions,
+and talk to us if you are unsure of what can affect you. A great
+deal of effort went into versioning each public class and
+interface of {\marf}, which you can check by running:
+
+\begin{verbatim}
+    java -jar marf.jar --verbose
+\end{verbatim}
+
+\noindent
+To ask about more detailed changes if they are unclear from
+the \file{ChangeLog}, please write to us to \url{marf-devel@lists.sf.net}
+or post a question in one of our forums at:
+
+\begin{verbatim}
+    https://sourceforge.net/forum/?group_id=63118
+\end{verbatim}
+
+\noindent
+Each release of {\marf} also supplies the Javadoc API comments,
+so you can and should consult those too. The bleeding edge
+API is located at:
+
+\begin{verbatim}
+    http://marf.sourceforge.net/api/
+\end{verbatim}
+
+\section{Regression Tests}
+\index{regression test application}
+\index{Testing!Regression}
+\index{MARF!Testing}
+
+If you want to test the newly built {\marf} before you deploy it,
+you can run the regression tests. The regression
+tests are a test suite to verify that {\marf}
+runs on your platform in the way the developers expected it to.
+For now to do so the option is to run manually tests located
+in the \api{marf.junit} package as well as executing
+all the \file{Test*} applications described later on in
+the Applications chapter. A \api{Regression} testing application
+to do the comprehensive testing and grouping the other test
+applications as well as the JUnit tests. This application is
+still under development as of 0.3.0.5.
+
+\section{Uninstall}
+\index{Uninstall}
+\index{Installation!Removal}
+
+Simply remove the pertinent \file{marf*.jar} file(s).
+
+\section{Cleaning}
+
+After the installation you can make room by removing the built
+files from the source tree with the command \tool{make clean}.
+
+% EOF

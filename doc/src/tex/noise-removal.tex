@@ -1,0 +1,24 @@
+\subsection{Noise Removal}
+
+Any vocal sample taken in a less-than-perfect (which is always the case) environment will experience a certain
+amount of room noise.  Since background noise exhibits a certain frequency characteristic,
+if the noise is loud enough it may inhibit good recognition of a voice when the voice is
+later tested in a different environment.  Therefore, it is necessary to remove as much
+environmental interference as possible.
+
+To remove room noise, it is first necessary to get a sample of the room noise by itself.
+This sample, usually at least 30 seconds long, should provide the general frequency
+characteristics of the noise when subjected to FFT analysis.  Using a technique similar
+to overlap-add FFT filtering, room noise can then be removed from the vocal sample by
+simply subtracting the noise's frequency characteristics from the vocal sample in question.
+
+That is, if $S(x)$ is the sample, $N(x)$ is the noise, and $V(x)$ is the voice, all in the
+frequency domain, then
+
+\begin{center}$S(x) = N(x) + V(x)$\end{center}
+
+Therefore, it should be possible to isolate the voice:
+
+\begin{center}$V(x) = S(x) - N(x)$\end{center}
+
+Unfortunately, time has not permitted us to implement this in practice yet.

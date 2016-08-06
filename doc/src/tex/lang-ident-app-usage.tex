@@ -1,0 +1,28 @@
+\begin{verbatim}
+
+Language Identification Application, $Revision: 1.1 $, $Date: 2006/02/13 14:46:56 $
+Serguei A. Mokhov, mokhov@cs.concordia.ca
+March 2003 - 2006
+
+
+Usage:
+    java LangIdentApp --help | -h
+    java LangIdentApp --version
+    java LangIdentApp --train [ --debug ] [ OPTIONS ] <language> <corpus-file>
+    java LangIdentApp --ident [ --debug ] [ OPTIONS ] foo <bar|corpus-file>
+
+Options (one or more of the following):
+    -interactive   interactive mode for classification instead of reading from a file
+    -char          use characters as n-grams (should always be present for this app)
+
+    -unigram       use UNIGRAM model
+    -bigram        use BIGRAM model
+    -trigram       use TRIGRAM model
+
+    -mle           use MLE
+    -add-one       use Add-One smoothing
+    -add-delta     use Add-Delta (ELE, d=0.5) smoothing
+    -witten-bell   use Witten-Bell smoothing
+    -good-turing   use Good-Turing smoothing
+
+\end{verbatim}

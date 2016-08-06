@@ -1,0 +1,121 @@
+\section{Storage}
+
+$Revision: 1.19 $
+
+Figure \ref{fig:storage}
+presents basic \api{Storage} modules and their API.
+
+\begin{figure}
+	\centering
+	\includegraphics[angle=90,totalheight=660pt,width=550pt]{../graphics/arch/storage.png}
+	\caption{Storage}
+	\label{fig:storage}
+\end{figure}
+
+\subsection{Speaker Database}
+
+We store specific speakers in a comma-separated (CSV) file, \verb+speakers.txt+
+within the application.
+It has the following format:
+
+\verb+<id:int>,<name:string>,<training-samples:list>,<testing-samples:list>+
+
+Sample lists are defined as follows:
+
+\verb+<*-sample-list> := filename1.wav|filename2.wav|...+
+
+
+\subsection{Storing Features, Training, and Classification Data}
+
+We defined a standard \verb+StorageManager+ interface for the modules to use.
+That's part of the \verb+StorageManager+ interface which each module will override
+because each a module has to know how to serialize itself, but the applications
+using {\marf} should not care.
+Thus, this \verb+StorageManager+ is a base class with abstract methods \verb+dump()+ and
+\verb+restore()+. These methods would generalize the
+model's serialization, in the sense that they are somehow ``read'' and ``written''.
+
+We have to store data we used for training for later use in
+the classification process. For this we pass FFT (\xf{sect:fft}) and LPC (\xf{sect:lpc})
+feature vectors through the \verb+TrainingSet+/\verb+TrainingSample+ class pair,
+which, as a result, store mean vectors (clusters) for our training models.
+
+In the Neural Network we use XML. The only reason XML and text files
+have been suggested is to allow us to easily modify values in
+a text editor and verify the data visually.
+
+In the Neural Network classification, we are using one net for
+all the speakers. We had thought that one net for each speaker
+would be ideal, but then we'll lose too much discrimination
+power. But doing this means that the net will need complete
+re-training for each new training utterance (or group thereof).
+
+We have a training/testing script that lists the location of all the wave files to
+be trained along with the identification of the speaker - \verb+testing.sh+.
+
+%All resulting vectors (and associated speakers) are appended to the \verb+training.set+ file.
+%Then the model is re-trained on whatever data needed and new models are dumped.
+
+%In the stochastic models, if we had them, the complete set of
+%utterances will be needed for the speaker to which the new
+%utterance(s) are being added, for mean and variance calculations. This
+%implies that all data needs storing.
+
+\input{training}
+
+\subsection{File Location}
+
+We decided to keep all the data and intermediate files in the same
+directory or subdirectories of that of the application.
+
+\begin{itemize}
+
+\item \verb+marf.Storage.TrainingSet.*+ - represent training sets
+	(global clusters) used in training with different preprocessing and feature extraction
+	methods; they can either be gzipped binary (.bin) or CSV text (.csv).
+
+\item \verb+speakers.txt.stats+ - binary statistics file.
+
+\item \verb+marf.Classification.NeuralNetwork.*.xml+ - XML file representing a trained
+	Neural Net for all the speakers in the database.
+
+\item \verb+training-samples/+ - directory with WAV files for training.
+
+\item \verb+testing-samples/+ - directory with WAV files for testing.
+
+\end{itemize}
+
+\subsection{Sample and Feature Sizes}
+
+Wave files are read and outputted as an array of
+data points that represents the waveform of the signal.
+
+Different methods will have different feature vector sizes.
+It depends on what kind of precision one desires.
+In the case of FFT, a 1024 FFT will result in 512 features,
+being an array of ``doubles'' corresponding to the frequency range.
+
+\cite{shaughnessy2000} said about using 3 ms for phoneme analysis and
+something like one second for general voice analysis.  At 8 kHz, 1024 samples
+represents 128 ms, this might be a good compromise.
+
+\subsection{Parameter Passing}
+
+A generic \verb+ModuleParams+ container class has been created to for an application
+to be able to pass module-specific parameters when
+specifying model files, training data,
+amount of LPC coefficients, FFT window size, logging/stats files, etc.
+
+\subsection{Result}
+
+When classification is over, its result should be stored somehow
+for further retrieval by the application. We have defined
+the \verb+Result+ object to carry out this task. It contains
+ID of the subject identified as well as some additional statistics
+(such as second closest speaker and distances from other speakers, etc.)
+
+\input{sampleloading}
+
+\input{sample-formats}
+
+% EOF

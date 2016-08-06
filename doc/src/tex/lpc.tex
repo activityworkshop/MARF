@@ -1,0 +1,75 @@
+\subsection{Linear Predictive Coding (LPC)}\label{sect:lpc}\index{LPC}
+
+This section presents implementation of the LPC Classification module.
+
+One method of feature extraction used in the {\marf} project was Linear
+Predictive Coding (LPC) analysis. It evaluates windowed sections of
+input speech waveforms and determines a set of coefficients
+approximating the amplitude vs. frequency function. This approximation
+aims to replicate the results of the Fast Fourier Transform yet only
+store a limited amount of information: that which is most valuable to
+the analysis of speech.
+
+\subsubsection{Theory}
+
+The LPC method is based on the formation of a spectral shaping filter,
+$H(z)$, that, when applied to a input excitation source, $U(z)$, yields a
+speech sample similar to the initial signal. The excitation source,
+$U(z)$, is assumed to be a flat spectrum leaving all the useful
+information in $H(z)$. The model of shaping filter used in most LPC
+implementation is called an ``all-pole'' model, and is as follows:
+
+$$ H(z) = \frac{G}{\left(1 - \displaystyle\sum_{k=1}^{p}(a_{k} z^{-k})\right)} $$
+
+Where $p$ is the number of poles used. A pole is a root of the
+denominator in the Laplace transform of the input-to-output
+representation of the speech signal.
+
+The coefficients $a_{k}$ are the final representation if the speech
+waveform. To obtain these coefficients, the least-square
+autocorrelation method was used. This method requires the use of the
+autocorrelation of a signal defined as:
+
+$$ R(k) = \displaystyle\sum_{m=k}^{n-1}(x(n) \cdot x(n-k)) $$
+
+where $x(n)$ is the windowed input signal.
+
+In the LPC analysis, the error in the approximation is used to derive
+the algorithm. The error at time n can be expressed in the following
+manner: $ e(n) = s(n) - \displaystyle\sum_{k=1}^{p}\left(a_{k} \cdot s(n-k)\right) $. Thusly,
+the complete squared error of the spectral shaping filter $H(z)$ is:
+
+$$ E = \displaystyle\sum_{n=-\infty}^{\infty}\left(x(n) - \displaystyle\sum_{k=1}^{p}(a_{k} \cdot x(n-k))\right) $$
+
+To minimize the error, the partial derivative $\frac{{\delta}E}{{\delta}a_{k}}$ is
+taken for each $k=1..p$, which yields $p$ linear equations of the form:
+
+$$ \displaystyle\sum_{n=-\infty}^{\infty}(x(n-i) \cdot x(n)) = \displaystyle\sum_{k=1}^{p}(a_{k} \cdot \displaystyle\sum_{n=-\infty}^{\infty}(x(n-i) \cdot x(n-k)) $$
+
+For $i=1..p$. Which, using the autocorrelation function, is:
+
+$$ \displaystyle\sum_{k=1}^{p}(a_{k} \cdot R(i-k)) = R(i) $$
+
+Solving these as a set of linear equations and observing that the
+matrix of autocorrelation values is a Toeplitz matrix yields the
+following recursive algorithm for determining the LPC coefficients:
+
+$$ k_{m} = \frac{\left(R(m) - \displaystyle\sum_{k=1}^{m-1}\left(a_{m-1}(k)R(m-k)\right)\right)}{E_{m-1}} $$
+
+$$ a_{m}(m) = k_{m} $$
+
+$$ a_{m}(k) = a_{m-1}(k) - k_{m} \cdot a_{m}(m-k) \mbox{ for } 1 \le k \le m-1\mbox{,} $$
+
+$$ E_{m} = (1 - k_{m}^2) \cdot E_{m-1} $$.
+
+This is the algorithm implemented in the {\marf} LPC module.
+
+\subsubsection{Usage for Feature Extraction}
+
+The LPC coefficients were evaluated at each windowed iteration,
+yielding a vector of coefficient of size $p$. These coefficients were
+averaged across the whole signal to give a mean coefficient vector
+representing the utterance. Thus a $p$ sized vector was used for
+training and testing. The value of $p$ chosen was based on tests given
+speed vs. accuracy. A $p$ value of around 20 was observed to be accurate and
+computationally feasible.

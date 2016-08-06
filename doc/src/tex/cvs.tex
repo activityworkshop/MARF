@@ -1,0 +1,82 @@
+The {\marf} source code is stored and managed using the
+CVS code management system at SourceForge.
+Anonymous CVS
+is available to pull the CVS code tree from the
+{\marf} package to your local machine.
+
+\section{Getting The Source Via Anonymous CVS}
+
+If you would like to keep up with the current sources on a regular
+basis, you can fetch them from SourceForge's CVS server
+and then use CVS to
+retrieve updates from time to time.
+
+\begin{itemize}
+\item
+     You will need a local copy of CVS
+     (Concurrent Version Control System), which you can get from
+     \verb+<http://www.cvshome.org/>+ or
+     any GNU software archive site. There is also WinCVS and
+     CVS mode built in JBulider if you plan to use these products
+     on Win32 platforms.
+
+\item
+     Do an initial login to the CVS server:
+
+\begin{verbatim}
+cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/marf login
+\end{verbatim}
+
+     You will be prompted for a password; just press ENTER.
+     You should only need to do this once, since the password will be
+     saved in \verb+.cvspass+ in your home directory.
+
+\item
+     Fetch the {\marf} sources:
+
+\begin{verbatim}
+cvs -z3 -d:pserver:anonymous@cvs.sf.net:/cvsroot/marf co -P marf
+\end{verbatim}
+
+     which installs the {\marf} sources into a
+     subdirectory \verb+marf+
+     of the directory you are currently in.
+
+     If you'd like to download sample applications which use {\marf}:
+
+\begin{verbatim}
+cvs -z3 -d:pserver:anonymous@cvs.sf.net:/cvsroot/marf co -P apps
+\end{verbatim}
+
+
+\item
+     Whenever you want to update to the latest CVS sources,
+     \verb+cd+ into
+     the \verb+marf+ or \verb+apps+ subdirectories, and issue
+
+\begin{verbatim}
+cvs -z3 update -d -P
+\end{verbatim}
+
+     This will fetch only the changes since the last time you updated.
+
+\item
+     You can save yourself some typing by making a file \verb+.cvsrc+
+     in your home directory that contains
+
+\begin{verbatim}
+cvs -z3
+update -d -P
+\end{verbatim}
+
+     This supplies the \verb+-z3+ option to all \verb+cvs+ commands, and the
+     \verb+-d+ and \verb+-P+ options to \verb+cvs update+.  Then you just have
+     to say
+
+\begin{verbatim}
+cvs update
+\end{verbatim}
+
+     to update your files.
+
+\end{itemize}

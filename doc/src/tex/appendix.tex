@@ -1,0 +1,82 @@
+\appendix
+
+\chapter{Spectrogram Examples}
+\label{appx:spectra}
+
+$Revision: 1.14 $
+
+As produced by the \api{Spectrogram} class.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=500pt]{../graphics/lpc_spectrograms/ian15_wav.png}
+	\caption{LPC spectrogram obtained for ian15.wav}
+	\includegraphics[width=500pt]{../graphics/lpc_spectrograms/graham13_wav.png}
+	\caption{LPC spectrogram obtained for \file{graham13.wav}}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{MARF Source Code}
+
+You can download
+the code from \verb+<http://marf.sourceforge.net>+, specifically:
+
+\begin{itemize}
+	\item The latest unstable version:\\\verb+<http://marf.sourceforge.net/marf.tar.gz>+
+	\item Browse code and revision history online:\\\verb+<http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/marf/>+
+\end{itemize}
+
+API documentation in the HTML format can be found in the documentation
+distribution, or for the latest version please consult:
+\verb+<http://marf.sourceforge.net/api/>+. If you want to participate
+in development, there is a developers version of the API:
+\verb+<http://marf.sourceforge.net/api-dev/>+, which includes
+all the private constructs into the docs as well.
+
+The current development version can also be retrieved via \tool{CVS}. The
+process outlined in \xa{appx:cvs}.
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{The CVS Repository}
+\label{appx:cvs}
+
+\input{cvs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{\api{SpeakerIdentApp} and \api{SpeakersIdentDb} Source Code}
+
+\section{\texttt{SpeakerIdentApp.java}}
+
+\vspace{15pt}
+\hrule
+{\scriptsize \input{SpeakerIdentApp}}
+\hrule
+\vspace{15pt}
+
+\section{\texttt{SpeakersIdentDb.java}}
+
+\vspace{15pt}
+\hrule
+{\scriptsize \input{SpeakersIdentDb}}
+\hrule
+\vspace{15pt}
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{TODO}
+\label{appx:todo}
+
+\vspace{15pt}
+\hrule
+{\scriptsize \input{TODO}}
+\hrule
+\vspace{15pt}
+
+% EOF

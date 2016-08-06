@@ -1,0 +1,75 @@
+\section{MARF Source Code}
+\index{MARF!Source Code}
+
+$Revision: 1.8 $
+
+\subsection{Project Source and Location}
+\index{MARF!Project Location}
+
+Our project since the its inception has always been an open-source project.
+All releases including the most current one should most of the time be
+accessible via \verb+<http://marf.sourceforge.net>+ provided by \texttt{SourceForge.net}.
+We have a complete API documentation as well as this manual and all the sources
+available to download through this web page.
+
+\subsection{Formatting}
+\index{MARF!source code formatting}
+\index{Source code formatting}
+
+Source code formatting uses a 4 column tab spacing, currently with
+tabs preserved (i.e. tabs are not expanded to spaces).
+
+For Emacs, add the following (or something similar)
+to your \file{\~/.emacs}
+initialization file:
+
+\begin{verbatim}
+;; check for files with a path containing "marf"
+(setq auto-mode-alist
+  (cons '("\\(marf\\).*\\.java\\'" . marf-java-mode)
+        auto-mode-alist))
+(setq auto-mode-alist
+  (cons '("\\(marf\\).*\\.java\\'" . marf-java-mode)
+        auto-mode-alist))
+
+(defun marf-java-mode ()
+  ;; sets up formatting for MARF Java code
+  (interactive)
+  (java-mode)
+  (setq-default tab-width 4)
+  (java-set-style "bsd")      ; set java-basic-offset to 4, etc.
+  (setq indent-tabs-mode t))  ; keep tabs for indentation
+\end{verbatim}
+
+For \tool{vim}, your
+\file{\~/.vimrc} or equivalent file should contain
+the following:
+
+\begin{verbatim}
+set tabstop=4
+\end{verbatim}
+
+    or equivalently from within vim, try
+
+\begin{verbatim}
+:set ts=4
+\end{verbatim}
+
+    The text browsing tools \tool{more} and
+    \tool{less} can be invoked as
+
+\begin{verbatim}
+more -x4
+less -x4
+\end{verbatim}
+
+
+\subsection{Coding and Naming Conventions}
+\index{MARF!Coding Conventions}
+\index{Coding and Naming Conventions}
+
+For now, please see \texttt{http://marf.sf.net/coding.html}.
+
+{\todo}
+
+% EOF

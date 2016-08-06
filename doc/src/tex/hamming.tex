@@ -1,0 +1,53 @@
+\subsection{Hamming Window}
+\index{Hamming Window}
+
+$Revision: 1.13 $
+
+\subsubsection{Implementation}
+\index{Hamming Window!Implementation}
+
+The Hamming Window implementation in {\marf} is in the
+\api{marf.math.Algortithms.Hamming} class as of
+version 0.3.0-devel-20050606 (a.k.a 0.3.0.2).
+
+\subsubsection{Theory}
+\index{Hamming Window!Theory}
+
+In many DSP techniques, it is necessary to consider a smaller portion of the
+entire speech sample rather than attempting to process the entire sample at
+once.  The technique of cutting a sample into smaller pieces to be considered
+individually is called ``windowing''.  The simplest kind of window to use is
+the ``rectangle'', which is simply an unmodified cut from the larger sample.
+
+$$
+r(t) =
+\left\{
+{
+	\begin{array}{ll}
+		1 & \mbox{ for } (0 \le t \le N-1) \\
+		0 & \mbox{ otherwise }
+	\end{array}
+}
+\right.
+$$
+
+Unfortunately, rectangular windows can introduce errors, because near the edges
+of the window there will potentially be a sudden drop from a high amplitude
+to nothing, which can produce false ``pops'' and ``clicks'' in the analysis.
+
+A better way to window the sample is to slowly fade out toward the edges, by
+multiplying the points in the window by a ``window function''.  If we take
+successive windows side by side, with the edges faded out, we will distort
+our analysis because the sample has been modified by the window function.
+To avoid this, it is necessary to overlap the windows so that all points in
+the sample will be considered equally.  Ideally, to avoid all distortion, the
+overlapped window functions should add up to a constant.  This is exactly what
+the Hamming window does.  It is defined as:
+
+$$ x = 0.54 - 0.46 \cdot \cos\left(\frac{2 \pi n}{l-1}\right) $$
+
+\noindent
+where $x$ is the new sample amplitude, $n$ is the index into the window, and $l$ is
+the total length of the window.
+
+% EOF

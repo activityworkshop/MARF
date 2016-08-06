@@ -1,0 +1,126 @@
+%
+% My own commands, commands adapted from Joey Paquet and Peter Grogono
+% Serguei Mokhov, mokhov@cs.concordia.ca
+%
+% $Id: styles.tex,v 1.4 2005/07/03 22:59:15 mokhov Exp $
+%
+
+\newcommand{\marf}{\textsf{MARF}}
+
+
+% Cross-reference commands.
+% Per Dr. Grogono and my own self.
+\newcommand{\xf}[1]{Figure~\ref{#1}}
+\newcommand{\xp}[1]{page~\pageref{#1}}
+\newcommand{\xs}[1]{Section~\ref{#1}}
+\newcommand{\xa}[1]{Appendix~\ref{#1}}
+\newcommand{\xc}[1]{Chapter~\ref{#1}}
+\newcommand{\xt}[1]{Table~\ref{#1}}
+
+%\newcommand{\bestscore}[1]{$#1\%$}
+\newcommand{\bestscore}[1]{\textsf{{\large #1\%}}}
+
+%
+% Abbrs
+%
+
+\newcommand{\rpc}{{RPC\index{RPC}}}
+\newcommand{\rmi}{{RMI\index{RMI}}}
+\newcommand{\gnu}{{GNU\index{GNU}}}
+\newcommand{\tcpip}{{TCP/IP\index{TCP/IP}}}
+\newcommand{\gipsy}{{GIPSY\index{GIPSY}}}
+
+%
+% The Imperatives
+%
+
+\newcommand{\C}{{C\index{C}}}
+\newcommand{\cpp}{{C++\index{C++}}}
+\newcommand{\perl}{{Perl\index{Perl}}}
+\newcommand{\java}{{Java\index{Java}}}
+\newcommand{\python}{{Python\index{Python}}}
+
+%
+% The Functionals
+%
+
+\newcommand{\lisp}{{LISP\index{LISP}}}
+\newcommand{\scheme}{{Scheme\index{Scheme}}}
+\newcommand{\haskell}{{Haskell\index{Haskell}}}
+
+%
+% Util
+%
+
+\newcommand{\tab}[1]{\hspace{#1pt}}
+
+\newcommand{\shrule}[0]{\vspace{3pt}\hrule\vspace{6pt}}
+\newcommand{\ehrule}[0]{\vspace{6pt}\hrule\vspace{3pt}}
+
+\newcommand{\nonterminal}[1]{$\mathtt{<\!\!#1\!\!>}$}
+
+\newcommand{\source}[1]
+{
+	{\shrule}
+	\scriptsize
+	#1
+	\normalsize
+	\hrule
+}
+
+\newcommand{\sourcefloat}[3]
+{
+	\begin{figure}[t]
+	\begin{centering}
+	\begin{minipage}[b]{0.5\textwidth}
+	\source{#1}
+	\end{minipage}
+	\caption{\small{#3}}
+	\label{#2}
+	\end{centering}
+	\end{figure}
+}
+
+\newcommand{\todo}[0]
+{
+	{\Large \[TODO\]}
+}
+
+\newcommand{\file}[1]{\texttt{#1}\index{Files!#1}}
+\newcommand{\tool}[1]{\texttt{#1}\index{Tools!#1}}
+\newcommand{\api}[1]{\texttt{#1}\index{API!#1}}
+
+%
+% Def
+%
+
+\newcommand{\statement}[2]
+{
+	\vspace{7pt}
+	\shrule
+	{\bf #1}
+
+	#2
+	\ehrule
+	\vspace{7pt}
+}
+
+\newcommand{\proposition}[2]
+{
+	\statement{Proposition #1}{#2}
+}
+
+\newcommand{\definition}[2]
+{
+	\statement{Definition #1}{#2}
+}
+
+\newcommand{\axiom}[2]
+{
+	\statement{Axiom #1}{#2}
+}
+
+\newcommand{\theorem}[2]
+{
+	\statement{Theorem #1}{#2}
+}

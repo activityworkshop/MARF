@@ -1,0 +1,50 @@
+\begin{verbatim}
+Usage:
+  java SpeakerIdentApp --train <samples-dir> [options]        -- train mode
+                       --single-train <sample> [options]      -- add a single sample to the training set
+                       --ident <sample> [options]             -- identification mode
+                       --batch-ident <samples-dir> [options]  -- batch identification mode
+                       --stats                                -- display stats
+                       --best-score                           -- display best classification result
+                       --reset                                -- reset stats
+                       --version                              -- display version info
+                       --help | -h                            -- display this help and exit
+
+Options (one or more of the following):
+
+Preprocessing:
+
+  -raw          - no preprocessing
+  -norm         - use just normalization, no filtering
+  -low          - use low-pass filter
+  -high         - use high-pass filter
+  -boost        - use high-frequency-boost preprocessor
+  -band         - use band-pass filter
+  -endp         - use endpointing
+
+Feature Extraction:
+
+  -lpc          - use LPC
+  -fft          - use FFT
+  -minmax       - use Min/Max Amplitudes
+  -randfe       - use random feature extraction
+  -aggr         - use aggregated FFT+LPC feature extraction
+
+Classification:
+
+  -nn           - use Neural Network
+  -cheb         - use Chebyshev Distance
+  -eucl         - use Euclidean Distance
+  -mink         - use Minkowski Distance
+  -diff         - use Diff-Distance
+  -randcl       - use random classification
+
+Misc:
+
+  -debug        - include verbose debug output
+  -spectrogram  - dump spectrogram image after feature extraction
+  -graph        - dump wave graph before preprocessing and after feature extraction
+  <integer>     - expected speaker ID
+
+
+\end{verbatim}

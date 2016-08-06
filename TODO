@@ -1,0 +1,572 @@
+MARF TODO/Wishlist
+------------------
+
+$Header: /cvsroot/marf/marf/TODO,v 1.72 2006/02/19 20:32:26 mokhov Exp $
+
+Legend:
+-------
+
+"-"  -- TODO
+"*"  -- done (for historical records)
+"+-" -- somewhat done ("+" is degree of completed work, "-" remaining).
+"?"  -- unsure if feature is needed or how to proceed about it or it's potentially far away
+
+
+THE APPS
+
+- SpeakerIdentApp
+  - GUI
+  - Real-Time recording and recognition (does it belong here?)
+  - Move dir. read from the app to MARF in training section {0.3.0}
+  - Enhance batch recognition (do not re-load training set per sample) {0.3.0}
+  - Enhance Option Processing
+    * Make use of OptionProcessor {0.3.0.5}
+    - Enhance options with arguments, e.g. -fft=1024, -lpc=40, -lpc=40,256, keeping the existing defaults
+    - Add options:
+      * --batch-ident option {0.3.0.5}
+      - -data-dir=DIRNAME other than default to specify a dir where to store training sets and stuff
+      - -mink=r
+      - -fft=x,y
+      - -lpc=x,y
+      * single file training option {0.3.0.5}
+      - Dump stats: -classic -latex -csv
+  +- Make binary/optimized distro
+  - Generate data.tex off speakers.txt in the manual.
+  +---- Convert testing.sh to Java
+  - Open up -randcl with -nn
+  * Finish testing.bat
+  * Make executable .jar
+  * Improve on javadoc
+  * ChangeLog
+  * Sort the stats
+  * Add classification methods to training in testing.sh
+  * Implement batch plan execution
+
+- LangIdentApp
+  * Integrate
+  - Add GUI
+  * Make executable .jar
+  - Release.
+
+- ProbabilisticParsingApp
+  * Integrate
+  - Add GUI
+  * Make executable .jar
+  - Release.
+
+- ZipfLawApp
+  * Integrate
+  - Add GUI
+  * Make executable .jar
+  - Release.
+
+- TestFilters
+  - The application has already a Makefile and a JBuilder project file.
+    We would want to add a NetBeans project as well.
+  - Add GUI
+  * Release.
+  * It only tests HighFrequencyBoost, but we also have BandpassFilter,
+    HighPassFilter, and LowPassFilter.
+    These have to be tested.
+  * The output of every filter will have to be stored in a expected
+    (needs to be created) folder for future regression testing. Like
+    with TestMath.
+  * Option processing has to be done and standartized
+    by using marf.util.OptionProcessor uniformly in all apps. But we can
+    begin with this one. The options then would be: --high, --low, --band,
+    and --boost that will correspond to the appropriate filters I mentioned.
+  * The exception handling has to be augmented to print the error message
+    and the stack trace to System.err.
+  * Apply coding conventions to naming variables, etc.
+  * Make executable .jar
+
+- TestNN
+  * Fix to work with new MARF API
+  * Add use of OptionProcessor
+  * Apply coding conventions
+  - Add GUI
+  * Make executable .jar
+  - Release.
+
+- TestLPC
+  - Add GUI
+  * Release.
+  * Fix to work with new MARF API
+  * Add use of OptionProcessor
+  * Apply coding conventions
+  * Make executable .jar
+
+- TestFFT
+  - Add GUI
+  * Release.
+  * Make executable .jar
+  * Fix to work with new MARF API
+  * Add use of OptionProcessor
+  * Apply coding conventions
+
+- MathTestApp
+  - Add GUI
+  * Release.
+  * Make executable .jar
+
+- TestWaveLoader
+  - Add GUI
+  * Release.
+  * Fix to work with new MARF API
+  * Apply coding conventions
+  * Make executable .jar
+
+- TestLoaders
+  - Add GUI
+  * Create a-la TestFilters with option processing.
+  * Make executable .jar
+  * Release.
+
+- Regression
+  - one script calls all the apps and compares new results vs. expected
+  - Matrix ops
+  +- Fix TestNN
+  - Add GUI
+  * Make executable .jar
+  - Release.
+
+- Graph % vs. # of samples used per method
+
+- Release all apps as packages at Source Forge
+  ++- Bundle
+  ++- Individually
+
+- SpeechRecognition
+  - Define
+
+- InstrumentIdentification
+  - Define
+
+- EmotionDetection
+  - Define
+
+
+THE BUILD SYSTEM
+
+  - Perhaps at some point we'd need make/project files for other Java IDEs, such as
+    - IBM Visual Age
+    - Ant
+    - Windoze .bat file(s)?
+    * Sun NetBeans
+  * A Makefile per directory
+  * Make utility detection test
+  * global makefile in /marf
+  * fix doc's global makefile
+  * Global Makefile for apps
+    (will descend to each dir and build all the apps.)
+  * Build and package distrubution
+    * MARF
+    * App
+
+
+DISTROS
+
+  * Apps jars
+  - Different JDKs (1.4/1.5)
+  - rpm
+    - FC
+    - Mandrake
+    - RH
+  - deb
+  - dmg
+  - iso
+
+
+THE FRAMEWORK
+
+- All/Optimization/Testing
+
+  - Implement text file support/toString() method for
+    all the modules for regression testing
+
+  - Threading and Parallelism
+    - PR and FE are safe to run in ||
+    - Fix NNet for ArrayLists->Vector
+
+  ++--- Adopt JUnit
+
+  +- Use of StringBuffer for String concatenation
+
+  * Implement getMARFSourceCodeRevision() method for CVS revision info.
+
+
+- Preprocessing
+
+  +- Make dump()/restore() to serialize filtered output {0.3.0}
+  - Fix hardcoding of filter boundaries
+  - Implement
+    - Enable changing values of frequency boundaries and coeffs. in filters by an app.
+    - "Compressor" [steve]
+    - Methods:  {1.0.0}
+      - removeNoise()
+      - removeSilence()
+      - cropAudio()
+    - streamed normalization
+    * Endpoint {0.3.0.5}
+    * High-pass filter with high-frequency boost together {0.3.0}
+    * Band-pass Filter {0.2.0}
+  * Move BandpassFilter and HighFrequencyBoost under FFTFilter package with CVS comments
+  * Tweak the filter values of HighPass and HighFrequencyBoost filters
+
+
+- Feature Extraction
+
+  - Make modules to dump their features for future use by NNet and maybe others {0.3.0}
+  - Implement {1.0.0}
+    - F0
+      - fundamental frequency estimation,
+        providing us with a few more features.
+    - Cepstral Analysis
+    - Segmentation
+    * RandomFeatureExtraction {0.2.0}
+  - Enhance
+    - MinMaxAmplitudes to pick different features, not very close to each other
+
+- Classification
+
+  - Implement
+    +++-- Mahalanobis Distance {0.3.0}
+      - Learning Covariance Matrix
+    - Stochastic [serge] {1.0.0}
+      - Gaussian Mixture Models
+      - Hidden Markov Models {1.0.0}
+    - SimilarityClassifier {0.3.0}
+      ? Boolean Model
+      ? Vector Space Model
+      ? sine similarity model
+    * Minkowski's Distance {0.2.0}
+    * RandomClassification {0.2.0}
+
+  - Fully Integrate
+    +- MaxProbabilityClassifier
+      - Push StatisticalEstimator to Stochastic
+    +- ZipfLaw
+
+  - Fix and document NNet {0.*.*}
+    - add % of correct/incorrect expected to train() {0.3.0}
+    - ArrayList ---> Vector, because ArrayList is NOT thread-safe {0.3.0}
+    - Second Best (by doubling # of output Neurons with the 2nd half being the 2nd ID)
+    +- Epoch training
+    * dump()/retore() {0.2.0}
+
+  - Distance Classifiers
+    - make distance() throw an exception maybe?
+    * Move under Distance package
+    * DiffDistance
+
+- Sample Loaders
+
+  - Create Loaders for Java-supported formats:
+    +--- AIFC
+    +--- AIFF
+    +--- AU
+    +--- SND
+  +--- Add MIDI support
+  * Create MARFAudioFileFormat extends AudioFileFormat
+  * Enumerate all types in addition to ours from FileAudioFormat.Types
+
+- marf.speech package
+  - Recognition (stt)
+  - Dictionaries
+  - Generation (tts)
+
+
+- NLP package
+  ++++- Integrate
+    +- Classification
+    - Potter's Stemmer
+    * Stats
+    * Storage management
+    * StatisticalEstimators
+    * NLP.java
+    * Parsing
+    * Util
+    * Collocations
+
+? Integrate AIMA stuff
+
+
+- Stats {0.3.0}
+
+  - Move stats collection from the app and other places to StatsCollector
+  - Timing
+  - Batch progress report
+  - Rank results
+  - Results validation (that numbers add up properly e.g. sum of BAD and GOOD should be equal to total)
+
+
+- Algos
+
+  +- Algorithm decoupling to marf.algos or marf.algorithms or ... {0.4.0}
+    * To marf.math.Algorithms {0.3.0}
+  - marf.algos.Search
+  - marf.util.DataStructures -- Node / Graph --- to be used by the networks and state machines
+  * move out hamming() from FeatureExtraction
+
+
+* marf.math
+
+  * Integrate Vector operations
+  * Matrix:
+    * Add {0.3.0.3}
+      * translate
+      * rotate
+      * scale
+      * shear
+
+
+- GUI {0.5.0}
+
+  - Make them actual GUI components to be included into App
+    - Spectrogram
+      +----- Implement SpectrogramPanel
+      - Draw spectrogram on the panel
+      * Fix filename stuff (module_dirname to module_filename)
+    - WaveGrapher
+      +----- Implement WaveGrapherPanel
+      - Draw waves on the panel
+  - Fix WaveGrapher
+    - Sometimes dumps files of 0 length
+    - Make it actually ouput PPM or smth like that (configurable?)
+    - Too huge files for samp output.
+    - Have LPC understand it
+  - Config tool
+  - Web interface?
+
+
+- MARF.java
+
+  - Concurrent use of modules of the same type
+    - FFT and F0 can both be applied like normalization and filtering
+  - Implement
+    - streamedRecognition()
+    +- train()
+       - Add single file training
+    - Inter-module compatibility (i.e. specific modules can only work
+      with some other specific modules and not the others)
+      - Module Compatibility Matrix
+      - Module integer and String IDs
+  - Server Part {2.0.0}
+  * enhance error reporting
+  * Embed the NLP class
+
+
+* MARF Exceptions Framework {0.3.0}
+  * Propagate to NLP properly
+    * NLPException
+  * StorageException
+  * Have all marf exceptions inherit from util.MARFException
+
+
+- marf.util
+
+  - complete and document
+    +- Matrix
+    +- FreeVector
+    * Arrays
+    * Debug
+  ? PrintFactory
+    - Move NeuralNetowork.indent()
+  ? marf.util.upgrade
+  * OptionProcessor
+    * Integrate {0.3.0.2}
+    * Add parsing of "name=value" options {0.3.0.3}
+  * Add marf.util.Debug module. {0.3.0.2}
+    * marf.util.Debug.debug()
+    * Replicate MARF.debug() --> marf.util.Debug.debug()
+
+
+- Storage
+
+  - ModuleParams:
+    - have Hashtables instead of Vectors
+      to allow params in any order and in any number.
+    - maybe use OptionProcessor or be its extension?
+  - Keep all data files under marf.data dir, like training sets, XML, etc {0.3.0}
+  - Implement
+    - Schema (as in DB for exports)
+      - Common attribute names for
+        - SQL
+        - XML
+        - HTML
+        - CSV
+      - Metadata / DDL
+    - Dump/Restore Types
+      +++- DUMP_BINARY (w/o compression) {0.3.0}
+      - DUMP_XML {?.?.?}
+      - DUMP_CSV {?.?.?}
+      - DUMP_HTML {?.?.?}
+      - DUMP_SQL {?.?.?}
+  +- Revise TrainingSet stuff
+    ? Cluster mode vs. feature set mode
+    - TrainingSet
+      - upgradability {?.?.?}
+      - convertability: gzbin <-> bin <-> csv <-> xml <-> html <-> sql
+  +--- Add FeatureSet {0.3.0}
+  - Revise dump/restore implementation to check for unnecessary
+    file writes
+  * Integrate IStorageManager
+  * Move DUMP_* flags up to IStorageManager
+  * Add re-implemented StorageManager and integrate it
+
+
+- The MARF Language
+  - A meta language to write MARF applications in a script/shell-like
+    manner along the lines of:
+      MARF:
+      {
+         use normalization;
+         use FFT 1024;
+         use NeuralNetwork;
+         use WAVLoader 8000 1 mono;
+         pipeline start on dir /var/data/sammple;
+         print stats paged 10;
+      }
+  - Fully define syntax
+  - Complete compiler
+    - grammar file
+    - semantic analysis
+    - code generator
+
+
+* Clean up
+  * CVS:
+    ? Rename /marf/doc/sgml to /marf/doc/styles
+    x Remove /marf/doc/styles/ref
+    * Remove --x permissions introduced from windoze in files:
+      * /marf/doc/src/tex/sampleloading.tex
+      * /marf/doc/src/graphics/*.png
+      * /marf/doc/src/graphics/arch/*.png
+      * /marf/doc/src/graphics/fft_spectrograms/*.ppm
+      * /marf/doc/src/graphics/lpc_spectrograms/*.ppm
+      * /marf/doc/arch.mdl
+      * /marf/src/marf/Classification/Distance/EuclideanDistance.java
+      * /marf/src/marf/Preprocessing/FFTFilter.java
+      * /apps/SpeakerIdentApp/SpeakerIdentApp.jpx
+      * /apps/SpeakerIdentApp/testing-samples/*.wav
+      * /apps/SpeakerIdentApp/testing-samples/*.wav
+      * /apps/TestFilters/TestFilters.*
+    * Add NLP revisions directly to the CVS (by SF staff)
+      * Parsing
+      * Stemming
+      * Collocations
+    * Move distance classifiers with CVS log
+      to Distance
+    * remove uneeded attics and corresponding dirs
+      * "Ceptral"
+      * Bogus samples
+
+
+THE CODE
+
+* Define coding standards
++++- Propagate them throughout the code
+* Document
+
+
+THE SAMPLE DATABASES
+
+- /samples/ -- Move all wav and corpora files there from apps
+  - WAV/
+    - training-samples/
+    - testing-samples/
+    - README
+    - speakers.txt
+    - <training-sets>
+
+  - corpora/
+    - training/
+      - en/
+      - fr/
+      - ru/
+      - ...
+    - testing/
+      - en/
+      - fr/
+      - ru/
+      - ...
+    - heldout/
+    - README
+    - <training-sets>
+
+- Make releases
+
+
+THE TOOLS
+
+* Add module
+
+- Add tools:
+  - marfindent
+  * stats2latex
+  * cvs2cl
+  * cvs2html
+
+- upgrade/
+  - MARFUpgrade.java
+    - an app or a marf module?
+    - cmd-line?
+    - GUI?
+    - Interactive?
+  - v012/TrainingSet.java
+  - v020/TrainingSet.java
+         FeatureSet.java
+
+
+THE DOCS
+
+- docs [s]
+  - report.pdf -> manual.pdf
+  - autosync from the report
+    - history.tex -> HISTORY
+    - legal.tex -> COPYRIGHT
+    - installation.tex -> INSTALL
+  - Arch Update [serge]
+    +- gfx model (rr)
+      - add util package
+      - add math package
+      - add nlp package
+      * gui: add StorageManager
+    * update doc
+    * newer images
+  - MARF-specific exceptions
+  - Account for dangling .tex files
+    - old-results.tex
+    - output.tex
+    * installation.tex
+    * training.tex
+    * sample-formats.tex
+    * cvs.tex
+    * history.tex
+    * f0.tex
+    * notation.tex
+    * sources.tex
+  +++- better doc format and formulas
+  - Results:
+    - Add modules params used, like r=6 in Minkowski, FFT input 1024, etc
+    - Add time took
+  * fix javadoc 1.4/1.5 warnings
+  * fix Appendix
+  * split-out bibliography
+  * index
+  * ChangeLog
+  * report components [serge]
+
+- web site
+  - Publish
+    * TODO
+    +- ChanageLog
+      * Raw
+      - HTML
+    - Manual
+      - Add HTML
+  * Add training sets
+  * CVS
+  * autoupdate from CVS
+
+EOF

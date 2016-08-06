@@ -1,0 +1,36 @@
+\begin{verbatim}
+
+Usage:
+
+  java TestLoaders --help | -h
+
+     displays usage information and exits
+
+  java TestLoaders --version
+
+     displays TestLoaders version and MARF's version and exits
+
+  java TestLoaders <LOADER> [ <input-sound-sample> ] [ <output-sound-sample> [ <output-txt-sample> ] ]
+
+     selects a loader from various of loaders according to the LOADER option
+     and then loads a corresponding type of sample from
+     the <input-sound-sample> file and stores the output sound sample in
+     <output-sound-sample> and its textual equivalent is stored in <output-txt-sample>.
+     If the second argument if omitted, the output file name is
+     assumed to be "out.<input-sound-sample>". Likewise,
+     if the third argument omitted, the output file name is
+     assumed to be "<output-sound-sample>.txt".
+
+  Where LOADER is one of the following:
+
+     --sine    use SineLoader (generated sine wave)
+     --wave    use WAVLoader; requires a <input-sound-sample> argument
+     --mp3     use MP3Loader; requires a <input-sound-sample> argument
+     --ulaw    use ULAWLoader; requires a <input-sound-sample> argument
+     --aiff    use AIFFLoader; requires a <input-sound-sample> argument
+     --aiffc   use AIFFCLoader; requires a <input-sound-sample> argument
+     --au      use AULoader; requires a <input-sound-sample> argument
+     --snd     use SNDLoader; requires a <input-sound-sample> argument
+     --midi    use MIDILoader; requires a <input-sound-sample> argument
+
+\end{verbatim}

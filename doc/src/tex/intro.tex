@@ -1,0 +1,165 @@
+\chapter{Introduction}
+\index{MARF!Introduction}
+
+$Revision: 1.22 $
+
+\section{What is MARF?}
+
+{\marf} stands for {\bf M}odular {\bf A}udio {\bf R}ecognition {\bf F}ramework.
+It contains a collection of algorithms for Sound, Speech, and Natural Language
+Processing arranged into an uniform framework to facilitate addition of new
+algorithms for preprocessing, feature extraction, classification, parsing, etc.
+implemented in Java.
+{\marf} is also a research platform for various performance metrics of the
+implemented algorithms.
+
+\subsection{Purpose}
+\index{MARF!Purpose}
+
+Our main goal is to build a general open-source framework to allow developers in the
+audio-recognition industry (be it speech, voice, sound, etc.) to choose and apply various methods,
+contrast and compare them, and use them in their applications. As a proof of concept, a
+user frontend application for Text-Independent (TI) Speaker Identification has
+been created on top of the framework (the \api{SpeakerIdentApp} program). A variety
+of testing applications and applications that show how to use various aspects of {\marf}
+are also present. A new recent addition is some (highly) experimental NLP support, which is also
+included in {\marf} as of 0.3.0-devel-20050606 (0.3.0.2). For more information on applications
+that employ {\marf} see \xc{chapt:apps}.
+
+\subsection{Why {\java}?}
+
+We have chosen to implement our project using the Java programming language. This
+choice is justified by the binary portability of the Java applications as well as
+facilitating memory management tasks and other issues, so we can concentrate more on
+the algorithms instead. Java also provides
+us with built-in types and data-structures to manage
+collections (build, sort, store/retrieve) efficiently \cite{javanuttshell}.
+
+\input{notation}
+
+\section{Authors, Contact, and Copyright Information}
+\index{MARF!Contact}
+\index{MARF!Copyright}
+
+\input{legal}
+
+\subsection{Authors}
+\index{MARF!Authors}
+
+\noindent
+Authors Emeritus, in alphabetical order:
+\index{MARF!Authors Emeritus}
+
+\begin{itemize}
+	\item Ian Cl\'ement, \url{iclement@users.sourceforge.net}
+	\item Serguei Mokhov, \url{mokhov@cs.concordia.ca}, a.k.a Serge
+	\item Dimitrios Nicolacopoulos, \url{pwrslave@users.sourceforge.net}, a.k.a Jimmy
+	\item Stephen Sinclair, \url{radarsat1@users.sourceforge.net}, a.k.a. Steve, radarsat1
+\end{itemize}
+
+\noindent
+Contributors:
+\index{MARF!Contributors}
+
+\begin{itemize}
+	\item Shuxin Fan, \url{fshuxin@gmail.com}, a.k.a Susan
+\end{itemize}
+
+\noindent
+Current maintainers:
+\index{MARF!Current maintainers}
+
+\begin{itemize}
+	\item Serguei Mokhov, \url{mokhov@cs.concordia.ca}
+\end{itemize}
+
+\noindent
+If you have
+some suggestions, contributions to make, or for bug reports, don't
+hesitate to contact us :-)
+For {\marf}-related issues please contact us at \url{marf-devel@lists.sf.net}.
+Please report bugs to \url{marf-bugs@lists.sf.net}.
+
+%
+%
+%
+
+\input{history}
+
+%
+%
+%
+
+\input{sources}
+
+%
+%
+%
+
+\section{Versioning}
+\index{Versioning}
+\index{MARF!Versioning}
+
+This section attempts to clarify versioning scheme employed
+by the {\marf} project for stable and development releases.
+
+In the 0.3.0 series a four digit version number was introduced
+like 0.3.0.1 or 0.3.0.2 and so on. The first digit indicates
+a {\em major version}. This typically indicates a significant
+coverage of implementations of major milestones and improvements,
+testing and quality validation and verification to justify a major
+release. The {\em minor version} has to do with some smaller
+milestones achieved throughout the development cycles.
+It is a bit subjective of what the minor and major version bumps are, but
+the TODO list in \xa{appx:todo} sets some tentative milestones
+to be completed at each minor or major versions. The {\em revision}
+is the third digit is typically applied to stable releases if there
+are a number of critical bug fixes in the minor release, it's revision
+is bumped. The last digit represents the {\em minor revision} of the
+code release. This is typically used throughout development releases
+to make the code available sooner for testing. This notion was first
+introduced in 0.3.0 to count sort of increments in {\marf} development,
+which included bug fixes from the past increment and some chunk of new
+material. Any bump of major, minor versions, or revision, resets the
+minor revision back to zero. In the 0.3.0-devel release series these
+minor revisions were publicly displayed as dates (e.g. 0.3.0-devel-20050817)
+on which that particular release was made.
+
+All version as of 0.3.0 can be programmatically queried for
+and validated against. In 0.3.0.5, a new \api{Version} class
+was introduced to encapsulate all versioning information and
+some validation of it to be used by the applications.
+
+\begin{itemize}
+\item
+	the major version can be obtained from \api{marf.MARF.MAJOR\_VERSION}
+	and \api{marf.Version.MAJOR\_VERSION} where as of 0.3.0.5 the former
+	is an alias of the latter
+
+\item
+	the minor version can be obtained from \api{marf.MARF.MINOR\_VERSION}
+	and \api{marf.Version.MINOR\_VERSION} where as of 0.3.0.5 the former
+	is an alias of the latter
+
+\item
+	the revision can be obtained from \api{marf.MARF.REVISION}
+	and \api{marf.Version.REVISION} where as of 0.3.0.5 the former
+	is an alias of the latter
+
+\item
+	the minor revision can be obtained from \api{marf.MARF.MINOR\_REVISION}
+	and \api{marf.Version.MINOR\_REVISION} where as of 0.3.0.5 the former
+	is an alias of the latter
+\end{itemize}
+
+The \api{marf.Version} class provides some API to validate the version
+by the application and report mismatches for convenience. See the API
+reference for details. One can also query a full \api{marf.jar} or 
+\api{marf-debug.jar} release for version where all four components
+are displayed by typing:
+
+\begin{verbatim}
+    java -jar marf.jar --version
+\end{verbatim}
+
+% EOF

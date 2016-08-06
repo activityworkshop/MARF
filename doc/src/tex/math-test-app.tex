@@ -1,0 +1,45 @@
+\subsection{MathTestApp}
+\index{Applications!MathTestApp}
+\index{Testing Applications!MathTestApp}
+
+$Revision: 1.3 $
+
+The \api{MathTestApp} application targets
+testing of the math-related implementations in the
+\api{marf.math} package. As of this writing, the
+application mainy exercises the \api{Matrix} class
+as this is the one used by the \api{MahalanobisDistance}
+classifier. It also does the necessary testing
+of the \api{Vector} class as well.
+
+The application supports the following set of options:
+
+\begin{itemize}
+\item
+\texttt{--help} or \texttt{-h} cause the application to
+display the usage information and exit.
+
+\item
+\texttt{--version} displays the application's and the
+unrelying {\marf}'s versions and exits.
+\end{itemize}
+
+\noindent
+Complete usage information:
+
+\vspace{15pt}
+\hrule
+\input{math-test-app-usage}
+\hrule
+\vspace{15pt}
+
+Before running tests, the application validates the
+MARF version, and then produces the output to STDOUT of
+various linear matrix operations, such as inversion,
+identity, multiplication, transposal, scaling, rotation,
+translation, and shear. The stored
+output in the \file{expected} folder, \file{math.out},
+contains expected output the authors believe is correct
+and which is used in the regression testing.
+
+% EOF

@@ -1,0 +1,53 @@
+\subsection{Fast Fourier Transform (FFT)}\label{sect:fft}
+
+The Fast Fourier Transform (FFT) algorithm is used both for feature extraction and as the basis for the
+filter algorithm used in preprocessing.  Although a complete discussion of the
+FFT algorithm is beyond the scope of this document, a short description of the
+implementation will be provided here.
+
+Essentially the FFT is an optimized version of the Discrete Fourier Transform.
+It takes a window of size $2^{k}$ and returns a complex array of coefficients
+for the corresponding frequency curve.  For feature extraction, only the
+magnitudes of the complex values are used, while the FFT filter operates
+directly on the complex results.
+
+The implementation involves two steps: First, shuffling the input positions by a
+binary reversion process, and then combining the results via a ``butterfly''
+decimation in time to produce the final frequency coefficients.
+The first step corresponds to breaking down the time-domain sample of size $n$
+into $n$ frequency-domain samples of size 1.  The second step re-combines the $n$
+samples of size 1 into 1 n-sized frequency-domain sample.
+
+The code used in {\marf} has been translated from the C code provided in the book,
+``Numeric Recipes in C'', \cite{numericalrecipes}.
+
+\subsubsection{FFT Feature Extraction}
+
+The frequency-domain view of a window of a time-domain sample gives us the
+frequency characteristics of that window.  In feature identification, the
+frequency characteristics of a voice can be considered as a list of ``features''
+for that voice.  If we combine all windows of a vocal sample by
+taking the average between them, we can get the average frequency
+characteristics of the sample.  Subsequently, if we average the frequency
+characteristics for samples from the same speaker, we are essentially finding
+the center of the cluster for the speaker's samples.  Once all speakers have
+their cluster centers recorded in the training set, the speaker of an
+input sample should be identifiable by comparing its frequency analysis with
+each cluster center by some classification method.
+
+Since we are dealing with speech, greater accuracy should be attainable by
+comparing corresponding phonemes with each other.  That is, ``th'' in ``the''
+should bear greater similarity to ``th'' in ``this'' than will ``the" and ``this'' when
+compared as a whole.
+
+The only characteristic of the FFT to worry about is the window used as input.
+Using a normal rectangular window can result in glitches in the frequency
+analysis because a sudden cutoff of a high frequency may distort the results.
+Therefore it is necessary to apply a Hamming window to the input sample, and
+to overlap the windows by half.  Since the Hamming window adds up to a constant
+when overlapped, no distortion is introduced.
+
+When comparing phonemes, a window size of about 2 or 3 ms is appropriate, but
+when comparing whole words, a window size of about 20 ms is more likely to be
+useful.  A larger window size produces a higher resolution in the frequency
+analysis.

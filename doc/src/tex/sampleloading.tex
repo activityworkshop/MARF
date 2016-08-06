@@ -1,0 +1,143 @@
+\subsection{Sample Format}
+
+$Revision: 1.20 $
+
+The sample format used for our samples was the following:
+
+\begin{itemize}
+	\item Audio Format: PCM signed (WAV)
+	\item Sample Rate: 8000 Hz
+	\item Audio Sample Size: 16 bit
+	\item Channels: 1 (mono)
+	\item Duration: from about 7 to 20 seconds
+\end{itemize}
+
+All training and testing samples were recorded through an external sound recording
+program (MS Sound Recorder) using a standard microphone. Each sample was
+saved as a WAV file with the above properties and stored in the appropriate folders
+where they would be loaded from within the main application. The PCM audio format
+(which stands for Pulse Code Modulation) refers to the digital encoding of the audio
+sample contained in the file and is the format used for WAV files. In a PCM
+encoding, an analog signal is represented as a sequence of amplitude values. The
+range of the amplitude value is given by the audio sample size which represents the
+number of bits that a PCM value consists of. In our case, the audio sample size is
+16-bit which means that that a PCM value can range from 0 to 65536. Since we are
+using PCM-signed format, this gives an amplitude range between $-32768$ and $32768$.
+That is, the amplitude values of each recorded sample can vary within this range.
+Also, this sample size gives a greater range and thus provides better accuracy in
+representing an audio signal then using a sample size of 8-bit which limited to a
+range of $(-128, 128)$. Therefore, a 16-bit audio sample size was used for our
+experiments in order to provide the best possible results. The sampling rate refers
+to the number of amplitude values taken per second during audio digitization.
+According to the Nyquist theorem, this rate must be at least twice the maximum rate
+(frequency) of the analog signal that we wish to digitize (\cite{jervis}). Otherwise, the signal
+cannot be properly regenerated in digitized form. Since we are using an 8 kHz
+sampling rate, this means that actual analog frequency of each sample is limited to
+4 kHz. However, this limitation does not pose a hindrance since the difference in
+sound quality is negligible (\cite{shaughnessy2000}). The number of channels
+refers to the output of the sound (1 for mono and 2 for stereo -- left and right
+speakers). For our experiment, a single channel format was used to avoid complexity
+during the sample loading process.
+
+\subsection{Sample Loading Process}
+
+To read audio information from a saved voice sample, a special sample-loading
+component had to be implemented in order to load a sample into an internal data
+structure for further processing. For this, certain sound libraries (\verb+javax.sound.sampled+)
+were provided from the Java programming language which enabled us to
+stream the audio data from the sample file. However once the data was captured, it
+had to be converted into readable amplitude values since the library routines only
+provide PCM values of the sample. This required the need to implement special
+routines to convert raw PCM values to actual amplitude values (see \verb+SampleLoader+ class in
+the \verb+Storage+ package).
+
+\clearpage
+The following pseudo-code represents the algorithm used to convert the PCM values
+into real amplitude values (\cite{javasun}):
+
+\vspace{15pt}
+\hrule
+\begin{verbatim}
+function readAmplitudeValues(Double Array : audioData)
+{
+    Integer: MSB, LSB,
+             index = 0;
+
+    Byte Array: AudioBuffer[audioData.length * 2];
+
+    read audio data from Audio stream into AudioBuffer;
+
+    while(not reached the end of stream OR index not equal to audioData.length)
+    {
+        if(Audio data representation is BigEndian)
+        {
+            // First byte is MSB (high order)
+            MSB = audioBuffer[2 * index];
+            // Second byte is LSB (low order)
+            LSB = audioBuffer[2 * index + 1];
+        }
+        else
+        {
+            // Vice-versa...
+            LSB = audioBuffer[2 * index];
+            MSB = audioBuffer[2 * index + 1];
+        }
+
+        // Merge high-order and low-order byte to form a 16-bit double value.
+        // Values are divided by maximum range
+        audioData[index] = (merge of MSB and LSB) / 32768;
+    }
+}
+\end{verbatim}
+\hrule
+\vspace{15pt}
+
+This function reads PCM values from a sample stream into a byte array that has
+twice the length of \verb+audioData+; the array which will hold the converted amplitude
+values (since sample size is 16-bit). Once the PCM values are read into \verb+audioBuffer+,
+the high and low order bytes that make up the amplitude value are extracted
+according to the type of representation defined in the sample's audio format.
+If the data representation is {\it big endian}, the high order byte of each PCM value is
+located at every even-numbered position in \verb+audioBuffer+. That is, the high order
+byte of the first PCM value is found at position 0, 2 for the second value, 4 for
+the third and so forth. Similarly, the low order byte of each PCM value is located
+at every odd-numbered position (1, 3, 5, etc.). In other words, if the data
+representation is {\it big endian}, the bytes of each PCM code are read from left to
+right in the \verb+audioBuffer+. If the data representation is not {\it big endian}, then high
+and low order bytes are inversed. That is, the high order byte for the first PCM
+value in the array will be at position 1 and the low order byte will be at
+position 0 (read right to left). Once the high and low order bytes are properly
+extracted, the two bytes can be merged to form a 16-bit double value. This value is
+then scaled down (divide by 32768) to represent an amplitude within a unit range $(-1, 1)$.
+The resulting value is stored into the \verb+audioData+ array, which will be passed to
+the calling routine once all the available audio data is entered into the array. An
+additional routine was also required to write audio data from an array into wave
+file. This routine involved the inverse of reading audio data from a sample file
+stream. More specifically, the amplitude values inside an array are converted back
+to PCM codes and are stored inside an array of bytes (used to create new audio
+stream). The following illustrates how this works:
+
+\vspace{15pt}
+\hrule
+\begin{verbatim}
+public void writePCMValues(Double Array: audioData)
+{
+    Integer: word  = 0,
+             index = 0;
+
+    Byte Array: audioBytes[(number of ampl. values in audioData) * 2];
+
+    while(index not equal to (number of ampl. values in audioData * 2))
+    {
+        word = (audioData[index] * 32768);
+        extract high order byte and place it in appropriate position in audioBytes;
+        extract low order byte and place it in appropriate position in audioBytes;
+    }
+
+    create new audio stream from audioBytes;
+}
+\end{verbatim}
+\hrule
+\vspace{15pt}
+
+% EOF

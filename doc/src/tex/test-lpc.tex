@@ -1,0 +1,46 @@
+\subsection{TestLPC}
+\index{Applications!TestLPC}
+\index{Testing Applications!TestLPC}
+
+$Revision: 1.5 $
+
+The \api{TestLPC} application targets
+the LPC unit testing as a preprocessing module.
+Through a number of options it also allows choosing
+between two implemented loaders -- \api{WAVLoader}
+and \api{SineLoader}. To faciliate option processing
+\api{marf.util.OptionProcessor} used that provides
+an ability of maintaining and validating valid/active
+option sets. The application also utilizes the \api{Dummy}
+preprocessing module to perform the normalization of
+incoming sample.
+
+The application supports the following set of options:
+
+\begin{itemize}
+\item
+\texttt{--help} or \texttt{-h} cause the application to
+display the usage information and exit. The usage information
+is also displayed if no option was supplied.
+
+\item
+\texttt{--sine} forces the use of \api{SineLoader} for
+sample data generation. The output of this option is also
+saved under \file{expected/sine.out} for regression testing.
+
+\item
+\texttt{--wave} forces the application to use the \api{WAVLoader}.
+This option requires a mandatory filename argument of a wave file
+to run the LPC algorithm against.
+\end{itemize}
+
+\noindent
+Complete usage information:
+
+\vspace{15pt}
+\hrule
+\input{test-lpc-usage}
+\hrule
+\vspace{15pt}
+
+% EOF

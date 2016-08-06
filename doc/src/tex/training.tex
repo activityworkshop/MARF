@@ -1,0 +1,47 @@
+\subsection{Assorted Training Notes}
+
+$Revision: 1.6 $
+
+For training we are using sets of feature vectors created by \api{FFT} or
+\api{LPC} and passing them to the \api{NeuralNetwork} in the form of a 
+cluster, or rather probabilistic ``cluster''. With this, there are some
+issues:
+
+\begin{enumerate}
+\item
+Mapping. We have to have a record of speakers and IDs for these speakers.
+This can be the same for \api{NeuralNetwork} and \api{Stochastic} methods so long as the \api{NeuralNetwork}
+will return the proper number and the ``clusters'' in the \api{Stochastic} module have
+proper labeling.
+
+\item
+Feature vector generation. I think the best way to do this is for each
+application using {\marf} to specify a feature file or directory which will
+contain lines/files with the following info:
+
+\verb+[a1, a2, ... , an] : <speaker id>+
+
+Retraining for a new speaker would involve two phases 1) appending the
+features to the file/dir, then 2) re-training the models. The
+\api{Classification} modules will be aware of the scheme and re-train on all data
+required.
+\end{enumerate}
+
+\subsubsection{Clusters Defined}
+
+Given a set of feature vectors in $n$-dimensional space, if we want these to
+represent $m$ ``items'' (in our case, speakers), we can make groupings of
+these vectors with a center point $c_{i}$ (ie: $m$ center points which will
+then represent the ``items''). Suen discussed an iterative algorithm to find
+the optimal groupings (or clusters).
+Anyway, I don't believe that Suen's clustering stuff is at all useful, as
+we will know, through info from training, which speaker is associated with
+the feature vector and can create the ``clusters'' with that information.
+
+So for \api{NeuralNetwork}: no clusters, just regular training.
+So for \api{Stochastic}: Clusters (kind of). I believe that we need to represent
+a Gaussian curve with a mean vector and a co-variance matrix. This will be
+created from the set of feature vectors for the speaker. But again, we know
+who it is so the Optimal Clustering business is useless.
+
+% EOF

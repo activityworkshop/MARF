@@ -1,0 +1,29 @@
+\subsection{Min/Max Amplitudes}
+\label{sect:minmax}
+\index{Min/Max Amplitudes}
+\index{Feature Extraction!Min/Max Amplitudes}
+
+$Revision: 1.4 $
+
+\subsubsection{Description}
+
+The Min/Max Amplitudes extraction simply involves
+picking up $X$ maximums and $N$ minimums out of the
+sample as features. If the length of the sample
+is less than $X+N$, the difference is filled in
+with the middle element of the sample.
+
+TODO: This feature extraction does not perform very well yet
+in any configuration because of the simplistic implementation:
+the sample amplitudes are sorted and $N$ minimums and $X$ maximums
+are picked up from both ends of the array. As the samples are
+usually large, the values in each group are really close if
+not identical making it hard for any of the classifiers
+to properly discriminate the subjects. The future improvements
+here will include attempts to pick up values in $N$ and $X$
+distinct enough to be features and for the samples smaller than the $X+N$ sum,
+use increments of the difference of smallest maximum and
+largest minimum divided among missing elements in the middle
+instead one the same value filling that space in.
+
+% EOF
