@@ -1,6 +1,7 @@
 package marf.Classification.NeuralNetwork;
 
 import java.io.BufferedWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import marf.util.BaseThread;
@@ -9,15 +10,16 @@ import marf.util.BaseThread;
 /**
  * <p>Class Neuron -- a basic element of a neural network.</p>
  *
- * <p>$Id: Neuron.java,v 1.16 2006/01/23 00:03:34 mokhov Exp $</p>
+ * $Id: Neuron.java,v 1.20 2009/02/08 04:31:45 mokhov Exp $
  *
  * @author Ian Clement
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.20 $
  * @since 0.0.1
  */
 public class Neuron
 extends BaseThread
+implements Serializable
 {
 	/*
 	 * ----------------------
@@ -69,22 +71,22 @@ extends BaseThread
 	/**
 	 * Inputs of the current Neuron.
 	 */
-	private ArrayList oInputs = new ArrayList();
+	private ArrayList<Neuron> oInputs = new ArrayList<Neuron>();
 
 	/**
 	 * Inputs' weights.
 	 */
-	private ArrayList oWeights = new ArrayList();
+	private ArrayList<Double> oWeights = new ArrayList<Double>();
 
 	/**
-	 * Buffered weights to be comitted.
+	 * Buffered weights to be committed.
 	 */
-	private ArrayList oWeightsBuffer = new ArrayList();
+	private ArrayList<Double> oWeightsBuffer = new ArrayList<Double>();
 
 	/**
 	 * Outputs of the current Neuron.
 	 */
-	private ArrayList oOutputs = new ArrayList();
+	private ArrayList<Neuron> oOutputs = new ArrayList<Neuron>();
 
 	/**
 	 * Used in error calculation.
@@ -92,7 +94,7 @@ extends BaseThread
 	protected double dDelta = 0.0;
 
 	/**
-	 * Activation threshhold.
+	 * Activation threshold.
 	 */
 	protected double dThreshold = 0.0;
 
@@ -100,6 +102,15 @@ extends BaseThread
 	 * Current Neuron's result.
 	 */
 	protected double dResult = 0.0;
+
+	/**
+	 * For serialization versioning.
+	 * When adding new members or make other structural
+	 * changes regenerate this number with the
+	 * <code>serialver</code> tool that comes with JDK.
+	 * @since 0.3.0.6
+	 */
+	private static final long serialVersionUID = -1386828790026558068L;
 
 
 	/*
@@ -353,7 +364,7 @@ extends BaseThread
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.16 $";
+		return "$Revision: 1.20 $";
 	}
 }
 

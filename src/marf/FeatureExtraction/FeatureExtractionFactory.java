@@ -14,10 +14,10 @@ import marf.Preprocessing.IPreprocessing;
 /**
  * <p>Provides a factory to instantiate requested feature extraction module(s).</p>
  *
- * $Id: FeatureExtractionFactory.java,v 1.2 2005/12/28 03:21:11 mokhov Exp $
+ * $Id: FeatureExtractionFactory.java,v 1.3 2007/12/18 03:45:41 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @since 0.3.0.5
  */
 public final class FeatureExtractionFactory
@@ -35,10 +35,10 @@ public final class FeatureExtractionFactory
 	 *
 	 * @param poFeatureExtractionMethod the integer value corresponding to the
 	 * desired feature extraction module
-	 * @param poPreprocessing passed as an agrument to the feature extractor per framework requirement
+	 * @param poPreprocessing passed as an argument to the feature extractor per framework requirement
 	 * @return a reference to the instance of the created feature extraction module
 	 * @throws FeatureExtractionException if the indicated module is
-	 * uknown or could not be loaded
+	 * unknown or could not be loaded
 	 *
 	 * @see MARF#LPC
 	 * @see MARF#FFT
@@ -71,10 +71,10 @@ public final class FeatureExtractionFactory
 	 *
 	 * @param piFeatureExtractionMethod the integer value corresponding to the
 	 * desired feature extraction module
-	 * @param poPreprocessing passed as an agrument to the feature extractor per framework requirement
+	 * @param poPreprocessing passed as an argument to the feature extractor per framework requirement
 	 * @return a reference to the instance of the created feature extraction module
 	 * @throws FeatureExtractionException if the indicated module is
-	 * uknown or could not be loaded
+	 * unknown or could not be loaded
 	 *
 	 * @see MARF#LPC
 	 * @see MARF#FFT
@@ -169,7 +169,7 @@ public final class FeatureExtractionFactory
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.2 $";
+		return "$Revision: 1.3 $";
 	}
 }
 

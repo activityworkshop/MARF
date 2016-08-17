@@ -13,12 +13,10 @@ import marf.util.NotImplementedException;
 
 /**
  * <p>Implements generic Statistical Estimator routines.
- * Must be subclasses by concrete implemenations of statistical estimators.</p>
- *
- * $Id: StatisticalEstimator.java,v 1.29 2006/02/11 20:36:56 mokhov Exp $
+ * Must be subclasses by concrete implementations of statistical estimators.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.29 $
+ * @version $Id: StatisticalEstimator.java,v 1.32 2010/09/27 23:56:28 mokhov Exp $
  * @since 0.3.0.2
  */
 public abstract class StatisticalEstimator
@@ -91,7 +89,7 @@ implements IStatisticalEstimator
 //					continue;
 //				}
 
-				Vector oNgram = new Vector();
+				Vector<String> oNgram = new Vector<String>();
 
 				switch(MARF.NLP.getNgramModel())
 				{
@@ -111,7 +109,7 @@ implements IStatisticalEstimator
 
 //						String strToken2 = getNextToken();
 
-						String strToken2 = oStreamTokenizer.getNextToken();
+						String strToken2 = this.oStreamTokenizer.getNextToken();
 
 						if(strToken2 == null)
 						{
@@ -134,7 +132,7 @@ implements IStatisticalEstimator
 //						if(oStreamTokenizer.nextToken() == StreamTokenizer.TT_EOF)
 //							break;
 
-						String strToken2 = oStreamTokenizer.getNextToken();
+						String strToken2 = this.oStreamTokenizer.getNextToken();
 
 						if(strToken2 == null)
 						{
@@ -225,7 +223,7 @@ implements IStatisticalEstimator
 					continue;
 				}
 
-				Vector oNgram = new Vector();
+				Vector<String> oNgram = new Vector<String>();
 
 				switch(MARF.NLP.getNgramModel())
 				{
@@ -461,6 +459,7 @@ implements IStatisticalEstimator
 	public final String getFilename()
 	{
 		return
+			MARF.getTrainingSetFilenamePrefix() +
 			getClass().getName() +
 			"." + MARF.NLP.getNgramModel() +
 			"." + MARF.NLP.getLanguage() +
@@ -473,7 +472,7 @@ implements IStatisticalEstimator
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.29 $";
+		return "$Revision: 1.32 $";
 	}
 }
 

@@ -10,16 +10,16 @@ import marf.util.BaseThread;
  * <p>Represents a Neural Network Layer.
  * 
  * Being itself a thread, encapsulates a group of
- * Neuron thread comprising a neron layer of the network.
+ * Neuron thread comprising a neuron layer of the network.
  * The actual threading is almost unimplemented yet, but the
  * class itself is properly synchronized.
  * </p>
  *
- * $Id: Layer.java,v 1.8 2006/01/22 23:47:26 mokhov Exp $
+ * $Id: Layer.java,v 1.11 2009/02/08 04:31:45 mokhov Exp $
  *
  * @author Serguei Mokhov
  * @since 0.3.0.2
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.11 $
  */
 public class Layer
 extends BaseThread
@@ -29,7 +29,7 @@ implements Serializable
 	 * Layer's data (a collection of neurons).
 	 * @since 0.3.0.5
 	 */
-	private ArrayList oLayerData = new ArrayList();
+	private ArrayList<Neuron> oLayerData = new ArrayList<Neuron>();
 
 	/**
 	 * For serialization versioning.
@@ -157,7 +157,7 @@ implements Serializable
 	 * @return the collection of neurons
 	 * @since 0.3.0.5
 	 */
-	public synchronized ArrayList getLayerData()
+	public synchronized ArrayList<Neuron> getLayerData()
 	{
 		return this.oLayerData;
 	}
@@ -168,7 +168,7 @@ implements Serializable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.8 $";
+		return "$Revision: 1.11 $";
 	}
 }
 

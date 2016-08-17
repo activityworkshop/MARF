@@ -1,5 +1,6 @@
 package marf.FeatureExtraction.FFT;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 import marf.MARF;
@@ -7,6 +8,7 @@ import marf.FeatureExtraction.FeatureExtraction;
 import marf.FeatureExtraction.FeatureExtractionException;
 import marf.Preprocessing.IPreprocessing;
 import marf.Storage.ModuleParams;
+import marf.Storage.Sample;
 import marf.Storage.SampleLoader;
 import marf.gui.Spectrogram;
 import marf.gui.WaveGrapher;
@@ -18,12 +20,12 @@ import marf.util.Debug;
 /**
  * <p>Class FFT implements Fast Fourier Transform.</p>
  *
- * <p>$Id: FFT.java,v 1.52 2005/12/30 05:54:25 mokhov Exp $</p>
+ * $Id: FFT.java,v 1.56 2012/05/30 16:24:18 mokhov Exp $
  *
  * @author Stephen Sinclair
  * @author Serguei Mokhov
  *
- * @version $Revision: 1.52 $
+ * @version $Revision: 1.56 $
  * @since 0.0.1
  */
 public class FFT
@@ -71,7 +73,7 @@ extends FeatureExtraction
 
 		if(oModuleParams != null)
 		{
-			Vector oFFTParams = oModuleParams.getFeatureExtractionParams();
+			Vector<Serializable> oFFTParams = oModuleParams.getFeatureExtractionParams();
 
 			if(oFFTParams != null && oFFTParams.size() > 0)
 			{
@@ -84,10 +86,36 @@ extends FeatureExtraction
 
 	/**
 	 * FFT Implementation of <code>extractFeatures()</code>.
+	 * Sample is taken from an IPreprocessing module from the pipeline.
+	 *
 	 * @return <code>true</code> if there were features extracted, <code>false</code> otherwise
 	 * @throws FeatureExtractionException in case of any errors while doing stuff
 	 */
 	public final synchronized boolean extractFeatures()
+	throws FeatureExtractionException
+	{
+		return extractFeaturesImplementation(this.oPreprocessing.getSample());
+	}
+
+	/**
+	 * Extracts features from the provided sample array.
+	 * @see marf.FeatureExtraction.IFeatureExtraction#extractFeatures(double[])
+	 * @since 0.3.0.6
+	 */
+	public final synchronized boolean extractFeatures(double[] padSampleData)
+	throws FeatureExtractionException
+	{
+		return extractFeaturesImplementation(new Sample(padSampleData));
+	}
+
+	/**
+	 * Does the actual business logic of the FFT feature extraction.
+	 * @param poSample sample to extract features from
+	 * @return <code>true</code> if there were features extracted, <code>false</code> otherwise
+	 * @throws FeatureExtractionException in case of any errors while doing stuff
+	 * @since 0.3.0.6
+	 */
+	protected final synchronized boolean extractFeaturesImplementation(Sample poSample)
 	throws FeatureExtractionException
 	{
 		try
@@ -119,7 +147,7 @@ extends FeatureExtraction
 			}
 
 			iWindowPos = 0;
-			iNbrDataRecv = this.oPreprocessing.getSample().getNextChunk(adSampleChunk);
+			iNbrDataRecv = poSample.getNextChunk(adSampleChunk);
 
 			while(iNbrDataRecv > 0)
 			{
@@ -128,7 +156,7 @@ extends FeatureExtraction
 				{
 					if(iWindowPos >= this.iChunkSize)
 					{
-						iNbrDataRecv = this.oPreprocessing.getSample().getNextChunk(adSampleChunk);
+						iNbrDataRecv = poSample.getNextChunk(adSampleChunk);
 						iWindowPos = 0;
 
 						// Padding to ^2 for the last chunk
@@ -170,7 +198,7 @@ extends FeatureExtraction
 		    		this.adFeatures[i] += adMagnitude[i];
 				}
 
-				iNbrDataRecv = this.oPreprocessing.getSample().getNextChunk(adSampleChunk);
+				iNbrDataRecv = poSample.getNextChunk(adSampleChunk);
 			}
 
 			if(iCount > 1)
@@ -214,7 +242,7 @@ extends FeatureExtraction
 	 * Allows setting a non-default chunk size.
 	 * Must be a power of 2.
 	 * @param piChunkSize new chunk size
-	 * @return the old chunk size
+	 * @return the old value of the chunk size (in case some callers are interested in backing it up)
 	 * @throws IllegalArgumentException if the chunk size parameter is
 	 * less than 1 or not a power of 2
 	 * @since 0.3.0.4
@@ -252,7 +280,7 @@ extends FeatureExtraction
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.52 $";
+		return "$Revision: 1.56 $";
 	}
 }
 

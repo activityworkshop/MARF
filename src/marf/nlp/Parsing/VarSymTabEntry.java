@@ -4,10 +4,10 @@ package marf.nlp.Parsing;
 /**
  * <p>Represents Variable SymTab Entry.</p>
  *
- * $Id: VarSymTabEntry.java,v 1.8 2006/01/19 04:51:41 mokhov Exp $
+ * $Id: VarSymTabEntry.java,v 1.9 2007/12/18 21:37:56 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  * @since 0.3.0.2
  */
 public class VarSymTabEntry
@@ -60,7 +60,7 @@ extends SymTabEntry
 	protected int iDimension = -1;
 	
 	/**
-	 * Default Construtor.
+	 * Default Constructor.
 	 */
 	public VarSymTabEntry()
 	{
@@ -86,7 +86,7 @@ extends SymTabEntry
 	}
 	
 	/**
-	 * Allowes to set data type of the variable.
+	 * Allows to set data type of the variable.
 	 * @param piType the new type
 	 */
 	public void setDataType(int piType)
@@ -100,7 +100,7 @@ extends SymTabEntry
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.8 $";
+		return "$Revision: 1.9 $";
 	}
 }
 

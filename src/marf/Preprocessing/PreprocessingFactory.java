@@ -9,16 +9,13 @@ import marf.Preprocessing.FFTFilter.HighFrequencyBoost;
 import marf.Preprocessing.FFTFilter.HighPassFilter;
 import marf.Preprocessing.FFTFilter.LowPassFilter;
 import marf.Storage.Sample;
-import marf.util.Debug;
 
 
 /**
  * <p>Provides a factory to instantiate requested preprocessing module(s).</p>
  *
- * $Id: PreprocessingFactory.java,v 1.1 2005/12/28 03:21:11 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.1 $
+ * @version $Id: PreprocessingFactory.java,v 1.5 2011/11/21 20:59:33 mokhov Exp $
  * @since 0.3.0.5
  */
 public final class PreprocessingFactory
@@ -36,10 +33,10 @@ public final class PreprocessingFactory
 	 *
 	 * @param poPreprocessingMethod the integer value corresponding to the
 	 * desired Preprocessing module
-	 * @param poSample passed as an agrument to the preprocessor per framework requirement
+	 * @param poSample passed as an argument to the preprocessor per framework requirement
 	 * @return a reference to the instance of the created feature extraction module
 	 * @throws PreprocessingException if the indicated module is
-	 * uknown or could not be loaded
+	 * unknown or could not be loaded
 	 *
 	 * @see MARF#DUMMY
 	 * @see MARF#BANDPASS_FFT_FILTER
@@ -71,10 +68,10 @@ public final class PreprocessingFactory
 	 *
 	 * @param piPreprocessingMethod the integer value corresponding to the
 	 * desired Preprocessing module
-	 * @param poSample passed as an agrument to the preprocessor per framework requirement
+	 * @param poSample passed as an argument to the preprocessor per framework requirement
 	 * @return a reference to the instance of the created feature extraction module
 	 * @throws PreprocessingException if the indicated module is
-	 * uknown or could not be loaded
+	 * unknown or could not be loaded
 	 *
 	 * @see MARF#DUMMY
 	 * @see MARF#BANDPASS_FFT_FILTER
@@ -102,40 +99,62 @@ public final class PreprocessingFactory
 		switch(piPreprocessingMethod)
 		{
 			case MARF.DUMMY:
+			{
 				oPreprocessing = new Dummy(poSample);
 				break;
+			}
 
 			case MARF.BANDPASS_FFT_FILTER:
+			{
 				oPreprocessing = new BandpassFilter(poSample);
 				break;
+			}
 
 			case MARF.ENDPOINT:
+			{
 				oPreprocessing = new Endpoint(poSample);
 				break;
+			}
 
 			case MARF.HIGH_FREQUENCY_BOOST_FFT_FILTER:
-				Debug.debug("here1");
+			{
+				//Debug.debug("here1");
 				oPreprocessing = new HighFrequencyBoost(poSample);
-				Debug.debug("here2");
+				//Debug.debug("here2");
 				break;
+			}
 
 			case MARF.LOW_PASS_FFT_FILTER:
+			{
 				oPreprocessing = new LowPassFilter(poSample);
 				break;
+			}
 
 			case MARF.HIGH_PASS_FFT_FILTER:
+			{
 				oPreprocessing = new HighPassFilter(poSample);
 				break;
+			}
 
 			case MARF.HIGH_PASS_BOOST_FILTER:
+			{
 				//soPreprocessing = new HighPassBoostFilter(soSample);
 				oPreprocessing = new HighFrequencyBoost(new HighPassFilter(poSample));
 				//soPreprocessing = new HighPassFilter(new HighFrequencyBoost(soSample));
 				break;
+			}
+
+			case MARF.BAND_STOP_FFT_FILTER:
+			{
+				oPreprocessing = new marf.Preprocessing.FFTFilter.BandStopFilter(poSample);
+				break;
+			}
 
 			case MARF.RAW:
+			{
 				oPreprocessing = new Raw(poSample);
 				break;
+			}
 
 			case MARF.PREPROCESSING_PLUGIN:
 			{
@@ -152,6 +171,48 @@ public final class PreprocessingFactory
 				break;
 			}
 				
+			case MARF.LOW_PASS_CFE_FILTER:
+			{
+				oPreprocessing = new marf.Preprocessing.CFEFilters.LowPassFilter(poSample);
+				break;
+			}
+
+			case MARF.HIGH_PASS_CFE_FILTER:
+			{
+				oPreprocessing = new marf.Preprocessing.CFEFilters.HighPassFilter(poSample);
+				break;
+			}
+
+			case MARF.BAND_PASS_CFE_FILTER:
+			{
+				oPreprocessing = new marf.Preprocessing.CFEFilters.BandPassFilter(poSample);
+				break;
+			}
+
+			case MARF.BAND_STOP_CFE_FILTER:
+			{
+				oPreprocessing = new marf.Preprocessing.CFEFilters.BandStopFilter(poSample);
+				break;
+			}
+
+			case MARF.SEPARABLE_DWT_FILTER:
+			{
+				oPreprocessing = new marf.Preprocessing.WaveletFilters.WaveletFilter(poSample);
+				break;
+			}
+
+			case MARF.DUAL_DTREE_DWT_FILTER:
+			{
+				oPreprocessing = new marf.Preprocessing.WaveletFilters.DualTreeComplexWaveletFilter(poSample);
+				break;
+			}
+
+			case MARF.DYADIC_DWT_FILTER:
+			{
+				oPreprocessing = new marf.Preprocessing.WaveletFilters.DyadicWaveletFilter(poSample);
+				break;
+			}
+
 			default:
 			{
 				throw new PreprocessingException
@@ -170,7 +231,7 @@ public final class PreprocessingFactory
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.1 $";
+		return "$Revision: 1.5 $";
 	}
 }
 

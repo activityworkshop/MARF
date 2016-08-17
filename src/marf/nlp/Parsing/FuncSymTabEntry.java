@@ -8,10 +8,8 @@ import java.util.Vector;
  * for function definition.
  * </p>
  *
- * $Id: FuncSymTabEntry.java,v 1.10 2005/12/30 18:36:54 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.10 $
+ * @version $Id: FuncSymTabEntry.java,v 1.12 2012/07/18 02:45:45 mokhov Exp $
  * @since 0.3.0.2
  */
 public class FuncSymTabEntry
@@ -26,14 +24,14 @@ extends SymTabEntry
 	 * Parameter List.
 	 * Parameters are VarSymTabEntries.
 	 */
-	protected Vector oParams = null;
+	protected Vector<VarSymTabEntry> oParams = null;
 
 	/**
 	 * Constructor.
 	 */
 	public FuncSymTabEntry()
 	{
-		this.oParams = new Vector();
+		this.oParams = new Vector<VarSymTabEntry>();
 	}
 
 	/**
@@ -49,14 +47,14 @@ extends SymTabEntry
 	 * Allows retrieval of parameter list as Vector.
 	 * @return a parameter list
 	 */
-	public Vector getParams()
+	public Vector<VarSymTabEntry> getParams()
 	{
 		return this.oParams;
 	}
 
 	/**
 	 * Cannot be anything other than FUNCTION.
-	 * @return SymDataType correspoinding to the FUNCTION identifier.
+	 * @return SymDataType corresponding to the FUNCTION identifier.
 	 * @see #FUNCTION
 	 */
 	public SymDataType getDataType()
@@ -74,7 +72,7 @@ extends SymTabEntry
 	}
 
 	/**
-	 * Allows getting the datatype of the function return value.
+	 * Allows getting the data type of the function's return value.
 	 * @return SymDataType corresponding to the return value
 	 * @see SymDataType
 	 */
@@ -89,7 +87,7 @@ extends SymTabEntry
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.10 $";
+		return "$Revision: 1.12 $";
 	}
 }
 

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -12,15 +13,19 @@ import marf.util.NotImplementedException;
 
 
 /**
- * <p>Class StorageManager.</p>
- * <p>Almost every concrete module must inherit from this class.
- * If that's not possible, implement IStorageManager interface.</p>
+ * <p>Class StorageManager provides basic persistence manager.</p>
+ * 
+ * <p>Almost every concrete module must inherit from this class that manages persistent data.
+ * If that's not possible, implement <code>IStorageManager interface</code>.
+ * </p>
  *
- * <p>$Id: StorageManager.java,v 1.26 2006/01/02 22:24:00 mokhov Exp $</p>
+ * $Id: StorageManager.java,v 1.34 2009/02/22 02:16:01 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.34 $
  * @since 0.0.1
+ * 
+ * @see IStorageManager
  */
 public abstract class StorageManager
 implements IStorageManager
@@ -41,12 +46,16 @@ implements IStorageManager
 	protected transient String strFilename = null;
 
 	/**
-	 * Actual object to be serialized (primarily for GZIP and BINARY modes.
-	 * Has to be back-synchronized.
-	 * @since 0.3.0
+	 * Actual object to be serialized (primarily for DUMP_GZIP_BINARY and DUMP_BINARY modes).
+	 * Has to be back-synchronized. In 0.3.0.6 the type was changed from Object to Serializable.
+	 *
+	 * @since 0.3.0.2
 	 * @see #backSynchronizeObject()
+	 * @see IStorageManager#DUMP_GZIP_BINARY
+	 * @see IStorageManager#DUMP_BINARY
 	 */
-	protected Object oObjectToSerialize = null;
+//	protected Object oObjectToSerialize = null;
+	protected Serializable oObjectToSerialize = null;
 
 	/**
 	 * If set to <code>true</code> (the default), causes
@@ -73,8 +82,8 @@ implements IStorageManager
 	/**
 	 * Default constructor equivalent to <code>StorageManager(null, getClass().getName())</code>.
 	 * Sets internal filename to the class name of the derivative.
-	 * @since 0.3.0
-	 * @see #StorageManager(Object, String)
+	 * @since 0.3.0.2
+	 * @see #StorageManager(Serializable, String)
 	 * @see #strFilename
 	 */
 	public StorageManager()
@@ -91,8 +100,8 @@ implements IStorageManager
 	 * Constructor with filename parameter equivalent to
 	 * <code>StorageManager(null, pstrFilename)</code>.
 	 * @param pstrFilename customized filename
-	 * @since 0.3.0
-	 * @see #StorageManager(Object, String)
+	 * @since 0.3.0.2
+	 * @see #StorageManager(Serializable, String)
 	 * @see #strFilename
 	 */
 	public StorageManager(String pstrFilename)
@@ -103,8 +112,9 @@ implements IStorageManager
 	/**
 	 * General constructor with serializable object parameter.
 	 * Sets internal filename to the class name of the parameter.
+	 *
 	 * @param poObjectToSerialize reference to object to be dumped to a file
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 * @see #oObjectToSerialize
 	 * @see #bDumpOnNotFound
 	 */
@@ -114,19 +124,57 @@ implements IStorageManager
 	}
 
 	/**
+	 * General constructor with serializable object parameter.
+	 * Sets internal filename to the class name of the parameter.
+	 *
+	 * @param poObjectToSerialize reference to object to be dumped to a file
+	 * @since 0.3.0.6
+	 * @see #oObjectToSerialize
+	 * @see #bDumpOnNotFound
+	 */
+	public StorageManager(Serializable poObjectToSerialize)
+	{
+		this(poObjectToSerialize, poObjectToSerialize.getClass().getName());
+	}
+
+	/**
 	 * General constructor with filename and serializable object parameters.
+	 *
 	 * @param poObjectToSerialize reference to object to be dumped to a file
 	 * @param pstrFilename customized filename
-	 * @since 0.3.0
+	 * @since 0.3.0.6
+	 * @see #oObjectToSerialize
+	 * @see #strFilename
+	 * @see #bDumpOnNotFound
+	 */
+	public StorageManager(Serializable poObjectToSerialize, String pstrFilename)
+	{
+		this.strFilename = pstrFilename;
+		this.oObjectToSerialize = poObjectToSerialize;
+
+		/*
+		Debug.debug
+		(
+			StorageManager.class,
+			new StringBuffer("constructed: ")
+				.append(pstrFilename).append(":")
+				.append(this.oObjectToSerialize)
+		);*/
+	}
+
+	/**
+	 * General constructor with filename and serializable object parameters.
+	 *
+	 * @param poObjectToSerialize reference to object to be dumped to a file
+	 * @param pstrFilename customized filename
+	 * @since 0.3.0.2
 	 * @see #oObjectToSerialize
 	 * @see #strFilename
 	 * @see #bDumpOnNotFound
 	 */
 	public StorageManager(Object poObjectToSerialize, String pstrFilename)
 	{
-		this.strFilename = pstrFilename;
-		this.oObjectToSerialize = poObjectToSerialize;
-		//Debug.debug(StorageManager.class, "constructed: " + pstrFilename + ":" + this.oObjectToSerialize);
+		this((Serializable)poObjectToSerialize, pstrFilename);
 	}
 
 	/**
@@ -135,8 +183,8 @@ implements IStorageManager
 	 * @param pstrFilename customized filename
 	 * @param pbDumpOnNotFound if <code>true</code>, a dump file will be created if it does not exist;
 	 * if <code>false</code>, an exception will be thrown
-	 * @since 0.3.0
-	 * @see #StorageManager(Object, String)
+	 * @since 0.3.0.2
+	 * @see #StorageManager(Serializable, String)
 	 * @see #strFilename
 	 */
 	public StorageManager(String pstrFilename, boolean pbDumpOnNotFound)
@@ -147,10 +195,11 @@ implements IStorageManager
 	/**
 	 * General constructor with serializable object parameter.
 	 * Sets internal filename to the class name of the parameter.
+	 *
 	 * @param poObjectToSerialize reference to object to be dumped to a file
 	 * @param pbDumpOnNotFound if <code>true</code>, a dump file will be created if it does not exist;
 	 * if <code>false</code>, an exception will be thrown
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 * @see #oObjectToSerialize
 	 * @see #bDumpOnNotFound
 	 */
@@ -160,16 +209,51 @@ implements IStorageManager
 	}
 
 	/**
+	 * General constructor with serializable object parameter.
+	 * Sets internal filename to the class name of the parameter.
+	 *
+	 * @param poObjectToSerialize reference to object to be dumped to a file
+	 * @param pbDumpOnNotFound if <code>true</code>, a dump file will be created if it does not exist;
+	 * if <code>false</code>, an exception will be thrown
+	 * @since 0.3.0.6
+	 * @see #oObjectToSerialize
+	 * @see #bDumpOnNotFound
+	 */
+	public StorageManager(Serializable poObjectToSerialize, boolean pbDumpOnNotFound)
+	{
+		this(poObjectToSerialize, poObjectToSerialize.getClass().getName(), pbDumpOnNotFound);
+	}
+
+	/**
 	 * General constructor with filename and serializable object parameters.
+	 *
 	 * @param poObjectToSerialize reference to object to be dumped to a file
 	 * @param pstrFilename customized filename
 	 * @param pbDumpOnNotFound if <code>true</code>, a dump file will be created if it does not exist;
 	 * if <code>false</code>, an exception will be thrown
-	 * @since 0.3.0
+	 *
+	 * @since 0.3.0.2
 	 * @see #oObjectToSerialize
 	 * @see #strFilename
 	 */
 	public StorageManager(Object poObjectToSerialize, String pstrFilename, boolean pbDumpOnNotFound)
+	{
+		this((Serializable)poObjectToSerialize, pstrFilename, pbDumpOnNotFound);
+	}
+
+	/**
+	 * General constructor with filename and serializable object parameters.
+	 *
+	 * @param poObjectToSerialize reference to object to be dumped to a file
+	 * @param pstrFilename customized filename
+	 * @param pbDumpOnNotFound if <code>true</code>, a dump file will be created if it does not exist;
+	 * if <code>false</code>, an exception will be thrown
+	 *
+	 * @since 0.3.0.6
+	 * @see #oObjectToSerialize
+	 * @see #strFilename
+	 */
+	public StorageManager(Serializable poObjectToSerialize, String pstrFilename, boolean pbDumpOnNotFound)
 	{
 		this.strFilename = pstrFilename;
 		this.oObjectToSerialize = poObjectToSerialize;
@@ -234,7 +318,7 @@ implements IStorageManager
 
 	/**
 	 * Implements object dump in GZIP-compressed form. Attempts
-	 * to save internal object reference to the generater/specified filename
+	 * to save internal object reference to the generated/specified filename
 	 * @throws StorageException in case of I/O or otherwise error during object dump
 	 * @since 0.3.0
 	 * @see #oObjectToSerialize
@@ -245,8 +329,19 @@ implements IStorageManager
 	{
 		try
 		{
-			FileOutputStream oFOS = new FileOutputStream(strFilename);
-			GZIPOutputStream oGZOS = new GZIPOutputStream(oFOS);
+			GZIPOutputStream oGZOS = null;
+			
+			if(this.strFilename == null || "".equals(this.strFilename))
+			{
+				// Assume STDOUT if no filename specified.
+				oGZOS = new GZIPOutputStream(System.out);
+			}
+			else
+			{
+				FileOutputStream  oFOS = new FileOutputStream(this.strFilename);
+				oGZOS = new GZIPOutputStream(oFOS);
+			}
+
 			ObjectOutputStream oOOS = new ObjectOutputStream(oGZOS);
 
 			oOOS.writeObject(this.oObjectToSerialize);
@@ -255,13 +350,14 @@ implements IStorageManager
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
 			throw new StorageException(e);
 		}
 	}
 
 	/**
 	 * Implements object dump in plain binary form without compression. Attempts
-	 * to save internal object reference to the generater/specified filename
+	 * to save internal object reference to the generated/specified filename
 	 * @throws StorageException in case of I/O or otherwise error during object dump
 	 * @since 0.3.0
 	 * @see #oObjectToSerialize
@@ -272,8 +368,18 @@ implements IStorageManager
 	{
 		try
 		{
-			FileOutputStream oFOS = new FileOutputStream(this.strFilename);
-			ObjectOutputStream oOOS = new ObjectOutputStream(oFOS);
+			ObjectOutputStream oOOS = null;
+
+			if(this.strFilename == null || "".equals(this.strFilename))
+			{
+				// Assume STDOUT if no filename specified.
+				oOOS = new ObjectOutputStream(System.out);
+			}
+			else
+			{
+				FileOutputStream oFOS = new FileOutputStream(this.strFilename);
+				oOOS = new ObjectOutputStream(oFOS);
+			}
 
 			oOOS.writeObject(this.oObjectToSerialize);
 			oOOS.flush();
@@ -281,6 +387,7 @@ implements IStorageManager
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
 			throw new StorageException(e);
 		}
 	}
@@ -399,12 +506,12 @@ implements IStorageManager
 
 	/**
 	 * Implements object loading from plain binary form without compression. Attempts
-	 * to load internal object reference with the generater/specified filename. After,
+	 * to load internal object reference with the generated/specified filename. After,
 	 * calls <code>backSynchronizeObject()</code> so the actual mode can reset back
 	 * references in its own data structures. If the file that we attempt to load
 	 * did not exist, it will be created.
 	 *
-	 * @throws StorageException in case of I/O or otherwise error during object retoration
+	 * @throws StorageException in case of I/O or otherwise error during object restoration
 	 * @since 0.3.0
 	 * @see #backSynchronizeObject()
 	 * @see #strFilename
@@ -414,70 +521,20 @@ implements IStorageManager
 	{
 		try
 		{
-			FileInputStream oFIS = new FileInputStream(strFilename);
-			ObjectInputStream oOIS = new ObjectInputStream(oFIS);
+			ObjectInputStream oOIS = null;
 
-			this.oObjectToSerialize = oOIS.readObject();
+			if(this.strFilename == null || "".equals(this.strFilename))
+			{
+				// Assume STDOUT if no filename specified.
+				oOIS = new ObjectInputStream(System.in);
+			}
+			else
+			{
+				FileInputStream oFIS = new FileInputStream(this.strFilename);
+				oOIS = new ObjectInputStream(oFIS);
+			}
 
-			oOIS.close();
-
-			backSynchronizeObject();
-        }
-        catch(FileNotFoundException e)
-        {
-        	if(this.bDumpOnNotFound == true)
-        	{
-	            System.err.println
-	            (
-	                "StorageManager.restore() --- FileNotFoundException for file: \""
-					+ strFilename + "\", " +
-	                e.getMessage() + "\n" +
-	                "Creating one now..."
-	            );
-	
-	            dump();
-        	}
-        	else
-        	{
-                throw new StorageException(e);
-        	}
-        }
-        catch(ClassNotFoundException e)
-        {
-            throw new StorageException
-            (
-                "StorageManager.restore() --- ClassNotFoundException: " +
-                e.getMessage()
-            );
-        }
-        catch(Exception e)
-        {
-            throw new StorageException(e);
-        }
-	}
-
-	/**
-	 * Implements object loading from GZIP-compressed binary form. Attempts
-	 * to load internal object reference with the generater/specified filename. After,
-	 * calls <code>backSynchronizeObject()</code> so the actual mode can reset back
-	 * references in its own data structures. If the file that we attempt to load
-	 * did not exist, it will be created.
-	 *
-	 * @throws StorageException in case of I/O or otherwise error during object retoration
-	 * @since 0.3.0
-	 * @see #backSynchronizeObject()
-	 * @see #strFilename
-	 */
-	public synchronized void restoreGzipBinary()
-	throws StorageException
-	{
-		try
-		{
-			FileInputStream oFIS = new FileInputStream(this.strFilename);
-			GZIPInputStream oGZIS = new GZIPInputStream(oFIS);
-			ObjectInputStream oOIS = new ObjectInputStream(oGZIS);
-
-			this.oObjectToSerialize = oOIS.readObject();
+			this.oObjectToSerialize = (Serializable)oOIS.readObject();
 
 			oOIS.close();
 
@@ -489,7 +546,7 @@ implements IStorageManager
         	{
 	            System.err.println
 	            (
-	                "StorageManager.restore() --- FileNotFoundException for file: \""
+	                "StorageManager.restore() --- file not found: \""
 					+ this.strFilename + "\", " +
 	                e.getMessage() + "\n" +
 	                "Creating one now..."
@@ -499,12 +556,15 @@ implements IStorageManager
         	}
         	else
         	{
+        		e.printStackTrace(System.err);
                 throw new StorageException(e);
         	}
         }
         catch(ClassNotFoundException e)
         {
-            throw new StorageException
+    		e.printStackTrace(System.err);
+
+    		throw new StorageException
             (
                 "StorageManager.restore() --- ClassNotFoundException: " +
                 e.getMessage()
@@ -512,6 +572,86 @@ implements IStorageManager
         }
         catch(Exception e)
         {
+    		e.printStackTrace(System.err);
+            throw new StorageException(e);
+        }
+	}
+
+	/**
+	 * Implements object loading from GZIP-compressed binary form. Attempts
+	 * to load internal object reference with the generated/specified filename. After,
+	 * calls <code>backSynchronizeObject()</code> so the actual mode can reset back
+	 * references in its own data structures. If the file that we attempt to load
+	 * did not exist, it will be created.
+	 *
+	 * @throws StorageException in case of I/O or otherwise error during object restoration
+	 * @since 0.3.0
+	 * @see #backSynchronizeObject()
+	 * @see #strFilename
+	 */
+	public synchronized void restoreGzipBinary()
+	throws StorageException
+	{
+		try
+		{
+			GZIPInputStream oGZIS = null;
+
+			if(this.strFilename == null || "".equals(this.strFilename))
+			{
+				// Assume STDOUT if no filename specified.
+				oGZIS = new GZIPInputStream(System.in);
+			}
+			else
+			{
+				FileInputStream oFIS = new FileInputStream(this.strFilename);
+				oGZIS = new GZIPInputStream(oFIS);
+			}
+
+			ObjectInputStream oOIS = new ObjectInputStream(oGZIS);
+
+			this.oObjectToSerialize = (Serializable)oOIS.readObject();
+
+			oOIS.close();
+
+			backSynchronizeObject();
+        }
+        catch(FileNotFoundException e)
+        {
+        	if(this.bDumpOnNotFound == true)
+        	{
+	            System.err.println
+	            (
+	                "StorageManager.restore() --- file not found: \""
+					+ this.strFilename + "\", " +
+	                e.getMessage() + "\n" +
+	                "Creating one now..."
+	            );
+	
+	            dump();
+        	}
+        	else
+        	{
+        		e.printStackTrace(System.err);
+                throw new StorageException(e);
+        	}
+        }
+        catch(ClassNotFoundException e)
+        {
+    		e.printStackTrace(System.err);
+
+    		throw new StorageException
+            (
+                "StorageManager.restore() --- ClassNotFoundException: " +
+                e.getMessage()
+            );
+        }
+        catch(NotImplementedException e)
+        {
+        	throw e;
+        }
+        catch(Exception e)
+        {
+    		e.printStackTrace(System.err);
             throw new StorageException(e);
         }
 	}
@@ -577,7 +717,7 @@ implements IStorageManager
 	 * with the generic implementation of <code>restore()</code>. By default
 	 * this method is unimplemented.
 	 * @throws NotImplementedException
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 * @see #restore()
 	 */
 	public synchronized void backSynchronizeObject()
@@ -585,6 +725,16 @@ implements IStorageManager
 		throw new NotImplementedException(this, "backSynchronizeObject()");
 	}
 
+	/**
+	 * Allows querying for the object this storage manager is in charge of.
+	 * @return the reference to the serializable object
+	 * @since 0.3.0.6
+	 */
+	public synchronized Serializable getObjectToSerialize()
+	{
+		return this.oObjectToSerialize;
+	}
+	
 	/**
 	 * Retrieves inner filename reference.
 	 * @return filename string
@@ -687,7 +837,7 @@ implements IStorageManager
 			return oClone;
 		}
 
-		// Should never happend.
+		// Should never happen.
 		catch(CloneNotSupportedException e)
 		{
 			throw new InternalError(e.getMessage());
@@ -724,7 +874,7 @@ implements IStorageManager
 	}
 	
 	/**
-	 * Default implementation of the toString() for all stoage
+	 * Default implementation of the toString() for all storage
 	 * manager derivatives.
 	 * @see java.lang.Object#toString()
 	 * @since 0.3.0.5
@@ -752,7 +902,7 @@ implements IStorageManager
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.26 $";
+		return "$Revision: 1.34 $";
 	}
 }
 

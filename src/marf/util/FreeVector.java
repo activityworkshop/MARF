@@ -9,10 +9,10 @@ import java.util.List;
  * <p>Adaptive extension of the java.util.Vector class.</p>
  *
  * <p>You may access elements of a Vector beyond it's initial length --- the Vector
- * will be automaticall adjusted as appropriate.</p>
+ * will be automatically adjusted as appropriate.</p>
  *
  * <p>Useful in the applications where desirable vector's growth by setting an element
- * beyond its upper boundary automatticaly lengthens the vector to accomondate the
+ * beyond its upper boundary automatically lengthens the vector to accommodate the
  * change (similar to Perl arrays).</p>
  *
  * <p>Similarly, getting an element beyond the upper boundary is not desirable failure, but
@@ -20,15 +20,13 @@ import java.util.List;
  * in length.</p>
  *
  * TODO: allow negative index boundaries.
- * 
- * $Id: FreeVector.java,v 1.12 2005/08/11 00:44:50 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.12 $
+ * @version $Id: FreeVector.java,v 1.16 2010/03/06 02:40:10 mokhov Exp $
  * @since 0.3.0.1
  */
-public class FreeVector
-extends Vector
+public class FreeVector<E>
+extends Vector<E>
 {
 	/**
 	 * For serialization versioning.
@@ -61,7 +59,7 @@ extends Vector
 	 * Constructs this vector given capacity and its increment.
 	 * Inherited from java.util.Vector.
 	 * @param piInitialCapacity initial element capacity (number of object placeholders)
-	 * @param piCapacityIncrement when current capacity reached, until how much capacity should be extened
+	 * @param piCapacityIncrement when current capacity reached, until how much capacity should be extended
 	 */
 	public FreeVector(int piInitialCapacity, int piCapacityIncrement)
 	{
@@ -73,35 +71,38 @@ extends Vector
 	 * Inherited from java.util.Vector.
 	 * @param poCollection collection for the vector elements.
 	 */
-	public FreeVector(Collection poCollection)
+	public FreeVector(Collection<? extends E> poCollection)
 	{
 		super(poCollection);
 	}
-	
+
+
 	/**
 	 * Access an element of the vector given index. 
 	 * Overridden from java.util.Vector.
 	 * @param piIndex vector element index to retrieve
-	 * @return object cotained at specified index, null if beyond boundary
+	 * @return object contained at specified index, null if beyond boundary
 	 */
-	public Object elementAt(int piIndex)
+	public synchronized E elementAt(int piIndex)
 	{
 		if(piIndex > size() - 1)
+		{
 			return null;
+		}
 
 		return super.elementAt(piIndex);
 	}
 
 	/**
 	 * Set an element of the vector given index.
-	 * Capacity is always ensured to be able to accomodate
-	 * any positive inidex (barring out of memory problems). 
+	 * Capacity is always ensured to be able to accommodate
+	 * any positive index (barring out of memory problems). 
 	 * Overridden from java.util.Vector.
 	 * 
 	 * @param poElement element to set at the index
 	 * @param piIndex the index
 	 */
-	public void setElementAt(Object poElement, int piIndex)
+	public synchronized void setElementAt(E poElement, int piIndex)
 	{
 		ensureIndexCapacity(piIndex);
 		super.setElementAt(poElement, piIndex);
@@ -109,14 +110,14 @@ extends Vector
 
 	/**
 	 * Inserts an element of the vector after given index.
-	 * Capacity is always ensured to be able to accomodate
-	 * any positive inidex (barring out of memory problems). 
+	 * Capacity is always ensured to be able to accommodate
+	 * any positive index (barring out of memory problems). 
 	 * Overridden from java.util.Vector.
 	 * 
 	 * @param poElement element to set after the index
 	 * @param piIndex the index
 	 */
-	public void insertElementAt(Object poElement, int piIndex)
+	public synchronized void insertElementAt(E poElement, int piIndex)
 	{
 		ensureIndexCapacity(piIndex);
 		super.insertElementAt(poElement, piIndex);
@@ -128,9 +129,9 @@ extends Vector
 	 * Has effect only if the index is greater than
 	 * the current vector's size.
 	 * 
-	 * @param piIndex the index to accomodate
+	 * @param piIndex the index to accommodate
 	 */
-	public void ensureIndexCapacity(int piIndex)
+	public synchronized void ensureIndexCapacity(int piIndex)
 	{
 		if(piIndex > size() - 1)
 		{
@@ -144,26 +145,26 @@ extends Vector
 	 * Overridden from java.util.Vector. Calls the overridden elementAt().
 	 * 
 	 * @param piIndex vector element index to retrieve
-	 * @return object cotained at specified index, null if beyond boundary
+	 * @return object contained at specified index, null if beyond boundary
 	 */
-	public synchronized Object get(int piIndex)
+	public synchronized E get(int piIndex)
 	{
 		return elementAt(piIndex);
 	}
 
 	/**
 	 * Set an element of the vector given index.
-	 * Capacity is always ensured to be able to accomodate
-	 * any positive inidex (barring out of memory problems).
+	 * Capacity is always ensured to be able to accommodate
+	 * any positive index (barring out of memory problems).
 	 * Overridden from java.util.Vector.
 	 * 
 	 * @param poElement element to set at the index
 	 * @param piIndex the index
 	 * @return object that was previously at that index.
 	 */
-	public synchronized Object set(int piIndex, Object poElement)
+	public synchronized E set(int piIndex, E poElement)
 	{
-		Object oOldElement = elementAt(piIndex);
+		E oOldElement = elementAt(piIndex);
 		setElementAt(poElement, piIndex);
 		return oOldElement;
 	}
@@ -174,7 +175,7 @@ extends Vector
 	 * @param piIndex the index
 	 * @param poElement element to set after the index
 	 */
-	public synchronized void add(int piIndex, Object poElement)
+	public synchronized void add(int piIndex, E poElement)
 	{
 		insertElementAt(poElement, piIndex);
 	}
@@ -186,10 +187,11 @@ extends Vector
 	 * @param piIndex index of the element to be removed
 	 * @return object reference of the element just removed; null if index exceeds the upper bound
 	 */
-	public synchronized Object remove(int piIndex)
+	public synchronized E remove(int piIndex)
 	{
 		if(piIndex >= size())
 		{
+			//XXX:
 			//???
 			// 1 less than the index
 			//ensureIndexCapacity(piIndex - 1);
@@ -210,8 +212,8 @@ extends Vector
 	 * 
 	 * @return <code>true</code> if the vector has changed
 	 */
-	public synchronized boolean addAll(int piIndex, Collection poCollection)
-	{
+    public synchronized boolean addAll(int piIndex, Collection<? extends E> poCollection)
+    {
 		ensureIndexCapacity(piIndex);
 		return super.addAll(piIndex, poCollection);
 	}
@@ -226,7 +228,7 @@ extends Vector
 	 * 
 	 * @return a corresponding List reference.
 	 */
-	public synchronized List subList(int piFromIndex, int piToIndex)
+	public synchronized List<E> subList(int piFromIndex, int piToIndex)
 	{
 		ensureIndexCapacity(piToIndex);
 		return super.subList(piFromIndex, piToIndex);
@@ -252,7 +254,7 @@ extends Vector
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.12 $";
+		return "$Revision: 1.16 $";
 	}
 }
 

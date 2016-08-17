@@ -6,10 +6,10 @@ import marf.Preprocessing.IPreprocessing;
 /**
  * <p>Feature Extraction Interface.</p>
  *
- * <p>$Id: IFeatureExtraction.java,v 1.4 2005/08/05 22:19:54 mokhov Exp $</p>
+ * $Id: IFeatureExtraction.java,v 1.5 2006/08/04 03:31:04 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @since 0.3.0.3
  */
 public interface IFeatureExtraction
@@ -17,14 +17,25 @@ public interface IFeatureExtraction
 	/**
 	 * Interface source code revision.
 	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.4 $";
+	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.5 $";
 
 	/**
 	 * Abstract feature extraction routine.
+	 * Requires an IPreprocessing to provide the sample data.
 	 * @return boolean true if there were features extracted, false otherwise
 	 * @throws FeatureExtractionException if there was an error while extracting features
 	 */
 	boolean extractFeatures()
+	throws FeatureExtractionException;
+
+	/**
+	 * Abstract feature extraction routine.
+	 * @param padSampleData the sample to extract features from
+	 * @return boolean true if there were features extracted, false otherwise
+	 * @throws FeatureExtractionException if there was an error while extracting features
+	 * @since 0.3.0.6
+	 */
+	boolean extractFeatures(double[] padSampleData)
 	throws FeatureExtractionException;
 
 	/**

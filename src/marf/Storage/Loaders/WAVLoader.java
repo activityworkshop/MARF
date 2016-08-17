@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -13,7 +14,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import marf.Storage.MARFAudioFileFormat;
 import marf.Storage.Sample;
-import marf.Storage.SampleLoader;
 import marf.Storage.StorageException;
 import marf.util.ByteUtils;
 import marf.util.InvalidSampleFormatException;
@@ -22,16 +22,16 @@ import marf.util.InvalidSampleFormatException;
 /**
  * <p>Loads/stores samples if WAVE format.</p>
  *
- * <p>$Id: WAVLoader.java,v 1.23 2006/01/14 22:30:13 mokhov Exp $</p>
+ * $Id: WAVLoader.java,v 1.34 2009/02/22 02:16:01 mokhov Exp $
  *
  * @author Jimmy Nicolacopoulos
  * @author Serguei Mokhov
  *
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.34 $
  * @since 0.0.1
  */
 public class WAVLoader
-extends SampleLoader
+extends AudioSampleLoader
 {
 	/*
 	 * ----------------
@@ -40,65 +40,102 @@ extends SampleLoader
 	 */
 
 	/**
-	 * WAVLoader Constructor.
+	 * Default WAVLoader Constructor.
 	 * @throws InvalidSampleFormatException if the WAV file isn't really in WAV format
 	 * or any other error took place.
 	 */
 	public WAVLoader()
 	throws InvalidSampleFormatException
 	{
-		this.oSample = new Sample(MARFAudioFileFormat.WAV);
-		AudioFormat.Encoding oEncoding = AudioFormat.Encoding.PCM_SIGNED;
+		this
+		(
+			DEFAULT_FREQUENCY,
+			DEFAULT_SAMPLE_BIT_SIZE,
+			DEFAULT_CHANNELS,
+			AudioFormat.Encoding.PCM_SIGNED
+		);
+	}
 
-		float fRate = DEFAULT_FREQUENCY;
-		int iBitSampleSize = DEFAULT_SAMPLE_BIT_SIZE;
-		int iChannels = DEFAULT_CHANNELS;
+	/**
+	 * Allows construction of the WAVE loader with non-default parameters.
+	 * @param piRequiredFrequency other than default of 8000
+	 * @param piRequiredBitSize other than the default of 16
+	 * @param piRequiredChannels other than the default of 1
+	 * @param poEncoding other than the default of AudioFormat.Encoding.PCM_SIGNED
+	 * @throws InvalidSampleFormatException if the WAV file isn't really in WAV format
+	 * or any other error took place.
+	 * @since 0.3.0.6
+	 * @see AudioFormat.Encoding
+	 */
+	public WAVLoader
+	(
+		float pfRequiredFrequency,
+		int piRequiredBitSize,
+		int piRequiredChannels,
+		AudioFormat.Encoding poEncoding
+	)
+	throws InvalidSampleFormatException
+	{
+		this.oSample = new Sample(MARFAudioFileFormat.WAV);
+
+		this.oEncoding = poEncoding;
+
+		this.fRequiredFrequency = pfRequiredFrequency;
+		this.iRequiredBitSize = piRequiredBitSize;
+		this.iRequiredChannels = piRequiredChannels;
 
 		this.oAudioFormat = new AudioFormat
 		(
-			oEncoding,
-			fRate,
-			iBitSampleSize,
-			iChannels,
-			(iBitSampleSize / 8) * iChannels,
-			fRate,
+			this.oEncoding,
+			this.fRequiredFrequency,
+			this.iRequiredBitSize,
+			this.iRequiredChannels,
+			(this.iRequiredBitSize / 8) * this.iRequiredChannels,
+			this.fRequiredFrequency,
 			false
 		);
 	}
 
 	/**
-	 * Loads WAV sample data from a file.
-	 * @param poInFile incoming sample File object
-	 * @return Sample object
-	 * @throws StorageException if there was a problem loading the sample
+	 * Loads and decodes the WAV sample from the provided stream.
+	 * @see marf.Storage.SampleLoader#loadSample(java.io.InputStream)
+	 * @since 0.3.0.6
 	 */
-	public Sample loadSample(File poInFile)
+	public Sample loadSample(InputStream poAudioDataInputStream)
 	throws StorageException
 	{
 		try
 		{
-			AudioInputStream oNewInputStream;
+			AudioInputStream oNewInputStream = null;
 
 			// The parameter should not be null and should be a regular file.
-			if(poInFile != null && poInFile.isFile())
+			if(poAudioDataInputStream != null)
 			{
-				// Check the file format of the file
-				AudioFileFormat oFileFormat = AudioSystem.getAudioFileFormat(poInFile);
-
-				if(oFileFormat.getType().equals(AudioFileFormat.Type.WAVE) == false)
+				if(poAudioDataInputStream instanceof AudioInputStream)
 				{
-					throw new InvalidSampleFormatException("Audio file type is not WAVE");
+					// Get input stream from the parameter we've been gifted
+					oNewInputStream = (AudioInputStream)poAudioDataInputStream;
 				}
-
-				// Get input stream from the file
-				oNewInputStream = AudioSystem.getAudioInputStream(poInFile);
+				else
+				{
+					// Check the file format of the file
+					AudioFileFormat oFileFormat = AudioSystem.getAudioFileFormat(poAudioDataInputStream);
+	
+					if(oFileFormat.getType().equals(AudioFileFormat.Type.WAVE) == false)
+					{
+						throw new InvalidSampleFormatException("Audio stream type is not WAVE");
+					}
+	
+					// Get input stream from the file
+					oNewInputStream = AudioSystem.getAudioInputStream(poAudioDataInputStream);
+				}
 
 				// Check internal audio format characteristics we require
 				validateAudioFormat(oNewInputStream.getFormat());
 			}
 			else
 			{
-				throw new FileNotFoundException("Filename is either null or is not a regular file.");
+				throw new FileNotFoundException("Audio stream or file is either null or is not a regular file.");
 			}
 
 			// Set the stream and fill out the sample's buffer with data
@@ -107,7 +144,7 @@ extends SampleLoader
 
 			return this.oSample;
 		}
-	
+
 		// To avoid re-wrapping into StorageException again.
 		catch(StorageException e)
 		{
@@ -117,6 +154,7 @@ extends SampleLoader
 		// Wrap all the other exceptions here.
 		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
 			throw new StorageException(e);
 		}
 	}
@@ -124,44 +162,73 @@ extends SampleLoader
 	/**
 	 * Buffers out the contents of an audio buffer into the parameter.
 	 * @param padAudioData data array to fill in
-	 * @return the number of words of data read (a word is two bytes)
+	 * @return the number of sample points of data read (default is a word of two bytes)
 	 * @throws StorageException if there was a problem reading the audio data
 	 */
-	public final int readAudioData(double[] padAudioData)
+	public final int readSampleData(double[] padAudioData)
 	throws StorageException
 	{
 		try
 		{
-			byte[] atAudioBuffer = new byte[padAudioData.length * 2];
-			int iNbrBytes = this.oAudioInputStream.read(atAudioBuffer);
-			int iWordCount = (iNbrBytes / 2) + (iNbrBytes % 2);
+			int iBytesPerSample = this.iRequiredBitSize / 8;
 
-			for(int i = 0; i < iWordCount; i++)
+			byte[] atAudioBuffer = new byte[padAudioData.length * iBytesPerSample];
+			int iNbrBytes = this.oAudioInputStream.read(atAudioBuffer);
+			int iSamplePointCount = (iNbrBytes / iBytesPerSample) + (iNbrBytes % iBytesPerSample);
+
+			for(int i = 0; i < iSamplePointCount; i++)
 			{
-				padAudioData[i] = (double)ByteUtils.byteArrayToShort
-				(
-					atAudioBuffer,
-					2 * i,
-					this.oAudioFormat.isBigEndian()
-				) / 32768;
+				switch(iBytesPerSample)
+				{
+					case 1:
+					{
+						padAudioData[i] = (double)atAudioBuffer[i] / 255;
+						break;
+					}
+					
+					case 2:
+					{
+						padAudioData[i] = (double)ByteUtils.byteArrayToShort
+						(
+							atAudioBuffer,
+							iBytesPerSample * i,
+							this.oAudioFormat.isBigEndian()
+						) / 32768;
+						
+						break;
+					}
+					
+					default:
+					{
+						throw new StorageException("Invalid bytes per sample setting: " + iBytesPerSample);
+					}
+				}
 			}
 
-			return iWordCount;
+			return iSamplePointCount;
 		}
 		catch(IOException e)
 		{
+			e.printStackTrace(System.err);
 			throw new StorageException(e);
 		}
 	}
 
 	/**
-	 * Buffers the contents of padAudioData into atAudioBuffer.
+	 * Buffers the contents of audio data parameter into the equivalent
+	 * AudioInputStream object given the audio format specification.
+	 * Essentially, this method converts a double-array data to a byte
+	 * array and makes it available again for reading using the standard
+	 * means. The double data is assumed not to exceed a two-byte range
+	 * prior conversion to bytes. If it does exceed two bytes in useful
+	 * precision, then this precision will be LOST. 
+	 * 
 	 * @param padAudioData array of data to be written
 	 * @param piNbrWords number of words to be written
 	 * @return the number of data written
 	 * @throws StorageException if there was an error writing audio data
 	 */
-	public final int writeAudioData(final double[] padAudioData, final int piNbrWords)
+	public final int writeSampleData(final double[] padAudioData, final int piNbrWords)
 	throws StorageException
 	{
 		int iWord = 0;
@@ -177,13 +244,13 @@ extends SampleLoader
 		}
 
 		this.oByteArrayOutputStream.write(atAudioBuffer, 0, atAudioBuffer.length);
-		atAudioBytes = oByteArrayOutputStream.toByteArray();
+		atAudioBytes = this.oByteArrayOutputStream.toByteArray();
 
-		ByteArrayInputStream oBais = new ByteArrayInputStream(atAudioBytes);
+		ByteArrayInputStream oBAIS = new ByteArrayInputStream(atAudioBytes);
 
 		this.oAudioInputStream = new AudioInputStream
 		(
-			oBais,
+			oBAIS,
 			this.oAudioFormat,
 			atAudioBytes.length / this.oAudioFormat.getFrameSize()
 		);
@@ -206,6 +273,7 @@ extends SampleLoader
 		}
 		catch(IOException e)
 		{
+			e.printStackTrace(System.err);
 			throw new StorageException(e);
 		}
 	}
@@ -238,20 +306,26 @@ extends SampleLoader
 		{
 			throw new UnsupportedAudioFileException
 			(
-				"Wave file not " + this.iRequiredBitSize + "-bit"
+				"Wave stream is not " + this.iRequiredBitSize
+				+ "-bit (found " + poFormat.getSampleSizeInBits() + ")"
 			);
 		}
 
 		if(poFormat.getChannels() != this.iRequiredChannels)
 		{
-			throw new UnsupportedAudioFileException("Wave file is not mono.");
+			throw new UnsupportedAudioFileException
+			(
+				"Wave stream's number of channels (requested: " + poFormat.getChannels()
+				+ ") is not the same as required (" + this.iRequiredChannels + ")."
+			);
 		}
 
-		if(poFormat.getFrameRate() != this.iRequiredFrequency)
+		if(poFormat.getFrameRate() != this.fRequiredFrequency)
 		{
 			throw new UnsupportedAudioFileException
 			(
-				"Wave file is not " + this.iRequiredFrequency + " Hz"
+				"Wave stream's frame rate (requested: " + poFormat.getFrameRate()
+				+ " Hz) is not the same as required (" + this.fRequiredFrequency + " Hz)."
 			);
 		}
 	}
@@ -263,7 +337,7 @@ extends SampleLoader
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.23 $";
+		return "$Revision: 1.34 $";
 	}
 }
 

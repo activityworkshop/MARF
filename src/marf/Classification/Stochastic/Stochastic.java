@@ -11,10 +11,10 @@ import marf.util.NotImplementedException;
  * <p>Generic Stochastic Classification Module.</p>
  * <p>TODO: partially implemented.</p>
  *
- * <p>$Id: Stochastic.java,v 1.24 2006/02/12 23:57:58 mokhov Exp $</p>
+ * $Id: Stochastic.java,v 1.26 2007/12/31 00:17:05 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.26 $
  * @since 0.0.1
  */
 public class Stochastic
@@ -43,8 +43,9 @@ extends Classification
 	 * @throws NotImplementedException
 	 * @throws ClassificationException never thrown
 	 * @return nothing
+	 * @since 0.3.0.6
 	 */
-	public boolean classify()
+	public boolean classify(double[] padFeatureVector)
 	throws ClassificationException
 	{
 		throw new NotImplementedException(this, "classify()");
@@ -55,8 +56,9 @@ extends Classification
 	 * @throws NotImplementedException
 	 * @throws ClassificationException never thrown
 	 * @return nothing
+	 * @since 0.3.0.6
 	 */
-	public boolean train()
+	public boolean train(double[] padFeatureVector)
 	throws ClassificationException
 	{
 		throw new NotImplementedException(this, "train()");
@@ -79,7 +81,7 @@ extends Classification
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.24 $";
+		return "$Revision: 1.26 $";
 	}
 }
 

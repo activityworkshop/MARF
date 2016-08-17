@@ -1,6 +1,6 @@
 /*
  * SymDataType Class
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
+ * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
  */
 
 package marf.nlp.Parsing;
@@ -8,10 +8,10 @@ package marf.nlp.Parsing;
 /**
  * <p>User-defined symbol's data type.</p>
  *
- * $Id: SymDataType.java,v 1.9 2006/01/15 20:51:55 mokhov Exp $
+ * $Id: SymDataType.java,v 1.15 2012/01/09 04:03:23 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.15 $
  * @since 0.3.0.2
  */
 public class SymDataType
@@ -100,7 +100,7 @@ public class SymDataType
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.9 $";
+		return "$Revision: 1.15 $";
 	}
 }
 

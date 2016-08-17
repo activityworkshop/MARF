@@ -14,17 +14,17 @@ import marf.util.NotImplementedException;
 /**
  * <p>Class Spectrogram dumps a spectrogram to a PPM file.</p>
  *
- * <p>$Id: Spectrogram.java,v 1.30 2005/08/13 23:09:38 susan_fan Exp $</p>
+ * $Id: Spectrogram.java,v 1.34 2012/05/30 16:24:18 mokhov Exp $
  *
  * @author Ian Clement
  * @author Serguei Mokhov
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.34 $
  * @since 0.0.1
  */
 public class Spectrogram
 extends StorageManager
 {
-    /**
+	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
@@ -32,20 +32,21 @@ extends StorageManager
 	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -8219029755014757254L;
+
 	/**
 	 * The data vector.
 	 */
-	protected Vector data = null;
+	protected Vector<double[]> oData = null;
 
 	/**
 	 * Current minimum.
 	 */
-	protected double min = 0.0;
+	protected double dMin = 0.0;
 
 	/**
 	 * Current maximum.
 	 */
-	protected double max = 0.0;
+	protected double dMax = 0.0;
 
 	/**
 	 * To differentiate file names based on the feature extraction method name.
@@ -57,7 +58,7 @@ extends StorageManager
 	 */
 	public Spectrogram()
 	{
-		this.data = new Vector();
+		this.oData = new Vector<double[]>();
 	}
 
 	/**
@@ -72,63 +73,75 @@ extends StorageManager
 
 	/**
 	 * Adds LPC spectrum to the data to dump.
-	 * @param lpc_coeffs LPC coefficiencies to dump
-	 * @param num_coeffs number of LPC coefficiencies to dump
-	 * @param size size of the spectrogram (width)
+	 * @param padLPCCoeffs LPC coefficients to dump
+	 * @param piNumCoeffs number of LPC coefficients to dump
+	 * @param piSize size of the spectrogram (width)
 	 */
-	public final void addLPC(final double[] lpc_coeffs, final int num_coeffs, final int size)
+	public final void addLPC(final double[] padLPCCoeffs, final int piNumCoeffs, final int piSize)
 	{
-		double[] to_insert = new double[size];
+		double[] adToInsert = new double[piSize];
 
-		for(int i = 0; i < size; i++)
+		for(int i = 0; i < piSize; i++)
 		{
-			double Ar = 1.0;
-			double Ai = 0.0;
+			double dAr = 1.0;
+			double dAi = 0.0;
 
-			for(int k = 0; k < num_coeffs; k++)
+			for(int k = 0; k < piNumCoeffs; k++)
 			{
-				Ar -= lpc_coeffs[k] * Math.cos(2 * Math.PI * i * -k / 128);
-				Ai -= lpc_coeffs[k] * Math.sin(2 * Math.PI * i * -k / 128);
+				dAr -= padLPCCoeffs[k] * Math.cos(2 * Math.PI * i * -k / 128);
+				dAi -= padLPCCoeffs[k] * Math.sin(2 * Math.PI * i * -k / 128);
 			}
 
-			double A = Math.sqrt(Ar * Ar + Ai * Ai);
-			double H = 1.0 / A;
+			double dA = Math.sqrt(dAr * dAr + dAi * dAi);
+			double dH = 1.0 / dA;
 
-			if(H > this.max)
-				this.max = H;
+			if(dH > this.dMax)
+			{
+				this.dMax = dH;
+			}
 			else
-				if(H < this.min)
-					this.min = H;
+			{
+				if(dH < this.dMin)
+				{
+					this.dMin = dH;
+				}
+			}
 
-			to_insert[i] = H;
+			adToInsert[i] = dH;
 		}
 
-		this.data.add(to_insert);
+		this.oData.add(adToInsert);
 	}
 
 	/**
 	 * Adds FFT spectrum to the data to dump.
-	 * @param values array of doubles (FFT coefficiencies)
+	 * @param padValues array of doubles (FFT coefficients)
 	 */
-	public final void addFFT(final double[] values)
+	public final void addFFT(final double[] padValues)
 	{
-		double[] to_insert = new double[values.length / 2];
+		double[] adToInsert = new double[padValues.length / 2];
 
-		if(this.data.size() == 0)
-			this.min = this.max = values[0];
-
-		for(int k = 0; k < to_insert.length; k++)
+		if(this.oData.size() == 0)
 		{
-			if(values[k] > max)
-				this.max = values[k];
-
-			if(values[k] < min)
-				this.min = values[k];
-
-			to_insert[k] = values[k];
+			this.dMin = this.dMax = padValues[0];
 		}
 
-		this.data.add(to_insert);
+		for(int k = 0; k < adToInsert.length; k++)
+		{
+			if(padValues[k] > dMax)
+			{
+				this.dMax = padValues[k];
+			}
+
+			if(padValues[k] < dMin)
+			{
+				this.dMin = padValues[k];
+			}
+
+			adToInsert[k] = padValues[k];
+		}
+
+		this.oData.add(adToInsert);
 	}
 
 	/**
@@ -141,15 +154,15 @@ extends StorageManager
 		try
 		{
 			Debug.debug("Dumping spectrogram " + MARF.getSampleFile() + "." + this.strMethod + ".ppm");
-			Debug.debug("Spectrogram.dump() - data size in vectors: " + data.size());
+			Debug.debug("Spectrogram.dump() - data size in vectors: " + this.oData.size());
 
-			FileOutputStream fos = null;
-			DataOutputStream outfile = null;
+			FileOutputStream oFOS = null;
+			DataOutputStream oOutFile = null;
 
-			fos = new FileOutputStream(MARF.getSampleFile() + "." + this.strMethod + ".ppm");
-			outfile = new DataOutputStream(fos);
+			oFOS = new FileOutputStream(MARF.getSampleFile() + "." + this.strMethod + ".ppm");
+			oOutFile = new DataOutputStream(oFOS);
 
-		// Ouput PPM header
+		// Output PPM header
 /*
 		man ppm:
 
@@ -176,30 +189,43 @@ extends StorageManager
 			// Output data
 
 			// Make max be at 75%
-			this.max *= 0.75;
+			this.dMax *= 0.75;
 
-			int length = ((double[])this.data.elementAt(0)).length;
+			int iWidth = this.oData.size();
+			int iLength = this.oData.elementAt(0).length;
 
-			outfile.writeBytes("P6\n" + this.data.size() + "\n" + length + "\n255\n");
+			oOutFile.writeBytes
+			(
+				"P6\n"
+				+ iWidth + "\n"
+				+ iLength + "\n"
+				+ "255\n"
+			);
 
-			for(int j = length - 1; j >= 0; j--)
+			for(int j = iLength - 1; j >= 0; j--)
 			{
-				for(int i = 0; i < this.data.size(); i++)
+				for(int i = 0; i < iWidth; i++)
 				{
-					double[] adData = (double[])this.data.elementAt(i);
-
+					double[] adData = this.oData.elementAt(i);
+					
 					for(int m = 0; m < 3; m++)
 					{
-						double val;
+						double dVal;
 
-						if(adData[j] > this.max)
-							val = this.max;
-						else if(adData[j] < this.min)
-							val = this.min;
+						if(adData[j] > this.dMax)
+						{
+							dVal = this.dMax;
+						}
+						else if(adData[j] < this.dMin)
+						{
+							dVal = this.dMin;
+						}
 						else
-							val = adData[j];
+						{
+							dVal = adData[j];
+						}
 
-						outfile.writeByte((int)(((this.max - val) / this.max) * 256));
+						oOutFile.writeByte((int)(((this.dMax - dVal) / this.dMax) * 256));
 					}
 				}
 			}
@@ -208,7 +234,7 @@ extends StorageManager
 			(
 				"Done dumping spectrogram " +
 				MARF.getSampleFile() + "." + this.strMethod +
-				".ppm [" + (this.data.size() * length * 3) + " bytes]"
+				".ppm [" + (this.oData.size() * iLength * 3) + " bytes]"
 			);
 		}
 		catch(Exception e)
@@ -231,11 +257,11 @@ extends StorageManager
 	/**
 	 * Returns source code revision information.
 	 * @return revision string
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.30 $";
+		return "$Revision: 1.34 $";
 	}
 }
 

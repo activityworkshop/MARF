@@ -13,11 +13,11 @@ package marf.util;
  * and this class was created prior that. And the functionality we offer
  * seems to be superior anyway.</p>
  *
- * $Id: BaseThread.java,v 1.16 2005/06/20 05:36:43 mokhov Exp $
+ * $Id: BaseThread.java,v 1.18 2007/12/23 06:29:46 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
- * @since 0.3.0
+ * @version $Revision: 1.18 $
+ * @since 0.3.0.1
  * 
  * @see ExpandedThreadGroup
  * @see Runnable
@@ -178,12 +178,14 @@ extends Thread
 
 		/*
 		 * This scenario is very possible when using convenience
-		 * constructos with this() call as this() chooses as the
+		 * constructors with this() call as this() chooses as the
 		 * base the constructor we are in, instead of
 		 * BaseThread(ThreadGroup, Runnable, String).
 		 */
 		if(poThreadGroup != null)
+		{
 			poThreadGroup.addThread(this);
+		}
 
 		this.oTarget = poTarget;
 		setTID();
@@ -227,8 +229,8 @@ extends Thread
 
 	/**
 	 * Retrieves the thread's target.
-	 * Proved to be usefult in some caes, e.g. in the GIPSY,
-	 * needed to know who was actually the target posmortem.
+	 * Proved to be useful in some cases, e.g. in the GIPSY,
+	 * needed to know who was actually the target postmortem.
 	 * @return Returns the Runnable target set during construction
 	 */
 	public Runnable getTarget()
@@ -242,7 +244,7 @@ extends Thread
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.16 $";
+		return "$Revision: 1.18 $";
 	}
 }
 

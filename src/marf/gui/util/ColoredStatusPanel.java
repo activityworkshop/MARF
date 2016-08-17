@@ -7,15 +7,15 @@ import marf.util.Debug;
 
 
 /**
- * Panel to be used as a status bar with color gradience.
+ * <p>Panel to be used as a status bar with color gradience.</p>
  *
  * TODO: refactor.
  *
- * $Id: ColoredStatusPanel.java,v 1.10 2005/08/14 01:15:57 mokhov Exp $
+ * $Id: ColoredStatusPanel.java,v 1.11 2007/12/18 03:46:08 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.10 $
- * @since 0.3.0
+ * @version $Revision: 1.11 $
+ * @since 0.3.0.2
  */
 public class ColoredStatusPanel
 extends SmartSizablePanel
@@ -112,7 +112,7 @@ extends SmartSizablePanel
 
 	/**
 	 * Draws this panel.
-	 * @param poGraphics underlying graphics subsytem reference
+	 * @param poGraphics underlying graphics subsystem reference
 	 * @see java.awt.Component#paint(java.awt.Graphics)
 	 */
 	public void paint(Graphics poGraphics)
@@ -184,7 +184,7 @@ extends SmartSizablePanel
 	/**
 	 * Sets current status to a new value and repaints.
 	 * If the status values exceed boundaries, the status
-	 * is aligned with the bounds istead.
+	 * is aligned with the bounds instead.
 	 * @param piCurrentStatus possible new current status
 	 */
 	public void setCurrentStatus(int piCurrentStatus)
@@ -240,7 +240,7 @@ extends SmartSizablePanel
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.10 $";
+		return "$Revision: 1.11 $";
 	}
 }
 

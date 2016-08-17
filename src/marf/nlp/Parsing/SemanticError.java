@@ -6,13 +6,13 @@ import java.io.IOException;
 
 /**
  * <p>Class SemanticError
- * Represents an instance of a sematic error
+ * Represents an instance of a semantic error
  * in the semantic analysis process.</p>
  *
- * $Id: SemanticError.java,v 1.15 2006/01/15 20:37:41 mokhov Exp $
+ * $Id: SemanticError.java,v 1.16 2007/12/18 21:37:55 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  * @since 0.3.0.2
  */
 public class SemanticError
@@ -100,7 +100,7 @@ extends CompilerError
 	}
 
 	/**
-	 * Constructor alterantive to Unknown error with the custom error message.
+	 * Constructor alternative to Unknown error with the custom error message.
 	 * @param poFaultingToken the semantic token that caused the error.
 	 * @param pstrCustomErrorMessage custom error message
 	 */
@@ -195,7 +195,7 @@ extends CompilerError
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.15 $";
+		return "$Revision: 1.16 $";
 	}
 }
 

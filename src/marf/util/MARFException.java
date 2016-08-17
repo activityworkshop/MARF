@@ -1,21 +1,19 @@
 package marf.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-
 
 /**
  * <p>Class MARFException.</p>
  * <p>This class extends Exception for MARF specifics.</p>
  *
- * <p>$Id: MARFException.java,v 1.19 2005/08/11 00:44:50 mokhov Exp $</p>
+ * $Id: MARFException.java,v 1.21 2007/12/23 06:29:47 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.21 $
  * @since 0.0.1
  */
 public class MARFException
 extends Exception
+implements IMARFException
 {
 	/**
 	 * Our own error message container.
@@ -55,41 +53,14 @@ extends Exception
 
 	/**
 	 * This is used for debug purposes only with some unusual Exception's.
-	 * It allows the originiating Exceptions stack trace to be returned.
+	 * It allows the originating Exceptions stack trace to be returned.
 	 * @param pstrMessage Error message string
 	 * @param poException Exception object to dump
 	 */
 	public MARFException(String pstrMessage, Exception poException)
 	{
 		super(pstrMessage);
-
-	 	// Based on PostgreSQL JDBC driver's PGSQLException.
-		try
-		{
-			ByteArrayOutputStream oByteArrayOutputStream = new ByteArrayOutputStream();
-			PrintWriter oPrintWriter = new PrintWriter(oByteArrayOutputStream);
-
-			oPrintWriter.println("Exception: " + poException + "\nStack Trace:\n");
-			poException.printStackTrace(oPrintWriter);
-			oPrintWriter.println("End of Stack Trace");
-
-			this.strMessage += pstrMessage + " " + oByteArrayOutputStream;
-
-			oPrintWriter.println(this.strMessage);
-
-			oPrintWriter.flush();
-			oPrintWriter.close();
-
-			oByteArrayOutputStream.close();
-		}
-		catch(Exception ioe)
-		{
-			this.strMessage +=
-				pstrMessage + " " +
-				poException +
-				"\nIO Error on stack trace generation! " +
-				ioe;
-		}
+		this.strMessage = ExceptionUtils.getStackTraceAsString(pstrMessage, poException);
 	}
 
 	/**
@@ -104,11 +75,61 @@ extends Exception
 
 	/**
 	 * Returns string representation of the error message.
+	 * Definalize in 0.3.0.6 to allow derivatives.
 	 * @return error string
 	 */
-	public final String getMessage()
+	public String getMessage()
 	{
 		return this.strMessage;
+	}
+
+	/* (non-Javadoc)
+	 * @see marf.util.IMARFException#create()
+	 */
+	public IMARFException create()
+	{
+		return create(null, null);
+	}
+
+	/* (non-Javadoc)
+	 * @see marf.util.IMARFException#create(java.lang.Exception)
+	 */
+	public IMARFException create(Exception poException)
+	{
+		return create(null, poException);
+	}
+
+	/* (non-Javadoc)
+	 * @see marf.util.IMARFException#create(java.lang.String)
+	 */
+	public IMARFException create(String pstrMessage)
+	{
+		return create(pstrMessage, null);
+	}
+
+	/**
+	 * @see marf.util.IMARFException#create(java.lang.String, java.lang.Exception)
+	 */
+	public IMARFException create(String pstrMessage, Exception poException)
+	{
+		if(pstrMessage == null && poException == null)
+		{
+			return new MARFException();
+		}
+		else if(pstrMessage == null && poException != null)
+		{
+			return new MARFException(poException);
+		}
+		else if(pstrMessage != null && poException == null)
+		{
+			return new MARFException(pstrMessage);
+		}
+		else if(pstrMessage != null && poException != null)
+		{
+			return new MARFException(pstrMessage, poException);
+		}
+
+		return null;
 	}
 
 	/**
@@ -128,7 +149,7 @@ extends Exception
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.19 $";
+		return "$Revision: 1.21 $";
 	}
 }
 

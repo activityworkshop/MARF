@@ -7,10 +7,10 @@ package marf.util;
  *
  * TODO: complete
  *
- * $Id: Matrix.java,v 1.14 2005/08/11 00:44:50 mokhov Exp $
+ * $Id: Matrix.java,v 1.15 2007/12/23 06:29:47 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  * @since 0.3.0.1
  *
  * @see FreeVector
@@ -98,17 +98,23 @@ extends FreeVector
 	public synchronized Object elementAt(final int[] paiPoint)
 	{
 		if(paiPoint == null || paiPoint.length == 0)
+		{
 			return elementAt(0);
+		}
 
 		Object oObject = elementAt(paiPoint[0]);
 
 		if(paiPoint.length == 1)
+		{
 			return oObject;
+		}
 
 		int[] aiReducedPoint = new int[paiPoint.length - 1];
 
 		for(int i = 0; i < aiReducedPoint.length; i++)
+		{
 			aiReducedPoint[i] = paiPoint[i];
+		}
 
 		return elementAt(aiReducedPoint);
 	}
@@ -132,7 +138,7 @@ extends FreeVector
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.14 $";
+		return "$Revision: 1.15 $";
 	}
 }
 

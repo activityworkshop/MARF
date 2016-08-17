@@ -1,20 +1,29 @@
 package marf.Storage;
 
+import java.io.IOException;
 import java.io.Serializable;
 
+import javax.sound.sampled.AudioFormat;
+
 import marf.util.Arrays;
+import marf.util.Debug;
 import marf.util.InvalidSampleFormatException;
 
 
 /**
- * <p>Audio sample data container.</p>
+ * <p>Sample data container.</p>
  *
- * <p>$Id: Sample.java,v 1.42 2006/01/02 22:24:00 mokhov Exp $</p>
+ * <p>The Sample Bean can contain data samples from audio, images, text, or
+ * any other data as a collection of double values. While started with Audio
+ * processing, it is not confined to audio data.
+ * </p>
+ *
+ * $Id: Sample.java,v 1.51 2009/02/22 02:16:01 mokhov Exp $
  *
  * @author Serguei Mokhov
  * @author Jimmy Nicolacopoulos
  *
- * @version $Revision: 1.42 $
+ * @version $Revision: 1.51 $
  * @since 0.0.1
  */
 public class Sample
@@ -22,15 +31,21 @@ implements Serializable, Cloneable
 {
 	/*
 	 * -------------------
-	 * Sample formats
+	 * Sample meta-data
 	 * -------------------
 	 */
 
 	/**
-	 * Groupping of file format data.
+	 * Grouping of file format data.
 	 * @since 0.3.0.2
 	 */
-	private MARFAudioFileFormat oAudioFileFormat = new MARFAudioFileFormat();
+	protected transient MARFAudioFileFormat oAudioFileFormat = null;
+
+	/**
+	 * Local format code.
+	 * @since 0.3.0.6
+	 */
+	private int iFormat = MARFAudioFileFormat.WAV;
 
 	/**
 	 * Default sample array's size (1024).
@@ -81,6 +96,14 @@ implements Serializable, Cloneable
 	 */
 	public Sample()
 	{
+		try
+		{
+			setAudioFileFormatCode(MARFAudioFileFormat.WAV);
+		}
+		catch(InvalidSampleFormatException e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -89,7 +112,15 @@ implements Serializable, Cloneable
 	 */
 	public Sample(double[] padData)
 	{
-		setSampleArray(padData);
+		try
+		{
+			setAudioFileFormatCode(MARFAudioFileFormat.WAV);
+			setSampleArray(padData);
+		}
+		catch(InvalidSampleFormatException e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -100,7 +131,7 @@ implements Serializable, Cloneable
 	public Sample(final int piFormat)
 	throws InvalidSampleFormatException
 	{
-		setAudioFormat(piFormat);
+		setAudioFileFormatCode(piFormat);
 	}
 
 	/**
@@ -113,7 +144,7 @@ implements Serializable, Cloneable
 	public Sample(final int piFormat, double[] padData)
 	throws InvalidSampleFormatException
 	{
-		setAudioFormat(piFormat);
+		setAudioFileFormatCode(piFormat);
 		setSampleArray(padData);
 	}
 
@@ -121,7 +152,7 @@ implements Serializable, Cloneable
 	 * Copy-constructor. Prior getting parameter's data,
 	 * it's cloned. Only the data and format are copied.
 	 *
-	 * @param poSample sample objec to copy data off from
+	 * @param poSample sample object to copy data off from
 	 * @throws InvalidSampleFormatException if the parameter format is invalid
 	 * @since 0.3.0.5
 	 */
@@ -129,28 +160,53 @@ implements Serializable, Cloneable
 	throws InvalidSampleFormatException
 	{
 		Sample oCopy = (Sample)poSample.clone();
-		setAudioFormat(oCopy.getAudioFormat());
+		setAudioFileFormatCode(oCopy.iFormat);
 		setSampleArray(oCopy.adSample);
 	}
 
 	/**
 	 * Retrieves current sample's format.
 	 * @return an integer representing the format of the sample
+	 * @since 0.3.0.6
 	 */
-	public final int getAudioFormat()
+	public synchronized int getAudioFileFormatCode()
 	{
-		return this.oAudioFileFormat.getAudioFormat();
+		return this.iFormat;
+	}
+
+	/**
+	 * Retrieves current sample's audio format data.
+	 * In 0.3.0.6 was changed to return AudioFormat instead of int;
+	 * a replacement API of getAudioFileFormatCode() was added.
+	 * @return an AudioFormat representing the format of the sample
+	 * @see #getAudioFileFormatCode()
+	 */
+	public synchronized AudioFormat getAudioFormat()
+	{
+		return this.oAudioFileFormat.getFormat();
 	}
 
 	/**
 	 * Sets current format of a sample.
-	 * @param piFormat format number from the enumeration
+	 * In 0.3.0.6 was renamed to match getAudioFileFormatCode().
+	 * @param piFileFormat format number from the enumeration
 	 * @throws InvalidSampleFormatException if the parameter format is invalid
+	 * @see #getAudioFileFormatCode()
 	 */
-	public final void setAudioFormat(final int piFormat)
+	public synchronized void setAudioFileFormatCode(final int piFileFormat)
 	throws InvalidSampleFormatException
 	{
-		this.oAudioFileFormat.setAudioFormat(piFormat);
+		// E.g. during deserialization
+		if(this.oAudioFileFormat == null)
+		{
+			this.oAudioFileFormat = new MARFAudioFileFormat(piFileFormat);
+		}
+		else
+		{
+			this.oAudioFileFormat.setAudioFormat(piFileFormat);
+		}
+
+		this.iFormat = piFileFormat;
 	}
 
 	/**
@@ -158,7 +214,7 @@ implements Serializable, Cloneable
 	 * Index gets reset as well.
 	 * @param padSampleArray an array of doubles
 	 */
-	public final void setSampleArray(double[] padSampleArray)
+	public synchronized void setSampleArray(double[] padSampleArray)
 	{
 		this.adSample = padSampleArray;
 		this.iArrayIndex = 0;
@@ -168,19 +224,19 @@ implements Serializable, Cloneable
 	 * Retrieves array containing audio data of the entire sample.
 	 * @return an array of doubles
 	 */
-	public final double[] getSampleArray()
+	public synchronized double[] getSampleArray()
 	{
 		return this.adSample;
 	}
 
 	/**
-	 * Gets the next chunk of audio data and places it into padChunkArray.
+	 * Gets the next chunk of the data and places it into padChunkArray.
 	 * Similar to readAudioData() method only it reads from the array instead of
 	 * the audio stream (file).
 	 * @param padChunkArray an array of doubles
 	 * @return number of datums retrieved
 	 */
-	public final int getNextChunk(double[] padChunkArray)
+	public synchronized int getNextChunk(double[] padChunkArray)
 	{
 		int iCount = 0;
 		long lSampleSize = getSampleSize();
@@ -198,16 +254,27 @@ implements Serializable, Cloneable
 	/**
 	 * Resets the marker used for reading audio data from sample array.
 	 */
-	public final void resetArrayMark()
+	public synchronized final void resetArrayMark()
 	{
 		this.iArrayIndex = 0;
+	}
+
+	/**
+	 * Resets the marker used for reading audio data from sample array.
+	 * Added for consistency and may be overridden.
+	 * @since 0.3.0.6
+	 * @see #resetArrayMark()
+	 */
+	public synchronized void reset()
+	{
+		resetArrayMark();
 	}
 
 	/**
 	 * Returns the length of the sample.
 	 * @return long Array length
 	 */
-	public final long getSampleSize()
+	public synchronized long getSampleSize()
 	{
 		return this.adSample == null ? 0 : this.adSample.length;
 	}
@@ -216,14 +283,15 @@ implements Serializable, Cloneable
 	 * Sets internal size of the sample array.
 	 * If array did not exist, it its created,
 	 * else cut or enlarged to the desired size.
-	 * The previous content is retained unless
-	 * the desired size is less than the current.
+	 * The previous content is retained in full unless
+	 * the desired size is less than the current (in which case
+	 * the new size exceeding data is lost).
 	 *
 	 * @param piDesiredSize new desired size of the array
 	 * @throws IllegalArgumentException if the parameter is <= 0
 	 * @since 0.3.0.2
 	 */
-	public void setSampleSize(int piDesiredSize)
+	public synchronized void setSampleSize(int piDesiredSize)
 	{
 		if(piDesiredSize <= 0)
 		{
@@ -236,6 +304,7 @@ implements Serializable, Cloneable
 		}
 		else
 		{
+			// Same size is already set, nothing to do.
 			if(this.adSample.length == piDesiredSize)
 			{
 				return;
@@ -244,7 +313,7 @@ implements Serializable, Cloneable
 			double[] adCopy = (double[])this.adSample.clone();
 			this.adSample = new double[piDesiredSize];
 
-			if(this.adSample.length > piDesiredSize)
+			if(adCopy.length > piDesiredSize)
 			{
 				// A portion of data is lost
 				Arrays.copy(this.adSample, adCopy, piDesiredSize);
@@ -265,12 +334,12 @@ implements Serializable, Cloneable
 	 * @see java.lang.Object#clone()
 	 * @since 0.3.0.5
 	 */
-	public Object clone()
+	public synchronized Object clone()
 	{
 		try
 		{
 			Sample oCopy = (Sample)super.clone();
-			oCopy.setAudioFormat(getAudioFormat());
+			oCopy.setAudioFileFormatCode(getAudioFileFormatCode());
 			oCopy.setSampleArray((double[])this.adSample.clone());
 			return oCopy;
 		}
@@ -286,22 +355,95 @@ implements Serializable, Cloneable
 
 	/**
 	 * Returns textual representation of the sample object.
-	 * The contents is the format and lengthon the first line, and then
+	 * The contents is the format and length on the first line, and then
 	 * a column of data.
 	 *
 	 * @return the sample data string
 	 * @see java.lang.Object#toString()
 	 * @since 0.3.0.3
 	 */
-	public String toString()
+	public synchronized String toString()
 	{
+		double[] adSampleRef = this.adSample == null
+			? new double[] {}
+			: this.adSample;
+
 		StringBuffer oData = new StringBuffer();
 
 		oData.append(this.oAudioFileFormat).append(", sample data length: ");
-		oData.append(this.adSample.length).append("\n");
-		oData.append(Arrays.arrayToDelimitedString(this.adSample, "\n"));
+		oData.append(adSampleRef.length).append("\n");
+		oData.append(Arrays.arrayToDelimitedString(adSampleRef, "\n"));
 
 		return oData.toString();
+	}
+
+	/**
+	 * Custom implementation of the object reading to be able to restore
+	 * the transient data.
+	 * @param poStream the stream to read this object from
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @since 0.3.0.6
+	 */
+	private void readObject(java.io.ObjectInputStream poStream)
+    throws IOException, ClassNotFoundException
+    {
+		try
+		{
+			int iFormatCode = poStream.readInt();
+			this.adSample = (double[])poStream.readObject();
+
+			Debug.debug("Format code after reading: " + this.iFormat);
+
+			setAudioFileFormatCode(iFormatCode);
+		}
+		catch(InvalidSampleFormatException e)
+		{
+			e.printStackTrace(System.err);
+			throw new RuntimeException(e);
+		}
+    }
+
+	/**
+	 * Implements the serialization of the object data to pair-match
+	 * the readObject.
+	 * @param poStream
+	 * @throws IOException
+	 * @see #readObject(java.io.ObjectInputStream)
+	 */
+	private void writeObject(java.io.ObjectOutputStream poStream)
+    throws IOException
+    {
+		Debug.debug("Format code before writing: " + this.iFormat);
+		poStream.writeInt(this.iFormat);
+		poStream.writeObject(this.adSample);
+    }
+
+	/**
+	 * Checks if the parameter is equal to this object.
+	 * The comparison is done by equality of the integer
+	 * format and the data arrays. The data arrays are
+	 * equal when they are both nulls or contain the
+	 * same data.
+	 *
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 * @since 0.3.0.6
+	 */
+	public boolean equals(Object poSample)
+	{
+		if(poSample instanceof Sample)
+		{
+			Sample oSample = (Sample)poSample;
+
+			return
+				oSample.iFormat == this.iFormat &&
+				(
+					(oSample.adSample == null && this.adSample == null)
+					|| (oSample.adSample != null && this.adSample != null && Arrays.equals(oSample.adSample, this.adSample))
+				);
+		}
+
+		return false;
 	}
 
 	/**
@@ -311,7 +453,7 @@ implements Serializable, Cloneable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.42 $";
+		return "$Revision: 1.51 $";
 	}
 }
 

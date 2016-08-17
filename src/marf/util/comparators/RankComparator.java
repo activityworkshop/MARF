@@ -8,16 +8,16 @@ import marf.util.SortComparator;
  *
  * <p>TODO: Implement and document.</p>
  *
- * $Id: RankComparator.java,v 1.13 2005/08/13 23:09:39 susan_fan Exp $
+ * $Id: RankComparator.java,v 1.14 2007/12/23 06:29:58 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.13 $
- * @since 0.3.0
+ * @version $Revision: 1.14 $
+ * @since 0.3.0.2
  */
 public class RankComparator
 extends SortComparator
 {
-    /**
+	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
@@ -45,7 +45,7 @@ extends SortComparator
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.13 $";
+		return "$Revision: 1.14 $";
 	}
 }
 

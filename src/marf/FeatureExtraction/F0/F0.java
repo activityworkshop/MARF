@@ -9,10 +9,10 @@ import marf.util.NotImplementedException;
 /**
  * <p>Class F0 - the Fundamental Frequency Extraction.</p>
  *
- * <p>$Id: F0.java,v 1.16 2005/08/14 01:15:55 mokhov Exp $</p>
+ * $Id: F0.java,v 1.17 2006/08/04 03:31:04 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  * @since 0.0.1
  */
 public class F0
@@ -41,8 +41,10 @@ extends FeatureExtraction
 	 * @return nothing
 	 * @throws NotImplementedException
 	 * @throws FeatureExtractionException never thrown
+	 * @see marf.FeatureExtraction.IFeatureExtraction#extractFeatures(double[])
+	 * @since 0.3.0.6
 	 */
-	public final boolean extractFeatures()
+	public final boolean extractFeatures(double[] padSampleData)
 	throws FeatureExtractionException
 	{
 		throw new NotImplementedException("F0.extractFeatures()");
@@ -51,11 +53,11 @@ extends FeatureExtraction
 	/**
 	 * Returns source code revision information.
 	 * @return revision string
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.16 $";
+		return "$Revision: 1.17 $";
 	}
 }
 

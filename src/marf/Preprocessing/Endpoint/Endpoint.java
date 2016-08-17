@@ -1,5 +1,6 @@
 package marf.Preprocessing.Endpoint;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 import marf.MARF;
@@ -18,10 +19,8 @@ import marf.util.Arrays;
  * and maximum values of an amplitude. A few variations
  * apply.</p>
  *
- * <p>$Id: Endpoint.java,v 1.26 2005/12/31 23:17:37 mokhov Exp $</p>
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.26 $
+ * @version $Id: Endpoint.java,v 1.29 2011/11/21 17:55:20 mokhov Exp $
  * @since 0.0.1; fully implemented as of 0.3.0.5
  */
 public class Endpoint
@@ -35,8 +34,8 @@ extends Preprocessing
 	protected boolean bCompress = false;
 	
 	/**
-	 * Indicates whether to consider or or not the egde points
-	 * (at the beginning and the end of the sample) as edpoints.
+	 * Indicates whether to consider or or not the edge points
+	 * (at the beginning and the end of the sample) as endpoints.
 	 * Default is <code>true</code>.
 	 * @since 0.3.0.5
 	 */
@@ -64,7 +63,7 @@ extends Preprocessing
 
 	/**
 	 * Preprocessing pipeline constructor.
-	 * @param poPreprocessing followup preprocessing module
+	 * @param poPreprocessing follow-up preprocessing module
 	 * @throws PreprocessingException
 	 * @since 0.3.0.3
 	 */
@@ -102,8 +101,8 @@ extends Preprocessing
 	public boolean preprocess()
 	throws PreprocessingException
 	{
-		boolean bRetVal = true;
-
+		boolean bRetVal = super.preprocess();
+		
 		// Apply compression
 		if(this.bCompress == true)
 		{
@@ -197,12 +196,15 @@ extends Preprocessing
 
 		if(oModuleParams != null)
 		{
-			Vector oEndpointParams = oModuleParams.getPreprocessingParams();
+			Vector<Serializable> oEndpointParams = oModuleParams.getPreprocessingParams();
 
-			if(oEndpointParams != null && oEndpointParams.size() == 2)
+			// First three in the Preprocessing protocol are noise, silence, and
+			// silence threshold.
+			// TODO: somehow remove/abstract the hardcoded values of 5, 3, and 4
+			if(oEndpointParams != null && oEndpointParams.size() >= 5)
 			{
-				enableCompression(((Boolean)oEndpointParams.firstElement()).booleanValue());
-				enableEdgeEndpoints(((Boolean)oEndpointParams.elementAt(1)).booleanValue());
+				enableCompression(((Boolean)oEndpointParams.elementAt(3)).booleanValue());
+				enableEdgeEndpoints(((Boolean)oEndpointParams.elementAt(4)).booleanValue());
 			}
 		}
 	}
@@ -214,7 +216,7 @@ extends Preprocessing
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.26 $";
+		return "$Revision: 1.29 $";
 	}
 }
 

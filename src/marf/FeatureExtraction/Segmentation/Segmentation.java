@@ -9,16 +9,16 @@ import marf.util.NotImplementedException;
 /**
  * <p>Class Segmentation.</p>
  *
- * <p>$Id: Segmentation.java,v 1.15 2005/08/13 23:09:37 susan_fan Exp $</p>
+ * $Id: Segmentation.java,v 1.16 2006/08/04 03:31:05 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  * @since 0.0.1
  */
 public class Segmentation
 extends FeatureExtraction
 {
-    /**
+	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
@@ -41,8 +41,10 @@ extends FeatureExtraction
 	 * @return nothing
 	 * @throws NotImplementedException
 	 * @throws FeatureExtractionException never thrown
+	 * @see marf.FeatureExtraction.IFeatureExtraction#extractFeatures(double[])
+	 * @since 0.3.0.6
 	 */
-	public final boolean extractFeatures()
+	public final boolean extractFeatures(double[] padSampleData)
 	throws FeatureExtractionException
 	{
 		throw new NotImplementedException("Segmentation.extractFeatures()");
@@ -51,11 +53,11 @@ extends FeatureExtraction
 	/**
 	 * Returns source code revision information.
 	 * @return revision string
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.15 $";
+		return "$Revision: 1.16 $";
 	}
 }
 

@@ -1,29 +1,64 @@
 package marf.Storage;
 
-import java.io.Serializable;
 import java.util.Vector;
 
+import marf.MARF;
+import marf.math.Matrix;
+import marf.util.Arrays;
 import marf.util.NotImplementedException;
 
 
 /**
- * <p>FeatureSet -- Encapsulates subject's feature vectors.</p>
- * TODO: complete implementation.
- *
- * <p>$Id: FeatureSet.java,v 1.14 2006/01/02 22:24:00 mokhov Exp $</p>
+ * <p>FeatureSet -- Encapsulates subject's feature vectors.
+ * Additionally, can compute mean and median vectors off
+ * the present feature vectors.
+ * </p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.14 $
+ * @version $Id: FeatureSet.java,v 1.21 2015/03/08 19:47:22 mokhov Exp $
  * @since 0.3.0.1
  */
 public class FeatureSet
-implements Serializable, Cloneable
+extends Cluster
 {
 	/**
-	 * A Vector of TrainingSamples.
+	 * XXX: A Vector of TrainingSamples.
 	 */
-	protected Vector oFeatureVectors = new Vector();
+	protected Vector<double[]> oFeatureVectors = new Vector<double[]>();
 
+	/**
+	 * Cached vector's data is invalid (untrustworthy), i.e.,
+	 * was either never computed yet or some other operation
+	 * on the class invalidated it.
+	 * @since 0.3.0.6
+	 */
+	private static final int CACHED_VECTOR_TYPE_INVALID = -1;
+	
+	/**
+	 * The cached vector data represents a freshly computed <em>mean</em> vector.
+	 * @since 0.3.0.6
+	 */
+	private static final int CACHED_VECTOR_TYPE_MEAN = 1;
+
+	/**
+	 * The cached vector data represents a freshly computed <em>median</em> vector.
+	 * @since 0.3.0.6
+	 */
+	private static final int CACHED_VECTOR_TYPE_MEDIAN = 2;
+	
+	/**
+	 * Type of the primary vector data member computed last.
+	 * @see CACHED_VECTOR_TYPE_INVALID
+	 * @see CACHED_VECTOR_TYPE_MEAN
+	 * @see CACHED_VECTOR_TYPE_MEDIAN
+	 */
+	private int iLastTypeVectorComputed = CACHED_VECTOR_TYPE_INVALID;
+	
+	/**
+	 * Maximum length of a feature vector in a set.
+	 */
+	private int iMaxColumns = 0;
+	
 	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
@@ -44,85 +79,48 @@ implements Serializable, Cloneable
 	 * Retrieves training samples.
 	 * @return vector of training samples.
 	 */
-	public Vector getFeatureVectors()
+	public Vector<double[]> getFeatureVectors()
 	{
+		// Invalidate the internal stuff as we cannot trust it's not altered outside
+		this.iLastTypeVectorComputed = CACHED_VECTOR_TYPE_INVALID;
 		return this.oFeatureVectors;
 	}
 
-	/**
-	 * Appends yet another feature vector.
-	 * TODO: implement.
-	 *
-	 * @param padFeatures
-	 * @param piSubjectID
-	 * @param pstrFileName
-	 * @param piFeatureExtractionMethod
-	 * @param piPreprocessingMethod
-	 * @throws NotImplementedException
+	/* (non-Javadoc)
+	 * @see marf.Storage.ITrainingSample#getDataVectors()
 	 */
-	public void addFeatureVector
-	(
-		double[] padFeatures,
-		int piSubjectID,
-		String pstrFileName,
-		int piFeatureExtractionMethod,
-		int piPreprocessingMethod
-	)
+	@Override
+	public Vector<double[]> getDataVectors()
 	{
-		throw new NotImplementedException();
-
-		/*
-		 * check if this sample is already in the training set
-		 * for this feature type & preprocessing mode
-		 */
-/*		TrainingSample samp = null;
-		boolean newSamp = true;
-
-		for(int i = 0; (i < oFeatureVectors.size()) && (newSamp); i++)
+		Vector<double[]> oSingle = new Vector<double[]>(1);
+		
+		switch(MARF.getConfiguration().getClusterFormat())
 		{
-			samp = (TrainingSample)(oFeatureVectors.get(i));
+			case MARF.CLUSTER_SINGLE:
+			{
+				// Just get data vector whatever it is
+				oSingle.add(getDataVector());
+				return oSingle ;
+			}
+			
+			case MARF.CLUSTER_MEDIAN:
+			{
+				oSingle.add(getMedianVector());
+				return oSingle;
+			}
+			
+			case MARF.CLUSTER_MEAN:
+			{
+				oSingle.add(getMeanVector());
+				return oSingle;
+			}
 
-			if
-			(
-				(iFeatureExtractionMethod == samp.iFeatureExtractionMethod)
-				&&
-				(strFileName.compareTo(samp.strFileName) == 0)
-				&&
-				(iPreprocessingMethod == samp.iPreprocessingMethod)
-			)
-				newSamp = false;
+			case MARF.CLUSTER_FEATURE_VECTORS:
+			default:
+			{
+				return getFeatureVectors();
+			}
 		}
-
-		if(newSamp)
-			samp = new TrainingSample();
-
-		samp.adFeatures = adFeatures;
-		samp.iSubjectID = iSubjectID;
-		samp.strFileName = strFileName;
-		samp.iFeatureExtractionMethod = iFeatureExtractionMethod;
-		samp.iPreprocessingMethod = iPreprocessingMethod;
-
-		if(newSamp)
-		{
-			this.oFeatureVectors.add(samp);
-
-			Debug.debug
-			(
-				"Added feature vector for subject " + iSubjectID +
-				", feature extraction method " + iFeatureExtractionMethod +
-				" (\"" + strFileName + "\")"
-			);
-		}
-		else
-		{
-			Debug.debug
-			(
-				"Updated feature vector for subject " + iSubjectID +
-				", feature type " + iFeatureExtractionMethod
-				+ " (\"" + strFileName + "\")"
-			);
-		}
-*/
 	}
 
 	/**
@@ -141,9 +139,10 @@ implements Serializable, Cloneable
 	 * @throws NotImplementedException
 	 * @since 0.3.0.5
 	 */
-	public void restore()
+	public void restoreCSV()
 	throws StorageException
 	{
+		this.iLastTypeVectorComputed = CACHED_VECTOR_TYPE_INVALID;
 		throw new NotImplementedException();
 /*	
 		try
@@ -183,7 +182,7 @@ implements Serializable, Cloneable
 	 * @throws NotImplementedException
 	 * @since 0.3.0.5
 	 */
-	public void dump()
+	public void dumpCSV()
 	throws StorageException
 	{
 		throw new NotImplementedException();
@@ -206,28 +205,166 @@ implements Serializable, Cloneable
 */
 	}
 
+	/* (non-Javadoc)
+	 * @see marf.Storage.TrainingSample#getMeanVector()
+	 * @since 0.3.0.6
+	 */
+	public double[] getMeanVector()
+	{
+		if(this.iLastTypeVectorComputed == CACHED_VECTOR_TYPE_MEAN)
+		{
+			return super.getMeanVector();
+		}
+		else
+		{
+			this.adDataVector = new double[this.iMaxColumns];
+
+			for(int i = 0; i < this.oFeatureVectors.size(); i++)
+			{
+				double[] adFeatureVector = (double[])this.oFeatureVectors.get(i);
+				
+				for(int j = 0; j < adFeatureVector.length; j++)
+				{
+					this.adDataVector[j] += adFeatureVector[j];
+				}
+			}
+			
+			for(int i = 0; i < this.adDataVector.length; i++)
+			{
+				this.adDataVector[i] /= size();
+			}
+			
+			this.iLastTypeVectorComputed = CACHED_VECTOR_TYPE_MEAN;
+
+			return getDataVector();
+		}
+	}
+
+	public double[] getMedianVector()
+	{
+		if(this.iLastTypeVectorComputed == CACHED_VECTOR_TYPE_MEDIAN)
+		{
+			return getDataVector();
+		}
+		else
+		{
+			this.adDataVector = new double[this.iMaxColumns];
+			double[][] addFeatureSetMatrix = new double[size()][this.iMaxColumns];
+			
+			for(int i = 0; i < this.oFeatureVectors.size(); i++)
+			{
+				double[] adFeatureVector = (double[])this.oFeatureVectors.get(i);
+				Arrays.copy(addFeatureSetMatrix[i], 0, adFeatureVector);
+			}
+			
+			Matrix oMatrix = new Matrix(addFeatureSetMatrix);
+			marf.math.Vector oVector = null;
+			
+			for(int i = 0; i < oMatrix.getCols(); i++)
+			{
+				oVector = oMatrix.getColumn(i);
+				double[] adSortedVector = oVector.getMatrixArray();
+				Arrays.sort(adSortedVector);
+
+				this.adDataVector[i] = adSortedVector[adSortedVector.length / 2];
+			}
+
+			this.iLastTypeVectorComputed = CACHED_VECTOR_TYPE_MEDIAN;
+			return getDataVector();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see marf.Storage.Cluster#addFeatureVector(double[], java.lang.String, int)
+	 * @since 0.3.0.6
+	 */
+	public boolean addFeatureVector(double[] padFeatureVector, String pstrFilename, int piSubjectID)
+	{
+		// What if piSubjectID is different from the one in this.iSubjectID?
+		if(size() == 0)
+		{
+			this.iSubjectID = piSubjectID;
+		}
+		else
+		{
+			assert this.iSubjectID == piSubjectID;
+		}
+		
+		/*
+		 * If this file has been trained on already, no retraining
+		 * required. Return false to indicate that no changes are made.
+		 */
+		if(addFilename(pstrFilename) == false)
+		{
+			return false;
+		}
+
+		// Dimensionality by X
+		if(this.iMaxColumns < padFeatureVector.length)
+		{
+			this.iMaxColumns = padFeatureVector.length;
+		}
+		
+		this.oFeatureVectors.add(padFeatureVector.clone());
+		
+		// Invalidate any previously compute mean or median vector
+		this.iLastTypeVectorComputed = CACHED_VECTOR_TYPE_INVALID;
+
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see marf.Storage.Cluster#getMeanCount()
+	 * @since 0.3.0.6
+	 */
+	public int getMeanCount()
+	{
+		return size();
+	}
+
 	/**
-	 * Implementes Cloneable interface for the FeatureSet object.
+	 * Implements Cloneable interface for the FeatureSet object.
 	 * Performs a "deep" copy of this object including all the feature vectors.
 	 * @see java.lang.Object#clone()
 	 * @since 0.3.0.5
 	 */
+	@SuppressWarnings("unchecked")
 	public Object clone()
 	{
-		try
+		//try
 		{
 			FeatureSet oClone = (FeatureSet)super.clone();
 
 			oClone.oFeatureVectors =
 				this.oFeatureVectors == null ?
-				null : (Vector)this.oFeatureVectors.clone();
+				null : (Vector<double[]>)this.oFeatureVectors.clone();
 
 			return oClone;
 		}
+		/*
 		catch(CloneNotSupportedException e)
 		{
 			throw new InternalError(e.getMessage());
-		}
+		}*/
+	}
+
+	/**
+	 * Provides string representation of the training set data in addition
+	 * to that of the parent Cluster.
+	 * @see marf.Storage.Cluster#toString()
+	 * @since 0.3.0.6
+	 */
+	public synchronized String toString()
+	{
+		StringBuffer oBuffer = new StringBuffer(super.toString());
+
+		oBuffer
+			.append("Max Columns: ").append(this.iMaxColumns).append("\n")
+			.append("Last Type Vector Computed: ").append(this.iLastTypeVectorComputed).append("\n")
+			.append("Feature Vectors: ").append(this.oFeatureVectors).append("\n")
+			.append("FeatureSet Source code revision: ").append(getMARFSourceCodeRevision()).append("\n");
+
+		return oBuffer.toString();
 	}
 
 	/**
@@ -237,7 +374,7 @@ implements Serializable, Cloneable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.14 $";
+		return "$Revision: 1.21 $";
 	}
 }
 

@@ -7,12 +7,10 @@ import marf.nlp.Parsing.Token;
 
 
 /**
- * Generic grammar token that must be subclassed.
- *
- * $Id: GrammarElement.java,v 1.9 2005/12/24 19:47:39 mokhov Exp $
+ * <p>Generic grammar token that must be subclassed.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.9 $
+ * @version $Id: GrammarElement.java,v 1.14 2012/07/18 02:45:45 mokhov Exp $
  * @since 0.3.0.2
  */
 public abstract class GrammarElement
@@ -29,14 +27,14 @@ implements Serializable
 	protected int iID;
 
 	/**
-	 * A bit extra info in the encasulted token.
+	 * A bit extra info in the encapsulated token.
 	 */
 	protected Token oToken = null;
 
 	/**
 	 * FirstSet of us.
 	 */
-	protected Vector oFirstSet = new Vector();
+	protected Vector<GrammarElement> oFirstSet = new Vector<GrammarElement>();
 
 	/**
 	 * For serialization versioning.
@@ -48,11 +46,12 @@ implements Serializable
 	private static final long serialVersionUID = -7580710676855516151L;
 
 	/**
-	 * Do not allow poblic default constructor
+	 * Do not allow public default constructor
 	 * because it doesn't make sense from outside.
 	 */
 	private GrammarElement()
 	{
+		super();
 	}
 
 	/**
@@ -63,6 +62,7 @@ implements Serializable
 	 */
 	protected GrammarElement(Token poToken, int piID)
 	{
+		this();
 		this.oToken = poToken;
 		this.strName = this.oToken.getLexeme();
 		this.iID = piID;
@@ -76,6 +76,7 @@ implements Serializable
 	 */
 	protected GrammarElement(String pstrName, int piID)
 	{
+		this();
 		this.iID = piID;
 		this.strName = pstrName;
 		this.oToken = null;
@@ -128,10 +129,10 @@ implements Serializable
 	 * Duplicates will not be added.
 	 *
 	 * @param poSet collection of grammar elements to add to the first set
-	 * @return <code>true</code> if the undelying first set has change
+	 * @return <code>true</code> if the underlying first set has change
 	 * as a result of operation.
 	 */
-	public boolean addToFirstSet(Vector poSet)
+	public boolean addToFirstSet(Vector<GrammarElement> poSet)
 	{
 		boolean bChanged = false;
 
@@ -186,7 +187,7 @@ implements Serializable
 	 * Allows getting the first set of this grammar element.
 	 * @return the first set of this element
 	 */
-	public Vector getFirstSet()
+	public Vector<GrammarElement> getFirstSet()
 	{
 		return this.oFirstSet;
 	}
@@ -218,7 +219,7 @@ implements Serializable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.9 $";
+		return "$Revision: 1.14 $";
 	}
 }
 

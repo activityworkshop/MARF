@@ -2,12 +2,12 @@ package marf.util;
 
 
 /**
- * <p>Debugging Facility.</p>
+ * <p>Simple MARF Debugging Facility.</p>
  *
- * <p>$Id: Debug.java,v 1.16 2006/01/18 19:31:14 mokhov Exp $</p>
+ * $Id: Debug.java,v 1.19 2009/02/08 04:31:45 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.19 $
  * @since 0.3.0.2
  */
 public class Debug
@@ -38,7 +38,7 @@ extends Logger
 	}
 
 	/**
-	 * Enables or disables debugging based on the paramter.
+	 * Enables or disables debugging based on the parameter.
 	 * This method is properly synchronized.
 	 * @param pbEnable to set the debug flag to
 	 * @return old value of the debug flag
@@ -116,12 +116,13 @@ extends Logger
 	}
 
 	/**
-	 * Issues a debug message if the flag is on with a trailing EOL.
+	 * Issues a debug message if the flag is on with a trailing EOL
+	 * preceded by the class name.
 	 * This method is properly synchronized.
 	 * @param poClass add class to extract the name from as a prefix
 	 * @param pstrMsgString desired debug message to be issued
 	 */
-	public static synchronized final void debug(final Class poClass, final String pstrMsgString)
+	public static synchronized final void debug(final Class<?> poClass, final String pstrMsgString)
 	{
 		debug
 		(
@@ -130,6 +131,19 @@ extends Logger
 				.append(":")
 				.append(pstrMsgString)
 		);
+	}
+
+	/**
+	 * Issues a debug message if the flag is on with a trailing EOL
+	 * preceded by the class name.
+	 * This method is properly synchronized.
+	 * @param poClass add class to extract the name from as a prefix
+	 * @param poMsgObject the object, whose string representation to be used as message
+	 * @since 0.3.0.6
+	 */
+	public static synchronized final void debug(final Class<?> poClass, final Object poMsgObject)
+	{
+		debug(poClass, poMsgObject.toString());
 	}
 
 	/**
@@ -147,7 +161,7 @@ extends Logger
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.16 $";
+		return "$Revision: 1.19 $";
 	}
 }
 

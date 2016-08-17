@@ -2,7 +2,7 @@
 \index{Applications!TestFilters}
 \index{Testing Applications!TestFilters}
 
-$Revision: 1.6 $
+$Revision: 1.7 $
 
 \api{TestFilters} is one of the testing applications in {\marf}. It tests how four types of
 FFT-filter-based preprocessors work with simulated or real wave type sound samples.
@@ -74,8 +74,8 @@ validating command-line options. \api{Sample} maintains incoming and processed s
 interface for all the MARF loaders. It must be overridden by a concrete sample loader such as \api{SineLoader} or \api{WAVLoader}.
 \api{Preprocessing} does
 general preprocessing such as \api{preprocess()} (overridden by the filters),
-\api{normalize()}, \api{removeNoise()} and \api{removeSilence()} out of which
-for this application the former two are used.
+\api{normalize()}, \api{removeSilence()} and \api{removeNoise()} out of which
+for this application the former three are used.
 In the end, above modules work together to test the work of the filters and produce
 the output to STDOUT.
 The output of \api{TestFilters} is the filtered data from the original signal fed to each

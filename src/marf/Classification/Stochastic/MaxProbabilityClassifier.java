@@ -1,5 +1,6 @@
 package marf.Classification.Stochastic;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 import marf.MARF;
@@ -19,10 +20,8 @@ import marf.util.Debug;
  * of Serguei Mokhov.
  * </p>
  *
- * $Id: MaxProbabilityClassifier.java,v 1.24 2006/02/12 23:57:58 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.24 $
+ * @version $Id: MaxProbabilityClassifier.java,v 1.31 2011/11/21 17:44:43 mokhov Exp $
  * @since 0.3.0.2
  */
 public class MaxProbabilityClassifier
@@ -35,9 +34,9 @@ extends Stochastic
 	protected StatisticalEstimator oStatisticalEstimator = null;
 
 	/**
-	 * A collection of available natural languages.
+	 * A collection of available, typically NLP, subjects.
 	 */
-	protected Vector oAvailLanguages = null;
+	protected Vector<String> oAvailLanguages = null;
 
 	/**
 	 * For serialization versioning.
@@ -70,7 +69,7 @@ extends Stochastic
 		// statistical estimator.
 		if(MARF.getModuleParams() != null)
 		{
-			Vector oParams = MARF.getModuleParams().getClassificationParams();
+			Vector<Serializable> oParams = MARF.getModuleParams().getClassificationParams();
 
 			if(oParams != null && oParams.size() > 1)
 			{
@@ -95,9 +94,12 @@ extends Stochastic
 
 		this.oStatisticalEstimator = poStatisticalEstimator;
 
-		this.oAvailLanguages = new Vector();
+		this.oAvailLanguages = new Vector<String>();
 		this.oObjectToSerialize = this.oAvailLanguages;
-		this.strFilename = getClass().getName() + ".gzbin";
+		this.strFilename
+			= MARF.getTrainingSetFilenamePrefix()
+			+ getClass().getName()
+			+ ".gzbin";
 	}
 
 	/**
@@ -159,23 +161,42 @@ extends Stochastic
 
 			for(int i = 0; i < this.oAvailLanguages.size(); i++)
 			{
-				String strLang = (String)oAvailLanguages.elementAt(i);
+				String strSubject = this.oAvailLanguages.elementAt(i);
 				//oStatisticalEstimator.setLang(strLang);
 
-				NLP.setLanguage(strLang);
+				NLP.setLanguage(strSubject);
 				this.oStatisticalEstimator.resetFilename();
 
 				double dProbability = this.oStatisticalEstimator.p();
+				
 				this.oStatisticalEstimator.getStreamTokenizer().reset();
 
-				System.out.println("lang=" + strLang + ", P=" + dProbability);
-				this.oResultSet.addResult(new Result(dProbability, strLang));
+				System.out.println("subject=" + strSubject + ", P=" + dProbability);
+				
+				// See if the String subject happened to be a number actually, which would be the ID
+				// If so, set it for the general pipelining mechanism.
+				try
+				{
+					Integer iID = Integer.parseInt(strSubject);
+					this.oResultSet.addResult(new Result(iID, dProbability, strSubject));
+				}
+				catch(NumberFormatException e)
+				{
+					// Old-fashioned IDless result
+					this.oResultSet.addResult(new Result(dProbability, strSubject));
+				}
 			}
 
 			return true;
 		}
+		catch(ClassificationException e)
+		{
+			e.printStackTrace(System.err);
+			throw e;
+		}
 		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
 			throw new ClassificationException(e);
 		}
 	}
@@ -186,9 +207,10 @@ extends Stochastic
 	 * object-to-serialize reference.
 	 * @since 0.3.0.5
 	 */
+	@SuppressWarnings("unchecked")
 	public synchronized void backSynchronizeObject()
 	{
-		this.oAvailLanguages = (Vector)this.oObjectToSerialize;
+		this.oAvailLanguages = (Vector<String>)this.oObjectToSerialize;
 	}
 
 	/**
@@ -261,7 +283,7 @@ extends Stochastic
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.24 $";
+		return "$Revision: 1.31 $";
 	}
 }
 

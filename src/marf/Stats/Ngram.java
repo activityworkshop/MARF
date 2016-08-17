@@ -4,10 +4,10 @@ package marf.Stats;
 /**
  * <p>N-gram Observation.</p>
  *
- * $Id: Ngram.java,v 1.15 2006/01/02 22:24:00 mokhov Exp $
+ * $Id: Ngram.java,v 1.16 2007/12/18 21:57:14 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  * @since 0.3.0.2
  */
 public class Ngram
@@ -107,7 +107,7 @@ extends Observation
 	}
 
 	/**
-	 * Retrievs the size of the N-gram.
+	 * Retrieves the size of the N-gram.
 	 * @return N
 	 */
 	public final int getSize()
@@ -155,7 +155,7 @@ extends Observation
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.15 $";
+		return "$Revision: 1.16 $";
 	}
 }
 

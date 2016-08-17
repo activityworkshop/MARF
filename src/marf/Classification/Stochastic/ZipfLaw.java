@@ -7,8 +7,11 @@ import java.io.StreamTokenizer;
 import java.util.Hashtable;
 
 import marf.Classification.ClassificationException;
+import marf.Classification.Distance.DiffDistance;
 import marf.FeatureExtraction.IFeatureExtraction;
+import marf.Stats.StatisticalObject;
 import marf.Stats.WordStats;
+import marf.Storage.Result;
 import marf.Storage.StorageException;
 import marf.util.SortComparator;
 import marf.util.comparators.FrequencyComparator;
@@ -17,10 +20,8 @@ import marf.util.comparators.FrequencyComparator;
 /**
  * <p>Module exercising Zipf's Law.</p>
  *
- * $Id: ZipfLaw.java,v 1.29 2006/02/12 23:57:58 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.29 $
+ * @version $Id: ZipfLaw.java,v 1.35 2012/07/09 03:53:32 mokhov Exp $
  * @since 0.3.0.2
  */
 public class ZipfLaw
@@ -30,17 +31,19 @@ extends Stochastic
 	 * Default number of entries display/output per page.
 	 * @since 0.3.0.5
 	 */
-	public static final int OUTPUT_PAGE_SIZE = 100;
+	public static final int DEFAULT_OUTPUT_PAGE_SIZE = 100;
 
 	/**
-	 * Local collection of word stats.
+	 * Local collection of word statistics.
 	 */
-	private Hashtable oStats = null;
+	private Hashtable<Object, StatisticalObject> oStats = null;
 
 	/**
-	 * Sorted references to stats.
+	 * Sorted references to statistics.
+	 * As of 0.3.0.6 was set to the base type StatisticalObject
+	 * instead of WordStats to allow other than word elements. 
 	 */
-	private WordStats[] aoSortedStatRefs = null;
+	private StatisticalObject[] aoSortedStatRefs = null;
 
 	/**
 	 * Indicates whether to dump in log-log scale format or not.
@@ -48,17 +51,24 @@ extends Stochastic
 	private boolean bDumpLogariphm = true;
 
 	/**
-	 * The length of a longest word found in characters.
+	 * The length of a longest word found, in characters (unigrams).
 	 * @since 0.3.0.5
 	 */
 	private int iMaxWordLength = 0;
 
 	/**
-	 * The length of a smallest word found in characters.
+	 * The length of a smallest word found, in characters (unigrams).
 	 * @since 0.3.0.5
 	 */
 	private int iMinWordLength = Integer.MAX_VALUE;
 
+	/**
+	 * When the results are dumped in the text mode, tell how
+	 * many records to show per page.
+	 * @since 0.3.0.6
+	 */
+	private int iOutputPageSize = DEFAULT_OUTPUT_PAGE_SIZE;
+	
 	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
@@ -76,18 +86,176 @@ extends Stochastic
 	{
 		super(null);
 		this.strFilename = pstrStatsFilename;
-		this.oStats = new Hashtable();
+		this.oStats = new Hashtable<Object, StatisticalObject>();
 		this.oObjectToSerialize = this;
 		this.iCurrentDumpMode = DUMP_GZIP_BINARY;
 	}
 
 	/**
 	 * Classification API.
-	 * @param poFeatureExtraction preprcessing module to get the data from
+	 * @param poFeatureExtraction preprocessing module to get the data from
 	 */
 	public ZipfLaw(IFeatureExtraction poFeatureExtraction)
 	{
 		super(poFeatureExtraction);
+		this.strFilename = getTrainingSetFilename().replaceAll("marf.Storage.TrainingSet", getClass().getName());
+		this.oStats = new Hashtable<Object, StatisticalObject>();
+		this.oObjectToSerialize = this;
+	}
+	
+	/**
+	 * @since 0.3.0.6
+	 * @see marf.Classification.IClassification#classify(double[])
+	 */
+	public boolean classify(double[] padFeatureVector)
+	throws ClassificationException
+	{
+		try
+		{
+			// Unseen data
+			collectStatistics(padFeatureVector);
+			
+			// Back up its stats
+			//Hashtable<Object, StatisticalObject> oBackupStats = (Hashtable<Object, StatisticalObject>)this.oStats.clone();
+			StatisticalObject[] aoSortedDataBackup = (StatisticalObject[])this.aoSortedStatRefs.clone();
+			
+			// Restore data from the training set
+			restore();
+			
+			double[] adUnseenData = new double[aoSortedDataBackup.length];
+			double[] adSeenData = new double[this.aoSortedStatRefs.length];
+			
+			// The unseen and trained vectors have to have identical
+			// observations on the LHS. The ones that are missing on
+			// either one get a frequency of zero. This is required
+			// for meaningful component-wise distance comparison
+			// afterwards as raw percentages will not do that.
+			// This can be approximated with the DiffDistance classifier
+			// as a temporary workaround.
+			// XXX
+			
+			// Compute totals prior conversion to percentages
+			int iUnseenObservationsTotal = 0;
+			int iTrainingObservationsTotal = 0;
+			
+			for(int i = 0; i < aoSortedDataBackup.length; i++)
+			{
+				iUnseenObservationsTotal += aoSortedDataBackup[i].getFrequency();
+			}
+
+			for(int i = 0; i < this.aoSortedStatRefs.length; i++)
+			{
+				iTrainingObservationsTotal += this.aoSortedStatRefs[i].getFrequency();
+			}
+
+			// Convert unseen and stored data to just plain double[] arrays
+			for(int i = 0; i < aoSortedDataBackup.length; i++)
+			{
+				adUnseenData[i] = (double)aoSortedDataBackup[i].getFrequency() / iUnseenObservationsTotal;
+			}
+
+			for(int i = 0; i < this.aoSortedStatRefs.length; i++)
+			{
+				adSeenData[i] = (double)this.aoSortedStatRefs[i].getFrequency() / iTrainingObservationsTotal;
+			}
+			
+			// Compare the unseen and stored data using a specified
+			// Distance classifier
+			// XXX
+			//DiffDistance oDistance = ClassifcationFactory.create(this.iDistanceMethod);
+			DiffDistance oDistance = new DiffDistance(null);
+			double dDistance = oDistance.distance(adSeenData, adUnseenData);
+			this.oResultSet.addResult(1, dDistance);
+			
+			return true;
+		}
+		catch(ClassificationException e)
+		{
+			throw e;
+		}
+		catch(Exception e)
+		{
+			throw new ClassificationException(e);
+		}
+	}
+
+	/**
+	 * @since 0.3.0.6
+	 * @see marf.Classification.IClassification#train(double[])
+	 */
+	public boolean train(double[] padFeatureVector)
+	throws ClassificationException
+	{
+		try
+		{
+			restore();
+			collectStatistics(padFeatureVector);
+			dump();
+			
+			return true;
+		}
+		catch(ClassificationException e)
+		{
+			throw e;
+		}
+		catch(Exception e)
+		{
+			throw new ClassificationException(e);
+		}
+	}
+
+	/**
+	 * @since 0.3.0.6
+	 * @see marf.Classification.IClassification#getResult()
+	 */
+	public Result getResult()
+	{
+		// TODO Auto-generated method stub
+		return super.getResult();
+	}
+
+	/**
+	 * Collects result statistics.
+	 * TODO: employ StatsCollector.
+	 * @param padFeatures desired stream tokenizer
+	 * @throws ClassificationException in case of inner exceptions
+	 */
+	public final void collectStatistics(double[] padFeatures)
+	throws ClassificationException
+	{
+		try
+		{
+			// All items are one unit in length
+			this.iMinWordLength = this.iMaxWordLength = 1;
+
+			// Collect Stats
+			for(int i = 0; i < padFeatures.length; i++)
+			{
+				// Look up if we already have an entry for this.
+				StatisticalObject oFeatureStats = (StatisticalObject)this.oStats.get(new Double(padFeatures[i]));
+
+				// New entry
+				if(oFeatureStats == null)
+				{
+					oFeatureStats = new StatisticalObject(1);
+					this.oStats.put(new Double(padFeatures[i]), oFeatureStats);
+				}
+
+				// Update existing entry
+				else
+				{
+					oFeatureStats.incFrequency();
+				}
+			}
+
+			// Sort and assign ranks
+			sort();
+			rankAll();
+		}
+		catch(RuntimeException e)
+		{
+			throw new ClassificationException(e);
+		}
 	}
 
 	/**
@@ -160,8 +328,8 @@ extends Stochastic
 	 */
 	private void sort()
 	{
-		this.aoSortedStatRefs = (WordStats[])oStats.values().toArray(new WordStats[0]);
-		marf.util.Arrays.sort(aoSortedStatRefs, new FrequencyComparator(SortComparator.DESCENDING));
+		this.aoSortedStatRefs = this.oStats.values().toArray(new StatisticalObject[0]);
+		marf.util.Arrays.sort(this.aoSortedStatRefs, new FrequencyComparator(SortComparator.DESCENDING));
 	}
 
 	/**
@@ -169,9 +337,9 @@ extends Stochastic
 	 */
 	private final void rankAll()
 	{
-		for(int i = 0; i < aoSortedStatRefs.length; i++)
+		for(int i = 0; i < this.aoSortedStatRefs.length; i++)
 		{
-			aoSortedStatRefs[i].setRank(i + 1);
+			this.aoSortedStatRefs[i].setRank(i + 1);
 		}
 	}
 
@@ -182,51 +350,77 @@ extends Stochastic
 	{
 		System.out.println("f = Frequency, r = Rank");
 
-		for(int i = 0; i < aoSortedStatRefs.length; i += 10 * OUTPUT_PAGE_SIZE)
+		for(int i = 0; i < this.aoSortedStatRefs.length; i += 10 * this.iOutputPageSize)
 		{
 			System.out.println
 			(
 				"\n" +
 				"---------------------------------\n" +
-				"Words from " + (i + 1) + " to " + (i + OUTPUT_PAGE_SIZE) + "\n" +
+				"Words from " + (i + 1) + " to " + (i + this.iOutputPageSize) + "\n" +
 				"---------------------------------\n\n"
 			);
 
 			System.out.println("Columns: r, f, f*r, word");
 
+			StringBuffer oStatsDump = new StringBuffer();
+			
 			for
 			(
 				int j = 0;
-				j < (aoSortedStatRefs.length - i > OUTPUT_PAGE_SIZE ? OUTPUT_PAGE_SIZE : aoSortedStatRefs.length - i);
+				j < (this.aoSortedStatRefs.length - i > this.iOutputPageSize ? this.iOutputPageSize : this.aoSortedStatRefs.length - i);
 				j++
 			)
 			{
-				System.out.println
-				(
-					aoSortedStatRefs[i + j].getRank() + "\t" +
-					aoSortedStatRefs[i + j].getFrequency() + "\t" +
-					aoSortedStatRefs[i + j].getFrequency() * aoSortedStatRefs[i + j].getRank() + "\t" +
-					aoSortedStatRefs[i + j].getLexeme()
-				);
+				StatisticalObject oStatsItem = this.aoSortedStatRefs[i + j];
+
+				oStatsDump
+					.append(oStatsItem.getRank()).append("\t")
+					.append(oStatsItem.getFrequency()).append("\t")
+					.append(oStatsItem.getFrequency() * oStatsItem.getRank()).append("\t");
+
+				if(oStatsItem instanceof WordStats)
+				{
+					oStatsDump.append(((WordStats)oStatsItem).getLexeme());
+				}
+				
+				oStatsDump.append("\n");
 			}
+			
+			System.out.print(oStatsDump);
 		}
 
 		// Frequency count
-		int aiFrequencies[] = new int[OUTPUT_PAGE_SIZE];
+		int aiFrequencies[] = new int[this.iOutputPageSize];
 		int iCurrFrequency = 1;
 
-		for(int i = aoSortedStatRefs.length - 1; i > 0 && iCurrFrequency < OUTPUT_PAGE_SIZE; i--)
+		for(int i = this.aoSortedStatRefs.length - 1; i > 0; i--)
 		{
 			//Debug.debug("freq: " + iCurrFrequency + ", i=" + i + ", len = " + aoSortedStatRefs.length);
 
-			if(aoSortedStatRefs[i].getFrequency() == iCurrFrequency)
+			if(this.aoSortedStatRefs[i].getFrequency() == iCurrFrequency)
 			{
+				// Such a frequency happened before
 				aiFrequencies[iCurrFrequency - 1]++;
 			}
 			else
 			{
+				// First occurrence of such a frequency
 				iCurrFrequency = aoSortedStatRefs[i].getFrequency();
-				aiFrequencies[iCurrFrequency - 1] = 1;
+				
+				if(iCurrFrequency < this.iOutputPageSize)
+				{
+					aiFrequencies[iCurrFrequency - 1] = 1;
+				}
+				else
+				{
+					System.err.println
+					(
+						"WARNING: Occurence of a frequency (" + iCurrFrequency + ") exceeds "
+						+ "output page size (" + this.iOutputPageSize + "), and, therefore, ignored."
+					);
+
+					iCurrFrequency = 1; 
+				}
 			}
 		}
 
@@ -238,7 +432,7 @@ extends Stochastic
 			"f\tC(f,w)"
 		);
 
-		for(int i = 0; i < OUTPUT_PAGE_SIZE; i++)
+		for(int i = 0; i < this.iOutputPageSize; i++)
 		{
 			System.out.println((i + 1) + "\t" + aiFrequencies[i]);
 		}
@@ -246,7 +440,7 @@ extends Stochastic
 
 	/**
 	 * Dumps CVS values of the rank and frequency into a file.
-	 * Filename is composed from the orginal corpus name plus the .csv extension.
+	 * Filename is composed from the original corpus name plus the .csv extension.
 	 * By default the dump is in the log() scale.
 	 * @throws IOException
 	 */
@@ -428,11 +622,11 @@ extends Stochastic
 	}
 
 	/**
-	 * Allows getting an array of sorted references to WordStats objects.
-	 * @return the sorted WordStats array
+	 * Allows getting an array of sorted references to the statistical objects.
+	 * @return the sorted StatisticalObject array
 	 * @since 0.3.0.5
 	 */
-	public final WordStats[] getSortedStatRefs()
+	public final StatisticalObject[] getSortedStatRefs()
 	{
 		return this.aoSortedStatRefs;
 	}
@@ -442,7 +636,7 @@ extends Stochastic
 	 * @return the stats hashtable
 	 * @since 0.3.0.5
 	 */
-	public final Hashtable getStats()
+	public final Hashtable<Object, StatisticalObject> getStats()
 	{
 		return this.oStats;
 	}
@@ -494,7 +688,7 @@ extends Stochastic
 			.append("Minimum word length: ").append(this.iMinWordLength).append("\n")
 			.append("Maximum word length: ").append(this.iMaxWordLength).append("\n")
 			.append("Dictionary size: ").append(this.oStats.size()).append("\n")
-			.append("WordStats Dictionary:\n")
+			.append("Stats Dictionary:\n")
 			.append(this.oStats);
 
 		return oBuffer.toString();
@@ -506,7 +700,7 @@ extends Stochastic
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.29 $";
+		return "$Revision: 1.35 $";
 	}
 }
 

@@ -8,10 +8,10 @@ import marf.Stats.Ngram;
  * <p>Represents Witten-Bell Smoothing Algorithm.
  * </p>
  *
- * $Id: WittenBell.java,v 1.20 2006/01/29 22:28:22 mokhov Exp $
+ * $Id: WittenBell.java,v 1.21 2007/12/18 21:57:15 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  * @since 0.3.0.2
  */
 public class WittenBell
@@ -57,35 +57,35 @@ extends Smoothing
 
 					for(int j = 0; j < iV; j++)
 					{
-						long lOccurence = (long)this.oProbabilityTable.getOccurence(j);
+						long lOccurrence = (long)this.oProbabilityTable.getOccurrence(j);
 
-						lN += lOccurence;
-						lZ += lOccurence == 0 ? 1 : 0;
+						lN += lOccurrence;
+						lZ += lOccurrence == 0 ? 1 : 0;
 					}
 
 					lT = iV - lZ;
 
 					for(int j = 0; j < iV; j++)
 					{
-						double dNewOccurence;
+						double dNewOccurrence;
 
-						long lOccurence = (long)this.oProbabilityTable.getOccurence(j);
+						long lOccurrence = (long)this.oProbabilityTable.getOccurrence(j);
 
 						double dAdjustment = (double)lN / (double)(lN + lT);
 
 						// Unseen
-						if(lOccurence == 0)
+						if(lOccurrence == 0)
 						{
-							dNewOccurence = ((double)lT / (double)lZ) * dAdjustment;
+							dNewOccurrence = ((double)lT / (double)lZ) * dAdjustment;
 						}
 
 						// Seen
 						else
 						{
-							dNewOccurence = lOccurence * dAdjustment;
+							dNewOccurrence = lOccurrence * dAdjustment;
 						}
 
-						this.oProbabilityTable.setOccurence(j, dNewOccurence);
+						this.oProbabilityTable.setOccurrence(j, dNewOccurrence);
 					}
 
 					break;
@@ -103,10 +103,10 @@ extends Smoothing
 					{
 						for(int j = 0; j < iV; j++)
 						{
-							long lOccurence = (long)this.oProbabilityTable.getOccurence(j, i);
+							long lOccurrence = (long)this.oProbabilityTable.getOccurrence(j, i);
 
-							alN[i] += lOccurence;
-							alZ[i] += lOccurence == 0 ? 1 : 0;
+							alN[i] += lOccurrence;
+							alZ[i] += lOccurrence == 0 ? 1 : 0;
 						}
 
 						alT[i] = iV - alZ[i];
@@ -124,32 +124,32 @@ extends Smoothing
 					{
 						for(int j = 0; j < iV; j++)
 						{
-							double dNewOccurence;
+							double dNewOccurrence;
 
-							long lOccurence = (long)this.oProbabilityTable.getOccurence(j, i);
+							long lOccurrence = (long)this.oProbabilityTable.getOccurrence(j, i);
 
 							double dAdjustment = (double)alN[i] / (double)(alN[i] + alT[i]);
 
 							// Unseen
-							if(lOccurence == 0)
+							if(lOccurrence == 0)
 							{
-								dNewOccurence = ((double)alT[i] / (double)alZ[i]) * dAdjustment;
+								dNewOccurrence = ((double)alT[i] / (double)alZ[i]) * dAdjustment;
 							}
 
 							// Seen
 							else
 							{
-								dNewOccurence = lOccurence * dAdjustment;
+								dNewOccurrence = lOccurrence * dAdjustment;
 							}
 
 /*
 							Debug.debug
 							(
-								"Old Occurence: " + lOccurence + "\n" +
-								"New Occurence: " + dNewOccurence
+								"Old Occurrence: " + lOccurence + "\n" +
+								"New Occurrence: " + dNewOccurence
 							);
 */
-							this.oProbabilityTable.setOccurence(j, i, dNewOccurence);
+							this.oProbabilityTable.setOccurrence(j, i, dNewOccurrence);
 						}
 					}
 
@@ -168,10 +168,10 @@ extends Smoothing
 						{
 							for(int j = 0; j < iV; j++)
 							{
-								long lOccurence = (long)this.oProbabilityTable.getOccurence(j, i, k);
+								long lOccurrence = (long)this.oProbabilityTable.getOccurrence(j, i, k);
 
-								alN[k][i] += lOccurence;
-								alZ[k][i] += lOccurence == 0 ? 1 : 0;
+								alN[k][i] += lOccurrence;
+								alZ[k][i] += lOccurrence == 0 ? 1 : 0;
 							}
 
 							alT[k][i] = iV - alZ[k][i];
@@ -184,25 +184,25 @@ extends Smoothing
 						{
 							for(int j = 0; j < iV; j++)
 							{
-								double dNewOccurence;
+								double dNewOccurrence;
 
-								long lOccurence = (long)this.oProbabilityTable.getOccurence(j, i, k);
+								long lOccurrence = (long)this.oProbabilityTable.getOccurrence(j, i, k);
 
 								double dAdjustment = (double)alN[k][i] / (double)(alN[k][i] + alT[k][i]);
 
 								// Unseen
-								if(lOccurence == 0)
+								if(lOccurrence == 0)
 								{
-									dNewOccurence = ((double)alT[k][i] / (double)alZ[k][i]) * dAdjustment;
+									dNewOccurrence = ((double)alT[k][i] / (double)alZ[k][i]) * dAdjustment;
 								}
 
 								// Seen
 								else
 								{
-									dNewOccurence = lOccurence * dAdjustment;
+									dNewOccurrence = lOccurrence * dAdjustment;
 								}
 
-								this.oProbabilityTable.setOccurence(j, i, k, dNewOccurence);
+								this.oProbabilityTable.setOccurrence(j, i, k, dNewOccurrence);
 							}
 						}
 					}
@@ -244,7 +244,7 @@ extends Smoothing
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.20 $";
+		return "$Revision: 1.21 $";
 	}
 }
 

@@ -1,6 +1,6 @@
 /*
  * TokenType Class
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
+ * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
  */
 
 package marf.nlp.Parsing;
@@ -15,10 +15,10 @@ import java.util.Hashtable;
  * token types.
  * </p>
  *
- * $Id: TokenType.java,v 1.13 2006/01/19 04:13:16 mokhov Exp $
+ * $Id: TokenType.java,v 1.21 2012/01/09 04:03:23 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.21 $
  * @since 0.3.0.2
  */
 public class TokenType
@@ -50,7 +50,7 @@ implements Serializable
 	public static final int BRACKET = -5;
 
 	/**
-	 * Identified keyword token type. A more preciuse set of ID.
+	 * Identified keyword token type. A more precise set of IDs.
 	 */
 	public static final int KEYWORD = -6;
 
@@ -62,7 +62,7 @@ implements Serializable
 	/**
 	 * End of File.
 	 * Not really a token type, but
-	 * and idicator of the fact the the end
+	 * and indicator of the fact the the end
 	 * of the source file has been reached
 	 */
 	public static final int EOF = -8;
@@ -87,7 +87,7 @@ implements Serializable
 	 * Hash representing literal values of the
 	 * above tokens (for output, for example).
 	 */
-	public static Hashtable soTokenTypes = new Hashtable();
+	public static Hashtable<Integer, String> soTokenTypes = new Hashtable<Integer, String>();
 
 	static
 	{
@@ -146,7 +146,7 @@ implements Serializable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.13 $";
+		return "$Revision: 1.21 $";
 	}
 }
 

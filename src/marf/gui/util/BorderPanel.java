@@ -9,10 +9,10 @@ import javax.swing.JPanel;
 /**
  * <p>Utility panel class with 5-point margin border with title.</p>
  *
- * $Id: BorderPanel.java,v 1.9 2006/01/22 19:01:19 mokhov Exp $
+ * $Id: BorderPanel.java,v 1.10 2007/12/31 00:17:17 mokhov Exp $
  *
- * @author Serguei Mokhov, mokhov@cs.concordia.ca
- * @version $Revision: 1.9 $
+ * @author Serguei Mokhov
+ * @version $Revision: 1.10 $
  * @since 0.3.0.1
  */
 public class BorderPanel
@@ -143,7 +143,7 @@ extends JPanel
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.9 $";
+		return "$Revision: 1.10 $";
 	}
 }
 

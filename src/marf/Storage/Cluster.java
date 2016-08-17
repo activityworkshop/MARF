@@ -11,20 +11,19 @@ import marf.util.NotImplementedException;
 /**
  * <p>Cluster contains a cluster information per subject.</p>
  *
- * <p>$Id: Cluster.java,v 1.14 2006/01/06 22:18:59 mokhov Exp $</p>
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.14 $
+ * @version $Id: Cluster.java,v 1.21 2015/03/08 19:47:22 mokhov Exp $
  * @since 0.3.0.1
  */
 public class Cluster
 extends TrainingSample
 {
 	/**
-	 * How many times mean was computed.
-	 * Used in recomputation of it.
+	 * How many times the mean was computed.
+	 * Used in recomputation of it when new data is coming in.
 	 */
-	protected int iMeanCount = 0;
+//	protected int iMeanCount = 0;
+	private int iMeanCount = 0;
 
 	/**
 	 * For serialization versioning.
@@ -37,7 +36,7 @@ extends TrainingSample
 
 	/**
 	 * Default cluster constructor.
-	 * Explicitly appeared in 0.3.0.5. 
+	 * Explicitly appeared in 0.3.0.5.
 	 * @since 0.3.0.5
 	 */
 	public Cluster()
@@ -61,39 +60,27 @@ extends TrainingSample
 	 * @return <code>false</code> if the filename is already there; <code>true</code> otherwise
 	 * @see #existsFilename(String)
 	 */
-	public final boolean addFilename(String pstrFilename)
+	public /*final*/ boolean addFilename(String pstrFilename)
 	{
-		if(existsFilename(pstrFilename))
-		{
-			return false;
-		}
-
-		this.oFilenames.add(pstrFilename);
-
-		return true;
+		return super.addFilename(pstrFilename);
 	}
 
 	/**
-	 * Checks existance of the file in the training set.
+	 * Checks existence of the file in the training set.
 	 * Serves as an indication that we already trained on the given file.
 	 * @param pstrFilename filename to check
 	 * @return <code>true</code> if the filename is there; <code>false</code> if not
 	 */
-	public final boolean existsFilename(String pstrFilename)
+	public boolean existsFilename(String pstrFilename)
 	{
-		if(oFilenames.contains(pstrFilename))
-		{
-			return true;
-		}
-
-		return false;
+		return this.oFilenames.contains(pstrFilename);
 	}
 
 	/**
 	 * Retrieves current mean count.
 	 * @return mean count
 	 */
-	public final int getMeanCount()
+	public int getMeanCount()
 	{
 		return this.iMeanCount;
 	}
@@ -102,25 +89,17 @@ extends TrainingSample
 	 * Increases mean count by one.
 	 * @return new mean count
 	 */
-	public final int incMeanCount()
+//	public final int incMeanCount()
+	private final int incMeanCount()
 	{
 		return (++this.iMeanCount);
-	}
-
-	/**
-	 * Retrieves the mean vector.
-	 * @return array of doubles representing the mean for that cluster
-	 */
-	public final double[] getMeanVector()
-	{
-		return getDataVector();
 	}
 
 	/**
 	 * Sets new mean vector.
 	 * @param padMeanVector double array representing the mean vector
 	 */
-	public final void setMeanVector(double[] padMeanVector)
+	public /*final*/ void setMeanVector(double[] padMeanVector)
 	{
 		setDataVector(padMeanVector);
 	}
@@ -132,24 +111,25 @@ extends TrainingSample
 	 * @param piSubjectID for which subject that vector is
 	 * @return <code>true</code> if the vector was added; <code>false</code> otherwise
 	 */
-	public final boolean addFeatureVector
+	public boolean addFeatureVector
 	(
 		double[] padFeatureVector,
 		String pstrFilename,
 		int piSubjectID
 	)
 	{
-		boolean bNewSample = getDataVector() == null ? true : false;
+		boolean bNewSample = this.adDataVector == null ? true : false;
 
 		if(bNewSample == true)
 		{
 			setSubjectID(piSubjectID);
 			setMeanVector((double[])padFeatureVector.clone());
+			addFilename(pstrFilename);
 		}
 		else
 		{
 			/*
-			 * If this file has been trained on already, no retraining
+			 * If this file has been trained on already, no retraining is
 			 * required. Return false to indicate that no changes are made.
 			 */
 			if(addFilename(pstrFilename) == false)
@@ -158,10 +138,12 @@ extends TrainingSample
 			}
 
 			// What if piSubjectID is different from the one in this.iSubjectID?
-			assert this.iSubjectID == piSubjectID; 
+			assert this.iSubjectID == piSubjectID;
 
 			// Recompute the mean
-			for(int f = 0; f < adDataVector.length; f++)
+			// XXX: what if the length of the parameter is less
+			// or more than that of
+			for(int f = 0; f < this.adDataVector.length; f++)
 			{
 				this.adDataVector[f] =
 					(this.adDataVector[f] * this.iMeanCount + padFeatureVector[f]) /
@@ -173,11 +155,11 @@ extends TrainingSample
 
 		if(bNewSample == true)
 		{
-			Debug.debug("Added feature vector for subject: " + piSubjectID);
+			Debug.debug("Cluster.addFeatureVector() -- Added feature vector for subject: " + piSubjectID);
 		}
 		else
 		{
-			Debug.debug("Updated mean vector for subject: " + piSubjectID);
+			Debug.debug("Cluster.addFeatureVector() -- Updated mean vector for subject: " + piSubjectID);
 		}
 
 		return true;
@@ -236,13 +218,30 @@ extends TrainingSample
 	}
 
 	/**
+	 * Provides string representation of the training set data in addition
+	 * to that of the parent TrainingSample.
+	 * @see marf.Storage.TrainingSample#toString()
+	 * @since 0.3.0.6
+	 */
+	public synchronized String toString()
+	{
+		StringBuffer oBuffer = new StringBuffer(super.toString());
+
+		oBuffer
+			.append("Mean Count: ").append(this.iMeanCount).append("\n")
+			.append("Cluster Source code revision: ").append(getMARFSourceCodeRevision()).append("\n");
+
+		return oBuffer.toString();
+	}
+
+	/**
 	 * Returns source code revision information.
 	 * @return revision string
 	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.14 $";
+		return "$Revision: 1.21 $";
 	}
 } // class Cluster
 

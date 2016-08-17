@@ -5,16 +5,16 @@ import marf.util.MARFException;
 /**
  * <p>Indicates exceptional situations in MARF's math.</p>
  *
- * <p>$Id: MathException.java,v 1.5 2005/08/13 23:09:39 susan_fan Exp $</p>
+ * $Id: MathException.java,v 1.6 2007/12/18 03:45:42 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.5 $
- * @since 0.3.0
+ * @version $Revision: 1.6 $
+ * @since 0.3.0.2
  */
 public class MathException
 extends MARFException
 {
-    /**
+	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
@@ -57,7 +57,7 @@ extends MARFException
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.5 $";
+		return "$Revision: 1.6 $";
 	}
 }
 

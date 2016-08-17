@@ -1,6 +1,6 @@
 /*
  * GrammarAnalyzer Class
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
+ * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
  */
 
 package marf.nlp.Parsing.GrammarCompiler;
@@ -25,10 +25,10 @@ import marf.util.NotImplementedException;
  * <p>GrammarAnalyzer class encapsulates functionality
  * required for lexical analysis of a the grammar definition file.</p>
  *
- * $Id: GrammarAnalyzer.java,v 1.21 2006/01/19 04:13:17 mokhov Exp $
+ * $Id: GrammarAnalyzer.java,v 1.28 2012/01/09 04:03:23 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.28 $
  * @since 0.3.0.2
  */
 public class GrammarAnalyzer
@@ -92,7 +92,7 @@ extends GenericLexicalAnalyzer
 	 * Customizes this analyzer for grammar files after calling
 	 * parent's <code>init()</code>. Allows C++, C, and script (#)
 	 * style comments; case-sensitive; ignores EOL; and treats
-	 * some puntuation a special. Sets default lex out filenames
+	 * some punctuation a special. Sets default lex out filenames
 	 * for standard and error lexical output.
 	 * @see marf.nlp.Parsing.GenericLexicalAnalyzer#init()
 	 */
@@ -106,7 +106,7 @@ extends GenericLexicalAnalyzer
 			// EOL is not a token
 			this.oStreamTokenizer.eolIsSignificant(false);
 
-			// Allow C-type coments '/**/'
+			// Allow C-type comments '/**/'
 			this.oStreamTokenizer.slashStarComments(true);
 
 			// Allow C++ '//' comments
@@ -271,7 +271,7 @@ extends GenericLexicalAnalyzer
 		// Keywords (including grammar ones)
 		if(TokenSubType.soKeywords.containsKey(this.oStreamTokenizer.sval))
 		{
-			// Sematic Token
+			// Semantic Token
 			if(this.oStreamTokenizer.sval.charAt(0) == '@')
 			{
 				this.oTokenType.setType(GrammarTokenType.SEMANTIC_TOKEN);
@@ -515,7 +515,7 @@ extends GenericLexicalAnalyzer
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.21 $";
+		return "$Revision: 1.28 $";
 	}
 }
 

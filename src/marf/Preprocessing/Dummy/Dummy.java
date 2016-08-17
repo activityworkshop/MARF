@@ -4,17 +4,16 @@ import marf.Preprocessing.IPreprocessing;
 import marf.Preprocessing.Preprocessing;
 import marf.Preprocessing.PreprocessingException;
 import marf.Storage.Sample;
-import marf.util.Debug;
 
 
 /**
  * <p>Implements dummy preprocessing module for testing purposes
  * that does only normalization.</p>
  *
- * <p>$Id: Dummy.java,v 1.25 2005/12/31 23:17:37 mokhov Exp $</p>
+ * $Id: Dummy.java,v 1.27 2007/12/16 01:11:05 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.27 $
  * @since 0.0.1
  */
 public class Dummy
@@ -54,7 +53,7 @@ extends Preprocessing
 
 	/**
 	 * Dummy Constructor.
-	 * @param poSample incomping sample
+	 * @param poSample incoming sample
 	 * @throws PreprocessingException
 	 */
 	public Dummy(Sample poSample)
@@ -64,62 +63,26 @@ extends Preprocessing
 	}
 
 	/**
-	 * Dummy implementation of <code>preprocess()</code> for testing.
-	 * @return <code>true</code>
-	 * @throws PreprocessingException never thrown
+	 * Dummy implementation of <code>preprocess()</code> for testing
+	 * that doesn't do any real work and simply defers the call to the
+	 * generic implementation.
+	 * @return <code>true</code> if preprocessing occurred and changes to the sample were made
+	 * @throws PreprocessingException
 	 */
 	public boolean preprocess()
 	throws PreprocessingException
 	{
-		return normalize();
-	}
-
-	/**
-	 * Dummy implementation of <code>removeNoise()</code> for testing.
-	 * @return <code>false</code>
-	 * @throws PreprocessingException never thrown
-	 */
-	public final boolean removeNoise()
-	throws PreprocessingException
-	{
-		Debug.debug(this.getClass().getName() + ".removeNoise()");
-		return false;
-	}
-
-	/**
-	 * Dummy implementation of <code>removeSilence()</code> for testing.
-	 * @return <code>false</code>
-	 * @throws PreprocessingException never thrown
-	 */
-	public final boolean removeSilence()
-	throws PreprocessingException
-	{
-		Debug.debug(this.getClass().getName() + ".removeSilence()");
-		return false;
-	}
-
-	/**
-	 * Dummy implementation of <code>cropAudio()</code> for testing.
-	 * @param pdStartingFrequency unused
-	 * @param pdEndFrequency unused
-	 * @return <code>false</code>
-	 * @throws PreprocessingException never thrown
-	 */
-	public final boolean cropAudio(double pdStartingFrequency, double pdEndFrequency)
-	throws PreprocessingException
-	{
-		Debug.debug(this.getClass().getName() + ".cropAudio()");
-		return false;
+		return super.preprocess();
 	}
 
 	/**
 	 * Returns source code revision information.
 	 * @return revision string
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.25 $";
+		return "$Revision: 1.27 $";
 	}
 }
 

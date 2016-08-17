@@ -1,20 +1,23 @@
 package marf.FeatureExtraction;
 
 import marf.Preprocessing.IPreprocessing;
+import marf.Storage.FeatureSet;
 import marf.Storage.StorageManager;
 
 
 /**
  * <p>Generic Feature Extraction Module.
  * Every feature extraction module must extend this class; if it cannot
- * then they must implement the IFeatureExtraction interface.
+ * then they must implement the <code>IFeatureExtraction</code> interface.
  * </p>
  *
- * <p>$Id: FeatureExtraction.java,v 1.33 2006/01/21 02:35:31 mokhov Exp $</p>
+ * $Id: FeatureExtraction.java,v 1.38 2012/05/30 16:24:18 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.38 $
  * @since 0.0.1
+ * 
+ * @see IFeatureExtraction
  */
 public abstract class FeatureExtraction
 extends StorageManager
@@ -26,10 +29,16 @@ implements IFeatureExtraction
 	protected IPreprocessing oPreprocessing = null;
 
 	/**
-	 * An array of features extracted (coefficiencies and/or amplitude values).
+	 * An array of features extracted (coefficients and/or amplitude values).
 	 */
 	protected double[] adFeatures = null;
 
+	/**
+	 * A collection of feature vectors or sets for a subject.
+	 * @since 0.3.0.6
+	 */
+	protected FeatureSet oFeatureSet = new FeatureSet();
+	
 	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
@@ -49,6 +58,20 @@ implements IFeatureExtraction
 		this.iCurrentDumpMode = DUMP_GZIP_BINARY;
 		this.oObjectToSerialize = this.adFeatures;
 	}
+
+	/**
+	 * Provides default implementation of the API by using the sample data
+	 * provided by the IPreprocessing module. The module should be set either
+	 * through a constructor or a setter prior invocation.
+	 * @see marf.FeatureExtraction.IFeatureExtraction#extractFeatures()
+	 * @since 0.3.0.6
+	 */
+	public boolean extractFeatures()
+	throws FeatureExtractionException
+	{
+		return this.extractFeatures(this.oPreprocessing.getSample().getSampleArray());
+	}
+
 
 	/**
 	 * Allows retrieval of the internal feature vector.
@@ -80,8 +103,9 @@ implements IFeatureExtraction
 	}
 
 	/**
-	 * Implementaion of back-synchronization of loaded object.
+	 * Implementation of back-synchronization of loaded object.
 	 * @since 0.3.0.3
+	 * @see marf.Storage.StorageManager#backSynchronizeObject()
 	 */
 	public void backSynchronizeObject()
 	{
@@ -89,7 +113,7 @@ implements IFeatureExtraction
 	}
 
 	/**
-	 * Implementes Cloneable interface for the FeatureExtraction object.
+	 * Implements Cloneable interface for the FeatureExtraction object.
 	 * The contained Preprocessing isn't cloned at this point,
 	 * and is just assigned to the clone.
 	 * @see java.lang.Object#clone()
@@ -110,7 +134,7 @@ implements IFeatureExtraction
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.33 $";
+		return "$Revision: 1.38 $";
 	}
 }
 

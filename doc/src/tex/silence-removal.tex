@@ -1,0 +1,18 @@
+\subsection{Silence Removal}
+
+Silence removal got implemented in 0.3.0.6 in MARF's
+\api{Preprocessing.removeSilence()} methods (and derivatives, except \api{Raw}).
+For better results, \api{removeSilence()} should be executed after
+normalization, where the default threshold of 1\% (0.01) works well
+for the most cases.
+
+The silence removal is performed in time domain where the amplitudes
+below the threshold are discarded from the sample. This also makes
+the sample smaller and less resemblent to other samples improving
+overall recognition performance.
+
+The actual threshold can be a settable parameter through
+\api{ModuleParams}, which is a third parameter according
+to the preprocessing parameter protocol.
+
+% EOF

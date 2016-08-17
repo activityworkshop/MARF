@@ -4,6 +4,7 @@ Usage:
                        --single-train <sample> [options]      -- add a single sample to the training set
                        --ident <sample> [options]             -- identification mode
                        --batch-ident <samples-dir> [options]  -- batch identification mode
+                       --gui                                  -- use GUI as a user interface
                        --stats                                -- display stats
                        --best-score                           -- display best classification result
                        --reset                                -- reset stats
@@ -14,13 +15,19 @@ Options (one or more of the following):
 
 Preprocessing:
 
+  -silence      - remove silence (can be combined with any below)
+  -noise        - remove noise (can be combined with any below)
   -raw          - no preprocessing
   -norm         - use just normalization, no filtering
-  -low          - use low-pass filter
-  -high         - use high-pass filter
-  -boost        - use high-frequency-boost preprocessor
-  -band         - use band-pass filter
+  -low          - use low-pass FFT filter
+  -high         - use high-pass FFT filter
+  -boost        - use high-frequency-boost FFT preprocessor
+  -band         - use band-pass FFT filter
   -endp         - use endpointing
+  -lowcfe       - use low-pass CFE filter
+  -highcfe      - use high-pass CFE filter
+  -bandcfe      - use band-pass CFE filter
+  -bandstopcfe  - use band-stop CFE filter
 
 Feature Extraction:
 

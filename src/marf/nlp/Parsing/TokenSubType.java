@@ -1,6 +1,6 @@
 /*
  * TokenSubType Class
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
+ * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
  */
 
 package marf.nlp.Parsing;
@@ -11,10 +11,10 @@ import java.util.Hashtable;
 /**
  * <p>MARF Specific Tokens Types.</p>
  *
- * $Id: TokenSubType.java,v 1.14 2006/01/19 04:13:16 mokhov Exp $
+ * $Id: TokenSubType.java,v 1.21 2012/01/09 04:03:23 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.21 $
  * @since 0.3.0.2
  */
 public class TokenSubType
@@ -219,31 +219,31 @@ extends TokenType
 	 * Maps constants and keyword spellings.
 	 * @since October 2, 2001
 	 */
-	public static Hashtable soKeywords = new Hashtable();
+	public static Hashtable<String, Integer> soKeywords = new Hashtable<String, Integer>();
 
 	/**
 	 * Maps constants and punctuation.
 	 * @since October 2, 2001
 	 */
-	public static Hashtable soValidPunctuation = new Hashtable();
+	public static Hashtable<String, Integer> soValidPunctuation = new Hashtable<String, Integer>();
 
 	/**
 	 * Maps constants and operators.
 	 * @since October 2, 2001
 	 */
-	public static Hashtable soOperators = new Hashtable();
+	public static Hashtable<String, Integer> soOperators = new Hashtable<String, Integer>();
 
 	/**
 	 * Maps constants and brackets, parentheses, and braces.
 	 * @since October 2, 2001
 	 */
-	public static Hashtable soBrackets = new Hashtable();
+	public static Hashtable<String, Integer> soBrackets = new Hashtable<String, Integer>();
 
 	/**
 	 * Matches numbers to literals for output purposes.
 	 * @since October 2, 2001
 	 */
-	public static Hashtable soTokenSubTypes = new Hashtable();
+	public static Hashtable<Integer, String> soTokenSubTypes = new Hashtable<Integer, String>();
 
 	static
 	{
@@ -402,7 +402,7 @@ extends TokenType
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.14 $";
+		return "$Revision: 1.21 $";
 	}
 }
 

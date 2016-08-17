@@ -6,10 +6,10 @@ import marf.util.MARFException;
  * <p>Class PreprocessingException indicates an error in one of the preprocessing
  * modules if an error happens somewhere throughout the process.</p>
  *
- * <p>$Id: PreprocessingException.java,v 1.10 2005/12/28 03:21:11 mokhov Exp $</p>
+ * $Id: PreprocessingException.java,v 1.11 2006/09/03 21:29:33 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  * @since 0.0.1
  */
 public class PreprocessingException
@@ -72,7 +72,7 @@ extends MARFException
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.10 $";
+		return "$Revision: 1.11 $";
 	}
 }
 

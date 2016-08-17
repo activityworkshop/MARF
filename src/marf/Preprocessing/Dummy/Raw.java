@@ -10,10 +10,10 @@ import marf.util.Debug;
  * <p>Implements raw preprocessing module for testing purposes
  * that does <b>not</b> do any preprocessing.</p>
  *
- * <p>$Id: Raw.java,v 1.13 2005/12/31 23:17:37 mokhov Exp $</p>
+ * $Id: Raw.java,v 1.15 2007/12/16 01:11:05 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.15 $
  * @since 0.3.0.2
  */
 public class Raw
@@ -77,12 +77,52 @@ extends Dummy
 	}
 
 	/**
+	 * Raw implementation of <code>removeNoise()</code> for testing.
+	 * Does not do any noise removal.
+	 * @return <code>true</code>
+	 * @throws PreprocessingException never thrown
+	 */
+	public final boolean removeNoise()
+	throws PreprocessingException
+	{
+		Debug.debug(this.getClass().getName() + ".removeNoise()");
+		return true;
+	}
+
+	/**
+	 * Raw implementation of <code>removeSilence()</code> for testing.
+	 * Does not do any silence removal.
+	 * @return <code>true</code>
+	 * @throws PreprocessingException never thrown
+	 */
+	public final boolean removeSilence()
+	throws PreprocessingException
+	{
+		Debug.debug(this.getClass().getName() + ".removeSilence()");
+		return true;
+	}
+
+	/**
+	 * Raw implementation of <code>cropAudio()</code> for testing.
+	 * @param pdStartingFrequency unused
+	 * @param pdEndFrequency unused
+	 * @return <code>true</code>
+	 * @throws PreprocessingException never thrown
+	 */
+	public final boolean cropAudio(double pdStartingFrequency, double pdEndFrequency)
+	throws PreprocessingException
+	{
+		Debug.debug(this.getClass().getName() + ".cropAudio()");
+		return true;
+	}
+
+	/**
 	 * Returns source code revision information.
 	 * @return revision string
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.13 $";
+		return "$Revision: 1.15 $";
 	}
 }
 

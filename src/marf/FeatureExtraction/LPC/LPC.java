@@ -1,5 +1,6 @@
 package marf.FeatureExtraction.LPC;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 import marf.MARF;
@@ -15,12 +16,10 @@ import marf.util.Debug;
 /**
  * <p>Class LPC implements Linear Predictive Coding.</p>
  *
- * <p>$Id: LPC.java,v 1.40 2005/12/30 05:54:25 mokhov Exp $</p>
- *
  * @author Ian Clement
  * @author Serguei Mokhov
  *
- * @version $Revision: 1.40 $
+ * @version $Id: LPC.java,v 1.42 2012/07/09 03:53:33 mokhov Exp $
  * @since 0.0.1
  */
 public class LPC
@@ -73,7 +72,7 @@ extends FeatureExtraction
 
 		if(oModuleParams != null)
 		{
-			Vector oParams = oModuleParams.getFeatureExtractionParams();
+			Vector<Serializable> oParams = oModuleParams.getFeatureExtractionParams();
 
 			if(oParams.size() > 0)
 			{
@@ -95,17 +94,22 @@ extends FeatureExtraction
 
 	/**
 	 * LPC Implementation of <code>extractFeatures()</code>.
+	 * As of 0.3.0.6 the generic pipelined <code>extractFeatures()</code>
+	 * refactored out to <code>FeatureExtraction</code>.
+	 *
 	 * @return <code>true</code> if features were extracted, <code>false</code> otherwise
-	 * @throws FeatureExtractionException
+	 * @throws FeatureExtractionException on any exception while extracting features
+	 * @see marf.FeatureExtraction.IFeatureExtraction#extractFeatures(double[])
+	 * @since 0.3.0.6
 	 */
-	public final boolean extractFeatures()
+	public final boolean extractFeatures(double[] padSampleData)
 	throws FeatureExtractionException
 	{
 		try
 		{
 			Debug.debug("LPC.extractFeatures() has begun...");
 
-			double[] adSample = this.oPreprocessing.getSample().getSampleArray();
+			double[] adSample = padSampleData;
 
 			Debug.debug("sample length: " + adSample.length);
 			Debug.debug("poles: " + this.iPoles);
@@ -151,7 +155,7 @@ extends FeatureExtraction
 				// Collect features
  				for(int j = 0; j < this.iPoles; j++)
  				{
- 					adFeatures[j] += adLPCCoeffs[j];
+ 					this.adFeatures[j] += adLPCCoeffs[j];
  					//Debug.debug("lpc_coeffs[" + j + "]"  + lpc_coeffs[j]);
  				}
 
@@ -163,7 +167,7 @@ extends FeatureExtraction
 			{
 				for(int j = 0; j < this.iPoles; j++)
 				{
-					adFeatures[j] /= iWindowsNum;
+					this.adFeatures[j] /= iWindowsNum;
 				}
 			}
 
@@ -181,6 +185,7 @@ extends FeatureExtraction
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
 			throw new FeatureExtractionException(e);
 		}
 	}
@@ -232,7 +237,7 @@ extends FeatureExtraction
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.40 $";
+		return "$Revision: 1.42 $";
 	}
 }
 

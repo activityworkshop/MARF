@@ -6,11 +6,11 @@ import marf.FeatureExtraction.IFeatureExtraction;
 /**
  * <p>Class EuclideanDistance.</p>
  *
- * <p>$Id: EuclideanDistance.java,v 1.20 2005/08/11 00:44:50 mokhov Exp $</p>
+ * $Id: EuclideanDistance.java,v 1.21 2007/12/31 00:17:04 mokhov Exp $
  *
  * @author Stephen Sinclair
  * @author Serguei Mokhov
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  * @since 0.0.1
  */
 public class EuclideanDistance
@@ -45,7 +45,9 @@ extends Distance
 		double dDistance = 0;
 
 		for(int f = 0; f < paVector1.length; f++)
+		{
 			dDistance += (paVector1[f] - paVector2[f]) * (paVector1[f] - paVector2[f]);
+		}
 
 		return dDistance;
 	}
@@ -57,7 +59,7 @@ extends Distance
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.20 $";
+		return "$Revision: 1.21 $";
 	}
 }
 

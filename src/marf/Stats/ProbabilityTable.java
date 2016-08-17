@@ -13,10 +13,8 @@ import marf.util.Matrix;
  * The class is properly synchronized as of 0.3.0.5.
  * </p>
  *
- * $Id: ProbabilityTable.java,v 1.40 2006/02/13 00:35:22 mokhov Exp $
- *
- * @author Serguei Mokhov
- * @version $Revision: 1.40 $
+ * @author Serguei A. Mokhov
+ * @version $Id: ProbabilityTable.java,v 1.42 2010/08/21 21:56:55 mokhov Exp $
  * @since 0.3.0.2
  */
 public class ProbabilityTable
@@ -27,7 +25,7 @@ implements Serializable
 	 * Observation's index in the vector is the one in the table
 	 * by n-grams.
 	 */
-	private Vector oColumnIndex = new Vector();
+	private Vector<Object> oColumnIndex = new Vector<Object>();
 
 	/**
 	 * Vector of vectors of probabilities, which are Double
@@ -84,13 +82,14 @@ implements Serializable
 
 	/**
 	 * Retrieves the probability of a list of observations
-	 * as a number of occurences.
+	 * as a number of occurrences.
 	 * @param poObservationList a collection of observations
 	 * @return the probability
 	 */
-	public final synchronized double p(final Vector poObservationList)
+	//public final synchronized double p(final Vector poObservationList)
+	public final synchronized Double p(final Vector<String> poObservationList)
     {
-		double dProbability = getOccurence(poObservationList);
+		double dProbability = getOccurrence(poObservationList);
 
 		Debug.debug
 		(
@@ -113,13 +112,13 @@ implements Serializable
 	}
 
 	/**
-	 * Allows setting an occurence given the <i>x</i> coordinate.
+	 * Allows setting an occurrence given the <i>x</i> coordinate.
 	 * An unigram model is assumed.
 	 * @param piX the <i>x</i> index
-	 * @param pdOccurence the occurence
+	 * @param pdOccurence the occurrence
 	 * @throws ArrayIndexOutOfBoundsException if the coordinate is out of range
 	 */
-	public final synchronized void setOccurence(final int piX, final double pdOccurence)
+	public final synchronized void setOccurrence(final int piX, final double pdOccurence)
 	{
 		if
 		(
@@ -136,18 +135,18 @@ implements Serializable
 		Vector oObservationList = new Vector();
 		oObservationList.add(this.oColumnIndex.elementAt(piX));
 
-		setOccurence(oObservationList, pdOccurence);
+		setOccurrence(oObservationList, pdOccurence);
 	}
 
 	/**
-	 * Allows setting an occurence given the <i>x</i> and <i>y</i> coordinates.
+	 * Allows setting an occurrence given the <i>x</i> and <i>y</i> coordinates.
 	 * A bigram model is assumed.
 	 * @param piX the <i>x</i> index
 	 * @param piY the <i>y</i> index
-	 * @param pdOccurence the occurence
+	 * @param pdOccurrence the occurrence
 	 * @throws ArrayIndexOutOfBoundsException if either of the coordinates is out of range
 	 */
-	public final synchronized void setOccurence(final int piX, final int piY, final double pdOccurence)
+	public final synchronized void setOccurrence(final int piX, final int piY, final double pdOccurrence)
 	{
 		if
 		(
@@ -169,19 +168,19 @@ implements Serializable
 		oObservationList.add(this.oColumnIndex.elementAt(piY));
 		oObservationList.add(this.oColumnIndex.elementAt(piX));
 
-		setOccurence(oObservationList, pdOccurence);
+		setOccurrence(oObservationList, pdOccurrence);
 	}
 
 	/**
-	 * Allows setting an occurence given the <i>x</i>, <i>y</i>, and <i>z</i> coordinates.
+	 * Allows setting an occurrence given the <i>x</i>, <i>y</i>, and <i>z</i> coordinates.
 	 * A trigram model is assumed.
 	 * @param piX the <i>x</i> index
 	 * @param piY the <i>y</i> index
 	 * @param piZ the <i>z</i> index
-	 * @param pdOccurence the occurence
+	 * @param pdOccurrence the occurrence
 	 * @throws ArrayIndexOutOfBoundsException if either of the coordinates is out of range
 	 */
-	public final synchronized void setOccurence(final int piX, final int piY, final int piZ, final double pdOccurence)
+	public final synchronized void setOccurrence(final int piX, final int piY, final int piZ, final double pdOccurrence)
 	{
 		if
 		(
@@ -208,17 +207,17 @@ implements Serializable
 		oObservationList.add(this.oColumnIndex.elementAt(piY));
 		oObservationList.add(this.oColumnIndex.elementAt(piX));
 
-		setOccurence(oObservationList, pdOccurence);
+		setOccurrence(oObservationList, pdOccurrence);
 	}
 
 	/**
-	 * Allows getting an occurence given the <i>x</i> coordinate.
+	 * Allows getting an occurrence given the <i>x</i> coordinate.
 	 * An unigram model is assumed.
 	 * @param piX the <i>x</i> index
-	 * @return the number of occurences of the item at the coordinates.
+	 * @return the number of occurrences of the item at the coordinates.
 	 * @throws ArrayIndexOutOfBoundsException if the coordinate is out of range
 	 */
-	public final synchronized double getOccurence(final int piX)
+	public final synchronized double getOccurrence(final int piX)
 	{
 		if
 		(
@@ -235,18 +234,18 @@ implements Serializable
 		Vector oObservationList = new Vector();
 		oObservationList.add(this.oColumnIndex.elementAt(piX));
 
-		return getOccurence(oObservationList);
+		return getOccurrence(oObservationList);
 	}
 
 	/**
-	 * Allows getting an occurence given <i>x</i> and <i>y</i> coordinates.
+	 * Allows getting an occurrence given <i>x</i> and <i>y</i> coordinates.
 	 * A bigram model is assumed.
 	 * @param piX the <i>x</i> index
 	 * @param piY the <i>y</i> index
-	 * @return the number of occurences of the item at the coordinates.
+	 * @return the number of occurrences of the item at the coordinates.
 	 * @throws ArrayIndexOutOfBoundsException if either of the coordinates is out of range
 	 */
-	public final synchronized double getOccurence(final int piX, final int piY)
+	public final synchronized double getOccurrence(final int piX, final int piY)
 	{
 		Debug.debug("getOccurence("+piX+","+piY+")");
 
@@ -270,19 +269,19 @@ implements Serializable
 		oObservationList.add(this.oColumnIndex.elementAt(piY));
 		oObservationList.add(this.oColumnIndex.elementAt(piX));
 
-		return getOccurence(oObservationList);
+		return getOccurrence(oObservationList);
 	}
 
 	/**
-	 * Allows getting an occurence given <i>x</i>, <i>y</i>, and <i>z</i> coordinates.
+	 * Allows getting an occurrence given <i>x</i>, <i>y</i>, and <i>z</i> coordinates.
 	 * A trigram model is assumed.
 	 * @param piX the <i>x</i> index
 	 * @param piY the <i>y</i> index
 	 * @param piZ the <i>z</i> index
-	 * @return the number of occurences of the item at the coordinates.
+	 * @return the number of occurrences of the item at the coordinates.
 	 * @throws ArrayIndexOutOfBoundsException if either of the coordinates is out of range
 	 */
-	public final double getOccurence(final int piX, final int piY, final int piZ)
+	public final double getOccurrence(final int piX, final int piY, final int piZ)
 	{
 		if
 		(
@@ -309,25 +308,26 @@ implements Serializable
 		oObservationList.add(this.oColumnIndex.elementAt(piY));
 		oObservationList.add(this.oColumnIndex.elementAt(piX));
 
-		return getOccurence(oObservationList);
+		return getOccurrence(oObservationList);
 	}
 
 	/**
-	 * Allows setting an occurence of a list of observations.
+	 * Allows setting an occurrence of a list of observations.
 	 * Works with uni-, bi-, and trigram models.
 	 * @param poObservationList the list
-	 * @param pdOccurence the desired occurence
+	 * @param pdOccurrence the desired occurrence
 	 */
-	public final synchronized void setOccurence(final Vector poObservationList, final double pdOccurence)
+	public final synchronized void setOccurrence(final Vector<String> poObservationList, final double pdOccurrence)
 	{
 		int iUniIndex;
 		int iBiIndex;
 		int iTriIndex;
 
-//		Debug.debug("setOccurence(poObservationList["+poObservationList+"])");
+//		Debug.debug("setOccurrence(poObservationList["+poObservationList+"])");
 
 		switch(poObservationList.size())
 		{
+			// Unigram
 			case 1:
 			{
 				iUniIndex = this.oColumnIndex.indexOf(poObservationList.elementAt(0));
@@ -335,28 +335,29 @@ implements Serializable
 				if(iUniIndex == -1)
 				{
 					this.oColumnIndex.add(poObservationList.elementAt(0));
-					this.oNMatrix.add(new Double(pdOccurence));
+					this.oNMatrix.add(new Double(pdOccurrence));
 				}
 				else
 				{
-					this.oNMatrix.setElementAt(new Double(pdOccurence), iUniIndex);
+					this.oNMatrix.setElementAt(new Double(pdOccurrence), iUniIndex);
 				}
 
 				break;
 			}
 
+			// Bigram
 			case 2:
 			{
 				iUniIndex = this.oColumnIndex.indexOf(poObservationList.elementAt(0));
 
-				Vector oRow;
+				Vector<Double> oRow;
 
 				if(iUniIndex == -1)
 				{
 					this.oColumnIndex.add(poObservationList.elementAt(0));
 					iUniIndex = this.oColumnIndex.size() - 1;
 
-					oRow = new Vector();
+					oRow = new Vector<Double>();
 					this.oNMatrix.add(oRow);
 				}
 				else
@@ -366,7 +367,7 @@ implements Serializable
 					// Fill in a gap
 					if(oRow == null)
 					{
-						oRow = new Vector();
+						oRow = new Vector<Double>();
 						this.oNMatrix.setElementAt(oRow, iUniIndex);
 					}
 				}
@@ -383,24 +384,25 @@ implements Serializable
 				oRow.ensureCapacity(iBiIndex + 1);
 				oRow.setSize(iBiIndex + 1);
 
-				oRow.setElementAt(new Double(pdOccurence), iBiIndex);
+				oRow.setElementAt(pdOccurrence, iBiIndex);
 
 				break;
 			}
 
+			// Trigram
 			case 3:
 			{
 				iUniIndex = this.oColumnIndex.indexOf(poObservationList.elementAt(0));
 
-				Vector oPlane;
-				Vector oRow;
+				Vector<Vector<Double>> oPlane;
+				Vector<Double> oRow;
 
 				if(iUniIndex == -1)
 				{
 					this.oColumnIndex.add(poObservationList.elementAt(0));
 					iUniIndex = this.oColumnIndex.size() - 1;
 
-					oPlane = new Vector();
+					oPlane = new Vector<Vector<Double>>();
 					this.oNMatrix.add(oPlane);
 				}
 				else
@@ -416,7 +418,7 @@ implements Serializable
 
 					if(oPlane == null)
 					{
-						oPlane = new Vector();
+						oPlane = new Vector<Vector<Double>>();
 
 						oPlane.ensureCapacity(iUniIndex + 1);
 						oPlane.setSize(iUniIndex + 1);
@@ -435,7 +437,7 @@ implements Serializable
 					this.oNMatrix.ensureCapacity(iBiIndex + 1);
 					this.oNMatrix.setSize(iBiIndex + 1);
 
-					oRow = new Vector();
+					oRow = new Vector<Double>();
 
 					oPlane.ensureCapacity(iBiIndex + 1);
 					oPlane.setSize(iBiIndex + 1);
@@ -454,12 +456,12 @@ implements Serializable
 					oPlane.ensureCapacity(iBiIndex + 1);
 					oPlane.setSize(iBiIndex + 1);
 
-					oRow = (Vector)oPlane.elementAt(iBiIndex);
+					oRow = oPlane.elementAt(iBiIndex);
 
 					// fill in gap created by tri-index
 					if(oRow == null)
 					{
-						oRow = new Vector();
+						oRow = new Vector<Double>();
 						oPlane.setElementAt(oRow, iBiIndex);
 					}
 				}
@@ -483,7 +485,7 @@ implements Serializable
 				oRow.ensureCapacity(iTriIndex + 1);
 				oRow.setSize(iTriIndex + 1);
 
-				oRow.setElementAt(new Double(pdOccurence), iTriIndex);
+				oRow.setElementAt(pdOccurrence, iTriIndex);
 
 				break;
 			}
@@ -491,14 +493,14 @@ implements Serializable
 	}
 
 	/**
-	 * Allows getting the occurence of a list of observations.
+	 * Allows getting the occurrence of a list of observations.
 	 * Works with uni-, bi-, and trigram models.
 	 * @param poObservationList the list
-	 * @return the number of occurences
+	 * @return the number of occurrences
 	 */
-	public final synchronized double getOccurence(final Vector poObservationList)
+	public final synchronized double getOccurrence(final Vector<String> poObservationList)
 	{
-		double dOccurence = 0.0;
+		double dOccurrence = 0.0;
 
 		int iUniIndex;
 		int iBiIndex;
@@ -506,6 +508,7 @@ implements Serializable
 
 //		Debug.debug("getOccurence(poObservationList["+poObservationList+"])");
 
+		// Size is the n-gram
 		switch(poObservationList.size())
 		{
 			case 1:
@@ -517,14 +520,14 @@ implements Serializable
 					return 0.0;
 				}
 
-				Double oOccurence = (Double)this.oNMatrix.elementAt(iUniIndex);
+				Double oOccurrence = (Double)this.oNMatrix.elementAt(iUniIndex);
 
-				if(oOccurence == null)
+				if(oOccurrence == null)
 				{
 					return 0.0;
 				}
 
-				dOccurence = oOccurence.doubleValue();
+				dOccurrence = oOccurrence.doubleValue();
 
 				break;
 			}
@@ -539,21 +542,21 @@ implements Serializable
 					return 0.0;
 				}
 
-				Vector oRow = (Vector)this.oNMatrix.elementAt(iUniIndex);
+				Vector<Double> oRow = (Vector<Double>)this.oNMatrix.elementAt(iUniIndex);
 
 				if(oRow == null || oRow.size() < iBiIndex + 1)
 				{
 					return 0.0;
 				}
 
-				Double oOccurence = (Double)oRow.elementAt(iBiIndex);
+				Double oOccurrence = oRow.elementAt(iBiIndex);
 
-				if(oOccurence == null)
+				if(oOccurrence == null)
 				{
 					return 0.0;
 				}
 
-				dOccurence = oOccurence.doubleValue();
+				dOccurrence = oOccurrence.doubleValue();
 
 				break;
 			}
@@ -576,21 +579,21 @@ implements Serializable
 					return 0.0;
 				}
 
-				Vector oRow = (Vector)oPlane.elementAt(iBiIndex);
+				Vector<Double> oRow = (Vector<Double>)oPlane.elementAt(iBiIndex);
 
 				if(oRow == null || oRow.size() < iTriIndex + 1)
 				{
 					return 0.0;
 				}
 
-				Double oOccurence = (Double)oRow.elementAt(iTriIndex);
+				Double oOccurrence = oRow.elementAt(iTriIndex);
 
-				if(oOccurence == null)
+				if(oOccurrence == null)
 				{
 					return 0.0;
 				}
 
-				dOccurence = oOccurence.doubleValue();
+				dOccurrence = oOccurrence.doubleValue();
 
 				break;
 			}
@@ -598,19 +601,27 @@ implements Serializable
 
 		//Debug.debug("dOccurence = " + dOccurence);
 
-		return dOccurence;
+		return dOccurrence;
 	}
 
 	/**
-	 * Increments the frequency of occurences of a list of observations.
+	 * Increments the frequency of occurrences of a list of observations.
 	 * @param poObservationList the list to work with
 	 * @return the new frequency
-	 */
+	 * In 0.3.0.6 changed from int to Double to avoid the loss of precision
+	 * that was not warranted anyway.
+	 *//*
 	public final synchronized int incFrequency(final Vector poObservationList)
 	{
-		int iFrequency = (int)getOccurence(poObservationList) + 1;
-		setOccurence(poObservationList, iFrequency);
+		int iFrequency = (int)getOccurrence(poObservationList) + 1;
+		setOccurrence(poObservationList, iFrequency);
 		return iFrequency;
+	}*/
+	public final synchronized Double incFrequency(final Vector<String> poObservationList)
+	{
+		Double dFrequency = getOccurrence(poObservationList) + 1;
+		setOccurrence(poObservationList, dFrequency);
+		return dFrequency;
 	}
 
 	/**
@@ -641,7 +652,7 @@ implements Serializable
 
 				for(int j = 0; j < this.oColumnIndex.size(); j++)
 				{
-					System.out.print(getOccurence(j) + ",");
+					System.out.print(getOccurrence(j) + ",");
 				}
 
 				break;
@@ -662,7 +673,7 @@ implements Serializable
 
 					for(int j = 0; j < this.oColumnIndex.size(); j++)
 					{
-						System.out.print("," + getOccurence(j, i));
+						System.out.print("," + getOccurrence(j, i));
 					}
 
 					System.out.println();
@@ -688,7 +699,7 @@ implements Serializable
 
 						for(int k = 0; k < this.oColumnIndex.size(); k++)
 						{
-							System.out.print("," + getOccurence(k, j, i));
+							System.out.print("," + getOccurrence(k, j, i));
 						}
 
 						System.out.println();
@@ -726,7 +737,7 @@ implements Serializable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.40 $";
+		return "$Revision: 1.42 $";
 	}
 }
 

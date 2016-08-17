@@ -10,13 +10,13 @@ import marf.util.Debug;
 
 
 /**
- * <p>Pobabilistic Grammar Analyzer -- an lexical analyzer designed
+ * <p>Probabilistic Grammar Analyzer -- an lexical analyzer designed
  * for probabilistic grammars out of a stream of characters.</p>
  *
- * $Id: ProbabilisticGrammarAnalyzer.java,v 1.15 2006/01/19 04:13:17 mokhov Exp $
+ * $Id: ProbabilisticGrammarAnalyzer.java,v 1.16 2007/12/18 21:37:57 mokhov Exp $
  * 
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  * @since 0.3.0.2
  */
 public class ProbabilisticGrammarAnalyzer
@@ -34,7 +34,7 @@ extends GrammarAnalyzer
 
 	/**
 	 * Initializes this grammar analyzer and sets the stream
-	 * tokenizer to regonize numerical values specially and
+	 * tokenizer to recognize numerical values specially and
 	 * don't fold anything to lowercase.
 	 * @return <code>true</code> if parent's initialization was successful
 	 * @see marf.nlp.Parsing.GenericLexicalAnalyzer#init()
@@ -50,7 +50,7 @@ extends GrammarAnalyzer
 	}
 
 	/**
-	 * Creates a propabilistic token type as a part of
+	 * Creates a probabilistic token type as a part of
 	 * the grammar.
 	 */
 	protected void createProbabilityToken()
@@ -63,7 +63,7 @@ extends GrammarAnalyzer
 	/**
 	 * Creates an instance of the next token in the grammar
 	 * token stream given integer token type. The token type
-	 * is determined from the undelying stream tokenizer.
+	 * is determined from the underlying stream tokenizer.
 	 * @throws LexicalError if there was an error reading off the token
 	 * @see marf.nlp.Parsing.GrammarCompiler.GrammarAnalyzer#createNextToken()
 	 */
@@ -163,7 +163,7 @@ extends GrammarAnalyzer
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.15 $";
+		return "$Revision: 1.16 $";
 	}
 }
 

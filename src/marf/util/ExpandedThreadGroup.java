@@ -13,19 +13,19 @@ import java.util.Vector;
  * <p>Maintains local references to the group-belonging threads
  * for extra group control in a form of a Vector.</p>
  *
- * $Id: ExpandedThreadGroup.java,v 1.12 2005/12/30 05:54:26 mokhov Exp $
+ * $Id: ExpandedThreadGroup.java,v 1.17 2010/06/11 21:00:48 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.12 $
- * @since 0.3.0
+ * @version $Revision: 1.17 $
+ * @since 0.3.0.1
  */
 public class ExpandedThreadGroup
 extends ThreadGroup
 {
 	/**
-	 * Local refernces to the threads belonging to this group.
+	 * Local references to the threads belonging to this group.
 	 */
-	protected Vector oGroup = new Vector(); 
+	protected Vector<Runnable> oGroup = new Vector<Runnable>(); 
 	
 	/**
 	 * ThreadGroup and name constructor inherited from the parent.
@@ -80,26 +80,41 @@ extends ThreadGroup
 	/**
 	 * Wait for all the threads in the group to terminate.
 	 * @throws InterruptedException if one of the threads is
-	 * interruped or a thread group has been started
+	 * interrupted or a thread group has been started
 	 */
 	public void join()
 	throws InterruptedException
 	{
+		Thread[] aoBabies = null;
+		int i = 0;
+		
 		try
 		{		
-			Thread[] aoBabies = enumerate(true);
+			aoBabies = enumerate(true);
 
-			for(int i = 0; i < aoBabies.length; i++)
+			for(i = 0; i < aoBabies.length; i++)
 			{
-				aoBabies[i].join();
+				// It is possible to have a null child thread if the activeCount()
+				// and enumerate() disagreed due to inherent race conditions, so
+				// we just silently ignore the nulls.
+				if(aoBabies[i] != null)
+				{
+					aoBabies[i].join();
+				}
 			}
 		}
 		catch(NullPointerException e)
 		{
+			e.printStackTrace(System.err);
+
 			throw new InterruptedException
 			(
 				"Threads (a thread group) have to be started first, " + 
-				"before calling join() onto them."
+				"before calling join() onto them.\n" +
+				"Diagnostic: thread array: " + aoBabies + "\n" +
+				"group: " + this.oGroup + "\n" + 
+				(aoBabies == null ? "" : "threads enumerated: " + aoBabies.length + "\n") +
+				(aoBabies == null ? "" : "thread processed last: " + i + "\n")
 			);
 		}
 	}
@@ -117,7 +132,16 @@ extends ThreadGroup
 
 		if(pbActiveThreads == true)
 		{
-			enumerate(aoBabies);
+			int iThreadsEnumerated = enumerate(aoBabies);
+			
+			if(iThreadsEnumerated != aoBabies.length)
+			{
+				System.err.println
+				(
+					"WARNING: ExpandedThreadGroup.enumerate(boolean): active count " + aoBabies.length
+					+ " != enumerated " + iThreadsEnumerated
+				);
+			}
 		}
 		else
 		{
@@ -131,7 +155,7 @@ extends ThreadGroup
 	 * Adds specified thread to the local reference list.
 	 * @param poThread thread object to add
 	 */
-	public void addThread(Thread poThread)
+	public synchronized void addThread(Thread poThread)
 	{
 		this.oGroup.add(poThread);
 	}
@@ -142,7 +166,7 @@ extends ThreadGroup
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.12 $";
+		return "$Revision: 1.17 $";
 	}
 }
 

@@ -6,22 +6,25 @@ import java.io.Serializable;
 /**
  * <p>Generic Statistical Object.</p>
  *
- * $Id: StatisticalObject.java,v 1.15 2006/01/17 22:41:14 mokhov Exp $
+ * $Id: StatisticalObject.java,v 1.17 2007/12/18 21:57:14 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.17 $
  * @since 0.3.0.2
  */
 public class StatisticalObject
 implements Serializable, Cloneable
 {
 	/**
-	 * Word's frequency in a given corpus. Default <code>0</code>.
+	 * Number of occurrences of this object basic data in a given document
+	 * (for example a corpus or a WAVE file).
+	 * Default <code>0</code>.
 	 */
 	protected int iFrequency = 0;
 
 	/**
-	 * Word's rank in the corpus. The rank of 1 indicates the top frequent word.
+	 * Rank of the object in the document.
+	 * The rank of 1 indicates the most frequent.
 	 * Default is <code>-1</code>, i.e. unset.
 	 */
 	protected int iRank = -1;
@@ -81,7 +84,7 @@ implements Serializable, Cloneable
 	}
 
 	/**
-	 * Restrieves the object's rank.
+	 * Retrieves the object's rank.
 	 * @return current rank
 	 */
 	public final int getRank()
@@ -147,7 +150,7 @@ implements Serializable, Cloneable
 	}
 
 	/**
-	 * Reports frequency and rank of an occurence of a statistical object.
+	 * Reports frequency and rank of an occurrence of a statistical object.
 	 * @see java.lang.Object#toString()
 	 * @since 0.3.0.5
 	 */
@@ -165,7 +168,7 @@ implements Serializable, Cloneable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.15 $";
+		return "$Revision: 1.17 $";
 	}
 }
 

@@ -1,6 +1,6 @@
 /*
  * LexicalAnalyzer Class
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
+ * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
  */
 
 package marf.nlp.Parsing;
@@ -19,10 +19,10 @@ import marf.util.Debug;
  * <p>LexicalAnalyzer class encapsulates the functionality
  * required for lexical analysis of a MARF source program.</p>
  *
- * $Id: LexicalAnalyzer.java,v 1.18 2006/01/19 04:13:16 mokhov Exp $
+ * $Id: LexicalAnalyzer.java,v 1.25 2012/01/09 04:03:23 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.25 $
  * @since 0.3.0.2
  */
 public class LexicalAnalyzer
@@ -71,9 +71,9 @@ extends GenericLexicalAnalyzer
 			// EOL is not a token
 			this.oStreamTokenizer.eolIsSignificant(false);
 
-			// /**/ Are C-type coments
+			// /**/ Are C-type comments
 			// Disable them, do it manually
-			// for unerminated comment detectiobn
+			// for unterminated comment detection
 			this.oStreamTokenizer.slashStarComments(false);
 
 			// No C++ '//' comments
@@ -501,7 +501,7 @@ extends GenericLexicalAnalyzer
 						String strBackup = new String((char)this.oStreamTokenizer.ttype + "");
 	
 						// Operator mode is only needed for
-						// the abmiguouus operators, no need
+						// the ambiguous operators, no need
 						// for the rest
 	
 						if
@@ -694,7 +694,7 @@ extends GenericLexicalAnalyzer
 
 	/**
 	 * Validates that an incoming string is a valid number or not.
-	 * @param pstrNum a string constating valid numerical chars
+	 * @param pstrNum a string containing valid numerical chars
 	 * @return int, LexicalError Error code
 	 */
 	protected int validNum(String pstrNum)
@@ -810,7 +810,7 @@ extends GenericLexicalAnalyzer
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.18 $";
+		return "$Revision: 1.25 $";
 	}
 }
 

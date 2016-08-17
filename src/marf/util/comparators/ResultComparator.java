@@ -8,16 +8,16 @@ import marf.util.SortComparator;
  * <p>Compares two Result objects for equality.</p>
  * Used in sorting.
  *
- * $Id: ResultComparator.java,v 1.14 2005/08/14 01:15:57 mokhov Exp $
+ * $Id: ResultComparator.java,v 1.16 2007/12/23 06:29:58 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.14 $
- * @since 0.3.0
+ * @version $Revision: 1.16 $
+ * @since 0.3.0.2
  */
 public class ResultComparator
 extends SortComparator
 {
-    /**
+	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
@@ -46,7 +46,7 @@ extends SortComparator
 	 *
 	 * @return 0 if the objects are equal, 1 if the 2nd is greater then the 1st
 	 * under ASCENDING, or the 1st is greater then the 2nd under DESCENDING.
-	 * Otherwise, -2 is returned.
+	 * Otherwise, -1 is returned.
 	 */
 	public int compare(Object poResult1, Object poResult2)
 	{
@@ -58,10 +58,14 @@ extends SortComparator
 			case DESCENDING:
 			{
 				if(oResult1.getOutcome() < oResult2.getOutcome())
+				{
 					return 1;
+				}
 
 				if(oResult1.getOutcome() > oResult2.getOutcome())
+				{
 					return -1;
+				}
 
 				return 0;
 			}
@@ -70,10 +74,14 @@ extends SortComparator
 			default:
 			{
 				if(oResult1.getOutcome() < oResult2.getOutcome())
+				{
 					return -1;
+				}
 
 				if(oResult1.getOutcome() > oResult2.getOutcome())
+				{
 					return 1;
+				}
 
 				return 0;
 			}
@@ -86,7 +94,7 @@ extends SortComparator
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.14 $";
+		return "$Revision: 1.16 $";
 	}
 }
 

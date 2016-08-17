@@ -25,10 +25,10 @@ import marf.util.Debug;
  * and produces a corresponding transition table for
  * a given language denoted by the grammar.</p>
  *
- * $Id: GrammarCompiler.java,v 1.29 2006/01/19 04:13:17 mokhov Exp $
+ * $Id: GrammarCompiler.java,v 1.31 2010/06/27 22:18:12 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.31 $
  * @since 0.3.0.2
  */
 public class GrammarCompiler
@@ -36,14 +36,14 @@ extends StorageManager
 {
 	/**
 	 * Action for adding a next token to the RHS of
-	 * the curren rule signifing to stop.
+	 * the current rule signifying to stop.
 	 * @since 0.3.0.5
 	 */
 	public static final String TOKEN_ACTION_BREAK = "break";
 
 	/**
 	 * Action for adding a next token to the RHS of
-	 * the curren rule signifing to continue and skip
+	 * the current rule signifying to continue and skip
 	 * to the next token.
 	 * @since 0.3.0.5
 	 */
@@ -51,7 +51,7 @@ extends StorageManager
 
 	/**
 	 * Action for adding a next token to the RHS of
-	 * the curren rule signifing to proceed to add the
+	 * the current rule signifying to proceed to add the
 	 * current token to the RHS.
 	 * @since 0.3.0.5
 	 */
@@ -149,7 +149,7 @@ extends StorageManager
 
 	/**
 	 * Compiles grammar.
-	 * Compilation consitis of parsing source grammar file,
+	 * Compilation consists of parsing source grammar file,
 	 * creating rules, Terminals, Non-Terminals; then computes
 	 * first and follow sets, and fills in a TransitionTable data structure.
 	 * @throws CompilerError in case there was a lexical or syntax error
@@ -185,14 +185,14 @@ extends StorageManager
 		this.oGrammarElement = oEpsilon; 
 		this.oGrammar.addTeminal(oEpsilon);
 
-		// Set the reference to epslion
+		// Set the reference to epsilon
 		this.oGrammar.setEpsilonTerminal(oEpsilon);
 	}
 
 	/**
 	 * Creates the next non-terminal of a rule from the upcoming
 	 * token.
-	 * @return <code>true</code> if the token was creater; and <code>false</code>
+	 * @return <code>true</code> if the token was created; and <code>false</code>
 	 * if the end of file was reached
 	 * @throws CompilerError -- either a <code>SyntaxError</code> or <code>LexicalError</code>
 	 * @see SyntaxError
@@ -488,7 +488,7 @@ extends StorageManager
 
 	/**
 	 * Dies on unexpected grammar token type.
-	 * @throws SyntaxError indicated unepected token type.
+	 * @throws SyntaxError indicated unexpected token type.
 	 */
 	protected void getBusted()
 	throws SyntaxError
@@ -515,7 +515,7 @@ extends StorageManager
 
 	/**
 	 * Checks for undefined non-terminals in the grammar.
-	 * @throws SemanticError if there were undefied non-terminals
+	 * @throws SemanticError if there were undefined non-terminals
 	 */
 	protected void checkUndefinedNonTerminals()
 	throws SemanticError
@@ -634,7 +634,7 @@ extends StorageManager
 	protected GrammarElement getGrammarElement(String pstrName)
 	{
 		// Search the terminal list.
-		Vector oTerminals = this.oGrammar.getTerminalList();
+		Vector<GrammarElement> oTerminals = this.oGrammar.getTerminalList();
 
 		for(int i = 0; i < oTerminals.size(); i++)
 		{
@@ -647,7 +647,7 @@ extends StorageManager
 		}
 
 		// Search the non-terminal list.
-		Vector oNonTerminals = this.oGrammar.getNonTerminalList();
+		Vector<GrammarElement> oNonTerminals = this.oGrammar.getNonTerminalList();
 
 		for(int i = 0; i < oNonTerminals.size(); i++)
 		{
@@ -712,7 +712,7 @@ extends StorageManager
 			System.out.println(oProductionRule.toAbbrString() + ": " + oProductionRule.toString());
 
 			// For all terminals...
-			Vector oRHSFirstSet = oProductionRule.getRHSFirstSet(this.oGrammar.getEpsilonTerminal());
+			Vector<GrammarElement> oRHSFirstSet = oProductionRule.getRHSFirstSet(this.oGrammar.getEpsilonTerminal());
 
 			for(int t = 0; t < oRHSFirstSet.size(); t++)
 			{
@@ -837,7 +837,7 @@ extends StorageManager
 								System.out.println("p: GrammarCompiler::fillInTransitionTable() - ERROR: Overwriting cell with a rule in it!");
 								System.out.println("Rule in the table cell: " + loCellRule.toAbbrString() + ": " + loCellRule.toString());
 								System.out.println("Overwriting Rule      : " + loRule.toAbbrString() + ": " + loRule.toString());
-								System.out.println("This means there are ambiguites in the source grammar.");
+								System.out.println("This means there are ambiguities in the source grammar.");
 								System.out.println("Please remove them and restart grammar compilation.");
 								//System.exit(1);
 							}
@@ -894,7 +894,7 @@ extends StorageManager
 									System.out.println("&: GrammarCompiler::fillInTransitionTable() - ERROR: Overwriting cell with a rule in it!");
 									System.out.println("Rule in the table cell: " + loCellRule.toAbbrString() + ": " + loCellRule.toString());
 									System.out.println("Overwriting Rule      : " + loRule.toAbbrString() + ": " + loRule.toString());
-									System.out.println("This means there are ambiguites in the source grammar.");
+									System.out.println("This means there are ambiguities in the source grammar.");
 									System.out.println("Please remove them and restart grammar compilation.");
 									//System.exit(1);
 								}
@@ -1044,7 +1044,7 @@ extends StorageManager
 					);
 
 					//this.oGrammar.serialize(1, loFileWriterRules);
-					Enumeration oRuleList = this.oGrammar.getRules().elements();
+					Enumeration<Rule> oRuleList = this.oGrammar.getRules().elements();
 
 					while(oRuleList.hasMoreElements())
 					{
@@ -1209,7 +1209,7 @@ extends StorageManager
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.29 $";
+		return "$Revision: 1.31 $";
 	}
 }
 

@@ -1,6 +1,6 @@
 /*
  * CompilerError Class.
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
+ * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
  */
 
 package marf.nlp.Parsing;
@@ -14,10 +14,10 @@ import marf.nlp.NLPException;
  * between various error types like
  * lexical, syntax, semantic and such.</p>
  *
- * $Id: CompilerError.java,v 1.16 2006/01/15 20:51:55 mokhov Exp $
+ * $Id: CompilerError.java,v 1.23 2012/01/09 04:03:23 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.23 $
  * @since 0.3.0.2
  */
 public class CompilerError
@@ -30,7 +30,7 @@ extends NLPException
 	public static final int OK = 0;
 
 	/**
-	 * Error code of the last error occured.
+	 * Error code of the last error occurred.
 	 * @since October 2, 2001
 	 */
 	protected int iCurrentErrorCode = OK;
@@ -115,6 +115,6 @@ extends NLPException
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.16 $";
+		return "$Revision: 1.23 $";
 	}
 }

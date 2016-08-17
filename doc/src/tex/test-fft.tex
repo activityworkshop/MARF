@@ -2,7 +2,7 @@
 \index{Applications!TestFFT}
 \index{Testing Applications!TestFFT}
 
-$Revision: 1.5 $
+$Revision: 1.6 $
 
 \api{TestFFT} is one of the testing applications in {\marf}.
 It aims to test how the FFT (Fast Fourier Transform) algorithm works in
@@ -62,8 +62,8 @@ sample data. \api{SampleLoader} provides sample loading interface for
 all the {\marf} loaders. It must be overridden by a concrete sample loader
 such as \api{SineLoader} or \api{WAVLoader}. \api{Preprocessing} does general
 preprocessing such with \api{preprocess()} (overridden by \api{Dummy}), \api{normalize()},
-\api{removeNoise()} and \api{removeSilence()} out of which for this application the
-former two are used. Then, processed data will be serve for an parameter of \api{FeatureExtraction.FFT.FFT}
+\api{removeSilence()} and \api{removeNoise()} out of which for this application the
+former three are used. Then, processed data will be serve for an parameter of \api{FeatureExtraction.FFT.FFT}
 to extract sample's features. In the end, above modules work together to test the work of the FFT
 algorithm and produce the output to STDOUT.
 

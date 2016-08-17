@@ -9,10 +9,10 @@ import marf.util.Debug;
 /**
  * <p>HighPassFilter class implements high-pass filtering the FFT Filter.</p>
  *
- * <p>$Id: HighPassFilter.java,v 1.15 2005/12/31 23:17:37 mokhov Exp $</p>
+ * $Id: HighPassFilter.java,v 1.19 2007/12/18 03:45:56 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.19 $
  * @since 0.0.1
  */
 public class HighPassFilter
@@ -62,30 +62,6 @@ extends FFTFilter
 	}
 
 	/**
-	 * Stub implementation of <code>removeNoise()</code>.
-	 * @return <code>false</code>
-	 * @throws PreprocessingException never thrown
-	 */
-	public final boolean removeNoise()
-	throws PreprocessingException
-	{
-		Debug.debug("HighPassFilter.removeNoise()");
-		return false;
-	}
-
-	/**
-	 * Stub implementation of <code>removeSilence()</code>.
-	 * @return <code>false</code>
-	 * @throws PreprocessingException never thrown
-	 */
-	public final boolean removeSilence()
-	throws PreprocessingException
-	{
-		Debug.debug("HighPassFilter.removeSilence()");
-		return false;
-	}
-
-	/**
 	 * Stub implementation of <code>cropAudio()</code>.
 	 * @param pdStartingFrequency unused
 	 * @param pdEndFrequency unused
@@ -103,9 +79,9 @@ extends FFTFilter
 	 * Creates high-pass frequency response coefficients and sets applies
 	 * them to the frequency response vector.
 	 *
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
-	public void genereateResponseCoefficients()
+	public void generateResponseCoefficients()
 	{
 		double[] adResponse = new double[DEFAULT_FREQUENCY_RESPONSE_SIZE];
 
@@ -135,7 +111,7 @@ extends FFTFilter
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.15 $";
+		return "$Revision: 1.19 $";
 	}
 }
 

@@ -7,18 +7,18 @@ import marf.util.NotImplementedException;
 
 
 /**
- * <p>Class Cepstral.</p>
+ * <p>Cepstral Analysis.</p>
  *
- * <p>$Id: Cepstral.java,v 1.13 2005/08/13 23:46:43 susan_fan Exp $</p>
+ * $Id: Cepstral.java,v 1.14 2006/08/04 03:31:04 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  * @since 0.0.1
  */
 public class Cepstral
 extends FeatureExtraction
 {
-    /**
+	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
@@ -41,8 +41,10 @@ extends FeatureExtraction
 	 * @return nothing
 	 * @throws NotImplementedException
 	 * @throws FeatureExtractionException never thrown
+	 * @see marf.FeatureExtraction.IFeatureExtraction#extractFeatures(double[])
+	 * @since 0.3.0.6
 	 */
-	public final boolean extractFeatures()
+	public final boolean extractFeatures(double[] padSampleData)
 	throws FeatureExtractionException
 	{
 		throw new NotImplementedException("Cepstral.extractFeatures()");
@@ -51,11 +53,11 @@ extends FeatureExtraction
 	/**
 	 * Returns source code revision information.
 	 * @return revision string
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.13 $";
+		return "$Revision: 1.14 $";
 	}
 }
 

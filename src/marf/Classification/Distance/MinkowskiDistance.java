@@ -1,5 +1,6 @@
 package marf.Classification.Distance;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 import marf.MARF;
@@ -9,10 +10,8 @@ import marf.FeatureExtraction.IFeatureExtraction;
 /**
  * <p>Class MinkowskiDistance.</p>
  *
- * <p>$Id: MinkowskiDistance.java,v 1.11 2005/08/14 01:15:54 mokhov Exp $</p>
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.11 $
+ * @version $Id: MinkowskiDistance.java,v 1.13 2012/07/09 03:53:32 mokhov Exp $
  * @since 0.2.0
  */
 public class MinkowskiDistance
@@ -44,10 +43,12 @@ extends Distance
 		// See if there is a request for another r
 		if(MARF.getModuleParams() != null)
 		{
-			Vector oParams = MARF.getModuleParams().getClassificationParams();
+			Vector<Serializable> oParams = MARF.getModuleParams().getClassificationParams();
 
 			if(oParams.size() > 1)
+			{
 				this.r = ((Double)oParams.elementAt(1)).doubleValue();
+			}
 		}
 	}
 
@@ -62,7 +63,9 @@ extends Distance
 		double dDistance = 0;
 
 		for(int f = 0; f < paVector1.length; f++)
+		{
 			dDistance += Math.pow(Math.abs(paVector1[f] - paVector2[f]), this.r);
+		}
 
 		return Math.pow(dDistance, 1 / this.r);
 	}
@@ -70,11 +73,11 @@ extends Distance
 	/**
 	 * Retrieves class' revision.
 	 * @return revision string
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.11 $";
+		return "$Revision: 1.13 $";
 	}
 }
 

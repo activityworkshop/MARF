@@ -6,11 +6,11 @@ import marf.FeatureExtraction.IFeatureExtraction;
 /**
  * <p>Diff-Distance Classifier.</p>
  *
- * <p>$Id: DiffDistance.java,v 1.10 2005/08/11 00:44:50 mokhov Exp $</p>
+ * $Id: DiffDistance.java,v 1.11 2007/12/31 00:17:04 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.10 $
- * @since 0.3.0
+ * @version $Revision: 1.11 $
+ * @since 0.3.0.2
  */
 public class DiffDistance
 extends Distance
@@ -98,7 +98,7 @@ extends Distance
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.10 $";
+		return "$Revision: 1.11 $";
 	}
 }
 

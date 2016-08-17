@@ -5,16 +5,17 @@ import java.util.Random;
 import marf.FeatureExtraction.FeatureExtraction;
 import marf.FeatureExtraction.FeatureExtractionException;
 import marf.Preprocessing.IPreprocessing;
+import marf.Storage.Sample;
 import marf.util.Arrays;
 
 
 /**
  * <p>Implementation of random feature extraction for testing as a baseline.</p>
  *
- * <p>$Id: RandomFeatureExtraction.java,v 1.15 2006/01/21 02:35:32 mokhov Exp $<p>
+ * $Id: RandomFeatureExtraction.java,v 1.18 2007/12/18 03:45:42 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.18 $
  * @since 0.2.0
  */
 public class RandomFeatureExtraction
@@ -32,7 +33,7 @@ extends FeatureExtraction
 	 * <code>serialver</code> tool that comes with JDK.
 	 * @since 0.3.0.4
 	 */
-	private static final long serialVersionUID =-5469714962808143269L;
+	private static final long serialVersionUID = -5469714962808143269L;
 
 	/**
 	 * RandomFeatureExtraction Constructor.
@@ -46,11 +47,37 @@ extends FeatureExtraction
 	}
 
 	/**
-	 * Random Gaussian-based feature extracton.
+	 * Random Gaussian-based feature extraction.
+	 * Sample is taken from an IPreprocessing module from the pipeline.
+	 *
 	 * @return <code>true</code> if successful
-	 * @throws FeatureExtractionException
+	 * @throws FeatureExtractionException in case of any error
 	 */
 	public final boolean extractFeatures()
+	throws FeatureExtractionException
+	{
+		return extractFeaturesImplementation(this.oPreprocessing.getSample());
+	}
+
+	/**
+	 * Extracts features from the provided sample array.
+	 * @see marf.FeatureExtraction.IFeatureExtraction#extractFeatures(double[])
+	 * @since 0.3.0.6
+	 */
+	public final boolean extractFeatures(double[] padSampleData)
+	throws FeatureExtractionException
+	{
+		return extractFeaturesImplementation(new Sample(padSampleData));
+	}
+
+	/**
+	 * Does the actual business logic of the random Gaussian feature extraction.
+	 * @param poSample sample to extract features from
+	 * @return <code>true</code> if there were features extracted, <code>false</code> otherwise
+	 * @throws FeatureExtractionException in case of any errors while doing stuff
+	 * @since 0.3.0.6
+	 */
+	protected final boolean extractFeaturesImplementation(Sample poSample)
 	throws FeatureExtractionException
 	{
 		try
@@ -58,7 +85,7 @@ extends FeatureExtraction
 			double[] adChunk = new double[DEFAULT_CHUNK_SIZE];
 			this.adFeatures  = new double[DEFAULT_CHUNK_SIZE];
 
-			int iDataRecv = this.oPreprocessing.getSample().getNextChunk(adChunk);
+			int iDataRecv = poSample.getNextChunk(adChunk);
 
 			while(iDataRecv > 0)
 			{
@@ -67,7 +94,7 @@ extends FeatureExtraction
 					this.adFeatures[i] += adChunk[i] * (new Random(i).nextGaussian());
 				}
 
-				iDataRecv = this.oPreprocessing.getSample().getNextChunk(adChunk);
+				iDataRecv = poSample.getNextChunk(adChunk);
 
 				// Padding to ^2 for the last chunk
 				if(iDataRecv < DEFAULT_CHUNK_SIZE && iDataRecv > 0)
@@ -81,6 +108,7 @@ extends FeatureExtraction
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
 			throw new FeatureExtractionException(e);
 		}
 	}
@@ -92,7 +120,7 @@ extends FeatureExtraction
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.15 $";
+		return "$Revision: 1.18 $";
 	}
 }
 

@@ -5,11 +5,11 @@ import java.io.UnsupportedEncodingException;
 /**
  * <p>Byte-Array Conversion Utility Functions.</p>
  *
- * $Id: ByteUtils.java,v 1.6 2005/06/16 19:58:58 mokhov Exp $
+ * $Id: ByteUtils.java,v 1.10 2009/02/22 02:16:01 mokhov Exp $
  *
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.10 $
  * @author Serguei Mokhov
- * @since 0.3.0
+ * @since 0.3.0.1
  */
 public class ByteUtils
 {
@@ -48,9 +48,11 @@ public class ByteUtils
 		int iRetVal = -1;
 
 		// TODO: revisit this: should we silently add missing byte and should
-		// we ingnore excessing bytes?
+		// we ignore excess bytes?
 		if(paRawBytes.length < piOffset + 2)
+		{
 			return -1;
+		}
 
 		int iLow;
 		int iHigh;
@@ -66,7 +68,7 @@ public class ByteUtils
 			iHigh = paRawBytes[piOffset + 1];
 		}
 
-		// Merge high-order and low-order byte to form a 16-bit double value.
+		// Merge high-order and low-order bytes to form a 16-bit value.
 		iRetVal = (iHigh << 8) | (0xFF & iLow);
 
 		return (short)iRetVal;
@@ -100,7 +102,9 @@ public class ByteUtils
 		int iRetVal = -1;
 
 		if(paRawBytes.length < piOffset + 4)
+		{
 			return iRetVal;
+		}
 
 		int iLowest;
 		int iLow;
@@ -189,28 +193,34 @@ public class ByteUtils
 	 *
 	 * @param paRawBytes the byte array, non-UNICODE
 	 * @param piOffset offset in the original array to start reading bytes from
-	 * @param piLength how many bytes of the array paramter to interpret as String
+	 * @param piLength how many bytes of the array parameter to interpret as String
 	 *
 	 * @return UNICODE String representation of the bytes with trailing garbage stripped;
 	 *         "" if array length is less than piOffset + piLength;
-	 *         "" if the generatied string begins with garbage
+	 *         "" if the generated string begins with garbage
 	 */
 	public static String byteArrayToString(byte[] paRawBytes, int piOffset, int piLength)
 	{
 		if(paRawBytes.length < piOffset + piLength)
+		{
 			return "";
+		}
 
 		String oBeautifulString = new String(paRawBytes, piOffset, piLength);
 		int i = 0;
 
 		if(oBeautifulString.matches("^\\W") == true)
+		{
 			oBeautifulString = "";
+		}
 		else
 		{
 			for(i = piOffset; i < piOffset + piLength; i++)
 			{
 				if(paRawBytes[i] < 32 || paRawBytes[i] > 128)
+				{
 					break;
+				}
 			}
 
 			oBeautifulString = oBeautifulString.substring(0, i - piOffset);
@@ -238,7 +248,7 @@ public class ByteUtils
 	 * If the charset is invalid, returns plain byte-representation of the host environment.
 	 *
 	 * @param pstrStringToConvert the original string
-	 * @param pstrCharSet characted set to assume for the original string
+	 * @param pstrCharSet character set to assume for the original string
 	 *
 	 * @return null-terminated byte[] representation of the String
 	 */
@@ -258,13 +268,14 @@ public class ByteUtils
 
 		return aRecordData;
 	}
-    /**
+
+	/**
 	 * Returns source code revision information.
 	 * @return revision string
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.6 $";
+		return "$Revision: 1.10 $";
 	}
 }
 

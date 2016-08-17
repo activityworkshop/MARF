@@ -2,19 +2,20 @@ package marf.FeatureExtraction;
 
 import marf.util.MARFException;
 
+
 /**
  * <p>Class FeatureExtractionException.</p>
  *
- * <p>$Id: FeatureExtractionException.java,v 1.8 2005/08/13 23:09:37 susan_fan Exp $</p>
+ * $Id: FeatureExtractionException.java,v 1.9 2007/12/18 03:45:40 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  * @since 0.0.1
  */
 public class FeatureExtractionException
 extends MARFException
 {
-    /**
+	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
@@ -56,11 +57,11 @@ extends MARFException
 	/**
 	 * Returns source code revision information.
 	 * @return revision string
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.8 $";
+		return "$Revision: 1.9 $";
 	}
 }
 

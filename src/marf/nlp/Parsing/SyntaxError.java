@@ -1,6 +1,6 @@
 /*
  * SyntaxError Class
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
+ * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
  */
 
 package marf.nlp.Parsing;
@@ -13,10 +13,10 @@ import java.io.IOException;
  * <p>Represents a Syntax Error.
  * </p>
  *
- * $Id: SyntaxError.java,v 1.18 2006/01/15 20:51:55 mokhov Exp $
+ * $Id: SyntaxError.java,v 1.25 2012/01/09 04:03:23 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.25 $
  * @since 0.3.0.2
  */
 public class SyntaxError
@@ -122,7 +122,7 @@ extends CompilerError
 	}
 
 	/**
-	 * Constructor 2 - An Alterantive to Unknown Error.
+	 * Constructor 2 - an alternative to Unknown Error.
 	 * @param poFaultingToken the token that caused the error
 	 * @param pstrCustomErrorMessage user-defined error message
 	 */
@@ -312,7 +312,7 @@ extends CompilerError
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.18 $";
+		return "$Revision: 1.25 $";
 	}
 }
 

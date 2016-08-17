@@ -1,6 +1,6 @@
 /*
  * SymTabEntry Class
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
+ * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
  */
 
 package marf.nlp.Parsing;
@@ -14,10 +14,10 @@ import java.util.Vector;
  * in the Symbol Table.
  * </p>
  *
- * $Id: SymTabEntry.java,v 1.11 2006/01/19 04:13:16 mokhov Exp $
+ * $Id: SymTabEntry.java,v 1.18 2012/07/18 02:45:45 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.18 $
  * @since 0.3.0.2
  */
 public class SymTabEntry
@@ -82,13 +82,13 @@ public class SymTabEntry
 	 * appears in the source code.
 	 * @since September 2001
 	 */
-	protected Vector oLocationsList = null;
+	protected Vector<Point> oLocationsList = null;
 
 	/**
 	 * Locations in generated code
 	 * (point, x - base, y - offset).
 	 */
-	protected Vector oGenCodeLocations = null;
+	protected Vector<?> oGenCodeLocations = null;
 
 	/**
 	 * Local scope symbol table (if applicable).
@@ -128,7 +128,7 @@ public class SymTabEntry
 	public SymTabEntry(Token poUID)
 	{
 		this.oUID = poUID;
-		this.oLocationsList = new Vector();
+		this.oLocationsList = new Vector<Point>();
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class SymTabEntry
 		this.bDeclared = true;
 		this.oUID = poUID;
 		this.oDataType = poSymDataType;
-		this.oLocationsList = new Vector();
+		this.oLocationsList = new Vector<Point>();
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class SymTabEntry
 	 * entry.
 	 * @return the locations list
 	 */
-	public Vector getLocationsList()
+	public Vector<Point> getLocationsList()
 	{
 		return this.oLocationsList;
 	}
@@ -289,7 +289,7 @@ public class SymTabEntry
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.11 $";
+		return "$Revision: 1.18 $";
 	}
 }
 

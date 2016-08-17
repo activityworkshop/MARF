@@ -3,19 +3,18 @@ package marf.Storage.Loaders;
 import java.io.File;
 
 import marf.Storage.Sample;
-import marf.Storage.SampleLoader;
 import marf.Storage.StorageException;
 import marf.util.NotImplementedException;
 
 
 /**
- * Not Implemented.
+ * TODO: Not Implemented.
  * @author Serguei Mokhov
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.5 $
  * @since 0.3.0.2
  */
 public class SNDLoader
-extends SampleLoader
+extends AudioSampleLoader
 {
 	/**
 	 * SND Loader Constructor.
@@ -31,7 +30,7 @@ extends SampleLoader
 	 * @throws NotImplementedException
 	 * @throws StorageException never thrown
 	 */
-	public final int readAudioData(double[] padSample)
+	public final int readSampleData(double[] padSample)
 	throws StorageException
 	{
 		throw new NotImplementedException("readAudioData()");
@@ -45,7 +44,7 @@ extends SampleLoader
 	 * @throws NotImplementedException
 	 * @throws StorageException never thrown
 	 */
-	public final int writeAudioData(final double[] padSample, final int piNbrData)
+	public final int writeSampleData(final double[] padSample, final int piNbrData)
 	throws StorageException
 	{
 		throw new NotImplementedException("writeAudioData()");
@@ -82,7 +81,7 @@ extends SampleLoader
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.3 $";
+		return "$Revision: 1.5 $";
 	}
 }
 

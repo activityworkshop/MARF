@@ -1,7 +1,7 @@
 package marf.Storage;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
 
 import marf.util.InvalidSampleFormatException;
 
@@ -9,12 +9,12 @@ import marf.util.InvalidSampleFormatException;
 /**
  * <p>Supported MARF Audio File Formats.</p>
  *
- * NOTE: this code is highly experimental.<br />
+ * NOTE: this code is still experimental.<br />
  *
- * <p>$Id: MARFAudioFileFormat.java,v 1.9 2005/12/28 03:21:12 mokhov Exp $</p>
+ * $Id: MARFAudioFileFormat.java,v 1.14 2007/12/23 06:29:46 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.14 $
  * @since 0.3.0.2
  */
 public class MARFAudioFileFormat
@@ -83,22 +83,28 @@ extends AudioFileFormat
 	public static final int MIDI   = 708;
 
 	/**
-	 * Custom (plugin) sample format.
+	 * Custom (plug-in) sample format.
 	 * @since 0.3.0.5
 	 */
 	public static final int CUSTOM = 709;
 
 	/**
+	 * Textual sample format.
+	 * @since 0.3.0.6
+	 */
+	public static final int TEXT   = 710;
+
+	/**
 	 * Lowest possible sample format value.
 	 * For boundaries check.
 	 */
-	private static final int LOWEST_FORMAT  = UNK;
+	private static final int LOWEST_FORMAT  = WAV;
 
 	/**
 	 * Highest possible sample format value.
 	 * For boundaries check.
 	 */
-	private static final int HIGHEST_FORMAT = CUSTOM;
+	private static final int HIGHEST_FORMAT = TEXT;
 
 	/**
 	 * Default sample array's size (1024).
@@ -128,18 +134,41 @@ extends AudioFileFormat
 	 * File type.
 	 * Has to be added as the parent's is private.
 	 */
-	protected AudioFileFormat.Type oType = null;
-
+	protected transient MARFAudioFileFormat.Type oType = null;
 
 	/**
 	 * Default constructor creates a WAVE-type format by default,
 	 * which is PCM-signed, 16 bits, mono, little-endian.
+	 * @throws InvalidSampleFormatException since 0.3.0.6 as implementation delegated to MARFAudioFileFormat(int)
+	 * @see #MARFAudioFileFormat(int) 
 	 */
 	public MARFAudioFileFormat()
+	throws InvalidSampleFormatException
+	{
+		this(WAV);
+	}
+
+	/**
+	 * Constructs format instant given the format enumeration parameter
+	 * and default AudioFormat parameters.
+	 *
+	 * @param piFormat the desired format instance.
+	 * @throws InvalidSampleFormatException if the specified format cannot be set
+	 * @since 0.3.0.6
+	 *
+	 * @see #setAudioFormat(int)
+	 * @see	AudioFormat.Encoding#PCM_SIGNED
+	 * @see	ISampleLoader#DEFAULT_FREQUENCY
+	 * @see	ISampleLoader#DEFAULT_SAMPLE_BIT_SIZE
+	 * @see	ISampleLoader#DEFAULT_CHANNELS
+	 * @see	ISampleLoader#DEFAULT_FREQUENCY
+	 */
+	public MARFAudioFileFormat(int piFormat)
+	throws InvalidSampleFormatException
 	{
 		this
 		(
-			MARFAudioFileFormat.Type.WAVE,
+			Type.forFormatCode(piFormat),
 			new AudioFormat
 			(
 				AudioFormat.Encoding.PCM_SIGNED,
@@ -153,8 +182,7 @@ extends AudioFileFormat
 			ISampleLoader.DEFAULT_SAMPLE_BIT_SIZE
 		);
 
-		this.iFormat = WAV;
-		this.oType = MARFAudioFileFormat.Type.WAVE;
+		setAudioFormat(piFormat);
 	}
 
 	/**
@@ -191,65 +219,19 @@ extends AudioFileFormat
 	/**
 	 * Sets current format of a sample.
 	 * @param piFormat format number from the enumeration
+	 * @return since 0.3.0.6 returns the resultant type.
 	 * @throws InvalidSampleFormatException if piFormat is out of range
 	 */
-	public final void setAudioFormat(final int piFormat)
+	public final MARFAudioFileFormat.Type setAudioFormat(final int piFormat)
 	throws InvalidSampleFormatException
 	{
-		if(piFormat < LOWEST_FORMAT || piFormat > HIGHEST_FORMAT)
-		{
-			throw new InvalidSampleFormatException("Not a valid audio format: " + piFormat);
-		}
-
-		this.iFormat = piFormat;
-
-		switch(this.iFormat)
-		{
-			case WAV:
-				this.oType = MARFAudioFileFormat.Type.WAVE;
-				return;
-
-			case ULAW:
-				this.oType = MARFAudioFileFormat.Type.ULAW;
-				return;
-
-			case MP3:
-				this.oType = MARFAudioFileFormat.Type.MP3;
-				return;
-
-			case SINE:
-				this.oType = MARFAudioFileFormat.Type.SINE;
-				return;
-
-			case AIFF:
-				this.oType = MARFAudioFileFormat.Type.AIFF;
-				return;
-
-			case AIFFC:
-				this.oType = MARFAudioFileFormat.Type.AIFC;
-				return;
-
-			case AU:
-				this.oType = MARFAudioFileFormat.Type.AU;
-				return;
-
-			case SND:
-				this.oType = MARFAudioFileFormat.Type.SND;
-				return;
-
-			case MIDI:
-				this.oType = MARFAudioFileFormat.Type.MIDI;
-				return;
-
-			case CUSTOM:
-				this.oType = MARFAudioFileFormat.Type.CUSTOM;
-				return;
-		}
+		this.oType = Type.forFormatCode(piFormat);
+		return this.oType;
 	}
 
 	/**
 	 * Constructs an audio file format object.
-	 * Mimic's parent's protected constructor.
+	 * Mimics parent's protected constructor.
 	 *
 	 * @param poType type of the audio file
 	 * @param piByteLength length of the file in bytes, or <code>AudioSystem.NOT_SPECIFIED</code>
@@ -262,7 +244,7 @@ extends AudioFileFormat
 	}
 
 	/**
-	 * In addtion to the types defined in <code>AudioFileFormat.Type</code>
+	 * In addition to the types defined in <code>AudioFileFormat.Type</code>
 	 * defines MP3, MIDI, and ULAW formats and their extensions.
 	 *
 	 * @see javax.sound.sampled.AudioFileFormat.Type
@@ -271,30 +253,61 @@ extends AudioFileFormat
 	extends AudioFileFormat.Type
 	{
 		/**
+		 * Specifies a WAVE file.
+		 */
+		public static final Type WAVE = new Type("WAVE", "wav");
+
+		/**
+		 * Specifies an AU file.
+		 */
+		public static final Type AU = new Type("AU", "au");
+
+		/**
+		 * Specifies an AIFF file.
+		 */
+		public static final Type AIFF = new Type("AIFF", "aif");
+
+		/**
+		 * Specifies an AIFF-C file.
+		 */
+		public static final Type AIFC = new Type("AIFF-C", "aifc");
+
+		/**
+		 * Specifies a SND file.
+		 */
+		public static final Type SND = new Type("SND", "snd");
+
+		/**
 		 * Specifies MP3 file.
 		 */
-		public static final Type MP3 = new MARFAudioFileFormat.Type("MP3", "mp3");
+		public static final Type MP3 = new Type("MP3", "mp3");
 
 		/**
 		 * Specifies SINE file.
 		 */
-		public static final Type SINE = new MARFAudioFileFormat.Type("SINE", "sine");
+		public static final Type SINE = new Type("SINE", "sine");
 
 		/**
 		 * Specifies MIDI file.
 		 */
-		public static final Type MIDI = new MARFAudioFileFormat.Type("MIDI", "mid");
+		public static final Type MIDI = new Type("MIDI", "mid");
 
 		/**
 		 * Specifies ULAW file.
 		 */
-		public static final Type ULAW = new MARFAudioFileFormat.Type("ULAW", "ulaw");
+		public static final Type ULAW = new Type("ULAW", "ulaw");
 
 		/**
-		 * Specifies custom plugin file.
+		 * Specifies custom plug-in file.
 		 * @since 0.3.0.5
 		 */
-		public static final Type CUSTOM = new MARFAudioFileFormat.Type("CUSTOM", "plugin");
+		public static final Type CUSTOM = new Type("CUSTOM", "plugin");
+
+		/**
+		 * Specifies text file.
+		 * @since 0.3.0.6
+		 */
+		public static final Type TEXT = new Type("TEXT", "txt");
 
 		/**
 		 * Mimics parent's constructor.
@@ -305,6 +318,80 @@ extends AudioFileFormat
 		{
 			super(pstrName, pstrExtension);
 		}
+		
+		/**
+		 * Given valid format code returns the corresponding Type instance.
+		 *
+		 * @param piFormat the desired format code
+		 * @return the Type instance instance
+		 * @since 0.3.0.6
+		 * @throws InvalidSampleFormatException if the format code is out of range
+		 * 
+		 * @see MARFAudioFileFormat#LOWEST_FORMAT
+		 * @see MARFAudioFileFormat#HIGHEST_FORMAT
+		 */
+		public static final Type forFormatCode(int piFormat)
+		throws InvalidSampleFormatException
+		{
+			if((piFormat < LOWEST_FORMAT || piFormat > HIGHEST_FORMAT) && piFormat != UNK)
+			{
+				throw new InvalidSampleFormatException("Not a valid audio format: " + piFormat);
+			}
+
+			Type oType = null;
+			
+			switch(piFormat)
+			{
+				case MARFAudioFileFormat.WAV:
+					oType = WAVE;
+					break;
+
+				case MARFAudioFileFormat.ULAW:
+					oType = ULAW;
+					break;
+
+				case MARFAudioFileFormat.MP3:
+					oType = MP3;
+					break;
+
+				case MARFAudioFileFormat.SINE:
+					oType = SINE;
+					break;
+
+				case MARFAudioFileFormat.AIFF:
+					oType = AIFF;
+					break;
+
+				case MARFAudioFileFormat.AIFFC:
+					oType = AIFC;
+					break;
+
+				case MARFAudioFileFormat.AU:
+					oType = AU;
+					break;
+
+				case MARFAudioFileFormat.SND:
+					oType = SND;
+					break;
+
+				case MARFAudioFileFormat.MIDI:
+					oType = MARFAudioFileFormat.Type.MIDI;
+					break;
+
+				case MARFAudioFileFormat.CUSTOM:
+					oType = MARFAudioFileFormat.Type.CUSTOM;
+					break;
+
+				case MARFAudioFileFormat.TEXT:
+					oType = MARFAudioFileFormat.Type.TEXT;
+					break;
+					
+				default:
+					assert false : "Impossible invalid sample format: " + piFormat;
+			}
+			
+			return oType;
+		}
 	}
 
 	/**
@@ -313,7 +400,7 @@ extends AudioFileFormat
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.9 $";
+		return "$Revision: 1.14 $";
 	}
 }
 

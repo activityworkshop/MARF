@@ -11,16 +11,21 @@ import marf.util.Debug;
  * <p><b>NOTE</b>: Implemented as equivalent to Euclidean Distance in 0.2.0, i.e.
  * the Covariance matrix is always an Indentity one.</p>
  *
- * <p>$Id: MahalanobisDistance.java,v 1.21 2005/08/12 20:02:56 susan_fan Exp $</p>
+ * $Id: MahalanobisDistance.java,v 1.23 2006/12/11 22:56:34 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.23 $
  * @since 0.2.0
  */
 public class MahalanobisDistance
 extends Distance
 {
-    /**
+	/**
+	 * Covariance Matrix.
+	 */
+	private Matrix oC = null;
+
+	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
@@ -28,11 +33,6 @@ extends Distance
 	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -6720267386878796592L;
-
-	/**
-	 * Covariance Matrix.
-	 */
-	private Matrix oC = null;
 
 	/**
 	 * MahalanobisDistance Constructor.
@@ -47,8 +47,8 @@ extends Distance
 		this.oC = new Matrix(iD, iD);
 
 		/*
-		 * Make the default an indetity matrix rendering it at least
-		 * equivalent to Euclidean distance. Will be fixed in 0.3.*
+		 * Make the default an identity matrix rendering it at least
+		 * equivalent to the Euclidean distance. Will be fixed in 0.3.*.
 		 */
 		this.oC.makeIdentity();
 	}
@@ -79,7 +79,7 @@ extends Distance
 
 		this.oC.inverse();
 
-		dDistance = Math.sqrt(oDifferenceVector.multiply(this.oC).multiply(oTransposedVector).getElement(0,0));
+		dDistance = Math.sqrt(oDifferenceVector.multiply(this.oC).multiply(oTransposedVector).getElement(0, 0));
 
 		return dDistance;
 	}
@@ -87,11 +87,11 @@ extends Distance
 	/**
 	 * Retrieves class' revision.
 	 * @return revision string
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.21 $";
+		return "$Revision: 1.23 $";
 	}
 }
 

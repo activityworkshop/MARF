@@ -4,12 +4,14 @@ import marf.util.MARFException;
 
 
 /**
- * <p>Class StorageException.</p>
+ * <p>NLPException is a root of exception hierarchy in the NLP
+ * exception processing.
+ * </p>
  *
- * <p>$Id: NLPException.java,v 1.4 2006/01/06 22:20:13 mokhov Exp $</p>
+ * <p>$Id: NLPException.java,v 1.5 2006/03/02 01:19:19 mokhov Exp $</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @since 0.3.0.4
  */
 public class NLPException
@@ -20,7 +22,6 @@ extends MARFException
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -6738475142356489003L;
 
@@ -66,7 +67,7 @@ extends MARFException
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.4 $";
+		return "$Revision: 1.5 $";
 	}
 }
 

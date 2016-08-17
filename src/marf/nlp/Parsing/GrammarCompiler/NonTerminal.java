@@ -9,10 +9,10 @@ import marf.nlp.Parsing.Token;
  * <p>Non-terminal grammar element.
  * E.g.: &lt;prog&gt;.</p>
  *
- * $Id: NonTerminal.java,v 1.10 2005/12/24 04:01:11 mokhov Exp $
+ * $Id: NonTerminal.java,v 1.12 2010/06/27 22:18:12 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.12 $
  * @since 0.3.0.2
  */
 public class NonTerminal
@@ -20,14 +20,14 @@ extends GrammarElement
 {
 	/**
 	 * Flag indicating whether this non-terminal is
-	 * fefined or not.
+	 * defined or not.
 	 */
 	protected boolean bDefined = false;
 
 	/**
 	 * Follow set of this non-terminal.
 	 */
-	protected Vector oFollowSet = new Vector();
+	protected Vector<GrammarElement> oFollowSet = new Vector<GrammarElement>();
 
 	/**
 	 * For serialization versioning.
@@ -83,7 +83,7 @@ extends GrammarElement
 	 * the follow set elements of this non-terminal.
 	 * @return the follow set collection
 	 */
-	public Vector getFollowSet()
+	public Vector<GrammarElement> getFollowSet()
 	{
 		return this.oFollowSet;
 	}
@@ -95,7 +95,7 @@ extends GrammarElement
 	 * @return <code>true</code> if the current follow set has
 	 * changed as a result of addition; <code>false</code> otherwise
 	 */
-	public boolean addToFollowSet(Vector poSet)
+	public boolean addToFollowSet(Vector<GrammarElement> poSet)
 	{
 		boolean bChanged = false;
 
@@ -170,7 +170,7 @@ extends GrammarElement
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.10 $";
+		return "$Revision: 1.12 $";
 	}
 }
 

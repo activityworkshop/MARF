@@ -7,17 +7,15 @@ import java.util.Comparator;
 /**
  * <p>Sort Comparator is the base for all sorting operations in MARF.</p>
  *
- * $Id: SortComparator.java,v 1.9 2005/12/24 19:47:39 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.9 $
+ * @version $Id: SortComparator.java,v 1.11 2012/07/18 02:45:45 mokhov Exp $
  * @since 0.3.0.2
  */
 public abstract class SortComparator
-implements Comparator, Serializable
+implements Comparator<Object>, Serializable
 {
 	/*
-	 * Constants to use for idication of the sorting order
+	 * Constants to use for indication of the sorting order
 	 */
 
 	/**
@@ -46,7 +44,7 @@ implements Comparator, Serializable
 	private static final long serialVersionUID = -3395493010875051653L;
 
 	/**
-	 * When constsructed, default mode is ASCENDING.
+	 * When constructed, default mode is ASCENDING.
 	 */
 	public SortComparator()
 	{
@@ -54,7 +52,7 @@ implements Comparator, Serializable
 	}
 
 	/**
-	 * When constsructed, the mode is the one specified.
+	 * When constructed, the mode is the one specified.
 	 * @param piSortMode desired sorting mode of ASCENDING or DESCENDING.
 	 * @throws IllegalArgumentException is not ASCENDING or DESCENDING
 	 */
@@ -90,7 +88,7 @@ implements Comparator, Serializable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.9 $";
+		return "$Revision: 1.11 $";
 	}
 }
 

@@ -4,14 +4,14 @@ package marf.util;
 /**
  * <p>This class extends RuntimeException for MARF unimplemented parts.</p>
  *
- * <p>$Id: NotImplementedException.java,v 1.14 2005/08/11 00:44:50 mokhov Exp $</p>
+ * $Id: NotImplementedException.java,v 1.15 2007/11/30 15:58:26 mokhov Exp $
  *
  * @author Serguei A. Mokhov
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  * @since 0.0.1
  */
 public class NotImplementedException
-extends RuntimeException
+extends MARFRuntimeException
 {
 	/**
 	 * For serialization versioning.
@@ -57,7 +57,7 @@ extends RuntimeException
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.14 $";
+		return "$Revision: 1.15 $";
 	}
 }
 

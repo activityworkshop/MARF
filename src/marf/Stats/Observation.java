@@ -2,12 +2,12 @@ package marf.Stats;
 
 
 /**
- * <p>Generic Observation of an occurce of something (like a word or an n-gram).</p>
+ * <p>Generic Observation of an occurrence of something (like a word or an n-gram).</p>
  *
- * $Id: Observation.java,v 1.12 2006/01/02 22:24:00 mokhov Exp $
+ * $Id: Observation.java,v 1.13 2007/12/18 21:57:14 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  * @since 0.3.0.2
  */
 public class Observation
@@ -139,7 +139,7 @@ extends WordStats
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.12 $";
+		return "$Revision: 1.13 $";
 	}
 }
 

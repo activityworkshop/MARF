@@ -2,7 +2,6 @@ package marf.Storage;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.Serializable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -14,35 +13,38 @@ import marf.util.Arrays;
  * Each training sample consists of the feature vector plus
  * information describing that feature vector.
  * Has been extracted from TrainingSet in 0.3.0.
- * TODO: fix CSV dumps
+ * TODO: fix CSV dumps.
  * </p>
- *
- * $Id: TrainingSample.java,v 1.10 2006/01/02 22:24:00 mokhov Exp $
  *
  * @author Stephen Sinclair
  * @author Serguei Mokhov
  *
- * @version $Revision: 1.10 $
+ * @version $Id: TrainingSample.java,v 1.18 2015/03/08 19:47:22 mokhov Exp $
  * @since 0.0.1
  */
 public class TrainingSample
-implements Serializable, Cloneable
+implements ITrainingSample
 {
    	/**
 	 * Which subject this feature vector is associated with.
+	 *
+	 * This is an application-independent ID within MARF to distinguish
+	 * from other subjects. Typical subjects may include speakers, languages
+	 * instruments, emotions, etc. that a give application is taken care of.
 	 */
 	protected int iSubjectID;
 
 	/**
-	 * Array represinting either a feature or mean vector describing the cluster.
+	 * Array representing either a feature vector, mean,
+	 * or a median vector describing the cluster .
 	 */
 	protected double[] adDataVector = null;
 
 	/**
-	 * A list of filenames that were used in training for this cluster.
+	 * A list of filenames that were used in training for this sample.
 	 * Used to avoid duplicate training on the same filename.
 	 */
-	protected Vector oFilenames = new Vector();
+	protected Vector<String> oFilenames = new Vector<String>();
 
 	/**
 	 * For serialization versioning.
@@ -55,11 +57,12 @@ implements Serializable, Cloneable
 
 	/**
 	 * Default training sample constructor.
-	 * Explicitly appeared in 0.3.0.5. 
+	 * Explicitly appeared in 0.3.0.5.
 	 * @since 0.3.0.5
 	 */
 	public TrainingSample()
 	{
+		super();
 	}
 
 	/**
@@ -67,25 +70,55 @@ implements Serializable, Cloneable
 	 * @param poTrainingSample TrainingSample object to copy
 	 * @since 0.3.0.5
 	 */
+	@SuppressWarnings("unchecked")
 	public TrainingSample(final TrainingSample poTrainingSample)
 	{
-		super();
+		this();
 
 		this.iSubjectID = poTrainingSample.iSubjectID;
-		this.oFilenames = (Vector)poTrainingSample.oFilenames.clone();
+		this.oFilenames = (Vector<String>)poTrainingSample.oFilenames.clone();
 
 		if(poTrainingSample.adDataVector != null)
 		{
-			this.adDataVector = (double[])poTrainingSample.adDataVector.clone(); 
+			this.adDataVector = (double[])poTrainingSample.adDataVector.clone();
 		}
 	}
 
-	/**
-	 * Sets a filename of the training sample.
-	 * Allways set the first element of the list of filenames.
-	 * @param pstrFilename filename to set
+	/* (non-Javadoc)
+	 * @see marf.Storage.ITrainingSample#setFeatureVector(double[], java.lang.String, int)
 	 */
-	public final void setFilename(String pstrFilename)
+	public boolean setFeatureVector
+	(
+		double[] padFeatureVector,
+		String pstrFilename,
+		int piSubjectID
+	)
+	{
+		this.iSubjectID = piSubjectID;
+		addFilename(pstrFilename);
+		this.adDataVector = new double[padFeatureVector.length];
+		Arrays.copy(this.adDataVector, padFeatureVector, padFeatureVector.length);
+
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see marf.Storage.ITrainingSample#addFeatureVector(double[], java.lang.String, int)
+	 */
+	public boolean addFeatureVector
+	(
+		double[] padFeatureVector,
+		String pstrFilename,
+		int piSubjectID
+	)
+	{
+		return setFeatureVector(padFeatureVector, pstrFilename, piSubjectID);
+	}
+
+	/* (non-Javadoc)
+	 * @see marf.Storage.ITrainingSample#setFilename(java.lang.String)
+	 */
+	public /*final*/ void setFilename(String pstrFilename)
 	{
 		if(this.oFilenames.size() == 0)
 		{
@@ -98,37 +131,73 @@ implements Serializable, Cloneable
 	}
 
 	/**
-	 * Retrieves Subject ID of a particular training sample.
-	 * @return int ID
+	 * Adds a filename to the training sample.
+	 *
+	 * The method is <code>protected</code> and can be made <code>public</code>
+	 * by the extending classes that allow more than one filename.
+	 *
+	 * @param pstrFilename filename to add
+	 * @return <code>false</code> if the filename is already there; <code>true</code> otherwise
+	 * @see #existsFilename(String)
+	 * @since 0.3.0.6
+	 */
+	public boolean addFilename(String pstrFilename)
+	{
+		if(existsFilename(pstrFilename))
+		{
+			return false;
+		}
+
+		this.oFilenames.add(pstrFilename);
+
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see marf.Storage.ITrainingSample#existsFilename(java.lang.String)
+	 */
+	public boolean existsFilename(String pstrFilename)
+	{
+		if
+		(
+			this.oFilenames.size() == 0
+			|| this.oFilenames.firstElement().toString().equals(pstrFilename) == false
+		)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see marf.Storage.ITrainingSample#getSubjectID()
 	 */
 	public final int getSubjectID()
 	{
 		return this.iSubjectID;
 	}
 
-	/**
-	 * Retrieves the data vector.
-	 * @return array of doubles representing the data for this subject
+	/* (non-Javadoc)
+	 * @see marf.Storage.ITrainingSample#getDataVector()
 	 */
 	public final double[] getDataVector()
 	{
 		return this.adDataVector;
 	}
 
-	/**
-	 * Sets new Subject ID.
-	 * @param piSubjectID integer ID
+	/* (non-Javadoc)
+	 * @see marf.Storage.ITrainingSample#setSubjectID(int)
 	 */
-	public final void setSubjectID(final int piSubjectID)
+	public /*final*/ void setSubjectID(final int piSubjectID)
 	{
 		this.iSubjectID = piSubjectID;
 	}
 
-	/**
-	 * Sets new mean vector.
-	 * @param padDataVector double array representing the mean vector
+	/* (non-Javadoc)
+	 * @see marf.Storage.ITrainingSample#setDataVector(double[])
 	 */
-	public final void setDataVector(double[] padDataVector)
+	public /*final*/ void setDataVector(double[] padDataVector)
 	{
 		this.adDataVector = padDataVector;
 	}
@@ -205,6 +274,60 @@ implements Serializable, Cloneable
 	}
 
 	/**
+	 * @since 0.3.0.6
+	 * @see marf.Storage.ITrainingSample#getMeanCount()
+	 */
+	public int getMeanCount()
+	{
+		return size();
+	}
+
+	/**
+	 * Simply retrieves the data vector.
+	 * Internally calls <code>getDataVector()</code>.
+	 * @return array of doubles representing the mean for that cluster
+	 * @since 0.3.0.6
+	 * @see #getDataVector()
+	 */
+	public double[] getMeanVector()
+	{
+		return getDataVector();
+	}
+
+	/**
+	 * Simply retrieves the data vector.
+	 * Internally calls <code>getDataVector()</code>.
+	 * @return array of doubles representing the mean for that cluster
+	 * @since 0.3.0.6
+	 * @see #getDataVector()
+	 */
+	public double[] getMedianVector()
+	{
+		return getDataVector();
+	}
+
+	/* (non-Javadoc)
+	 * @see marf.Storage.ITrainingSample#getDataVectors()
+	 */
+	@Override
+	public Vector<double[]> getDataVectors()
+	{
+		// Optimize initial capacity to 1
+		Vector<double[]> oResult = new Vector<double[]>(1);
+		oResult.add(getDataVector());
+		return oResult;
+	}
+
+	/**
+	 * @since 0.3.0.6
+	 * @see marf.Storage.ITrainingSample#size()
+	 */
+	public int size()
+	{
+		return this.adDataVector == null ? 0 : 1;
+	}
+
+	/**
 	 * Implements Cloneable interface for the TrainingSample object.
 	 * @see java.lang.Object#clone()
 	 * @since 0.3.0.5
@@ -215,13 +338,32 @@ implements Serializable, Cloneable
 	}
 
 	/**
+	 * Provides string representation of the training sample data.
+	 * @see java.lang.Object#toString()
+	 * @since 0.3.0.6
+	 */
+	public String toString()
+	{
+		StringBuffer oBuffer = new StringBuffer();
+
+		oBuffer
+			.append("Subject ID: ").append(this.iSubjectID).append("\n")
+			.append("Data vector reference: ").append(this.adDataVector).append("\n")
+			.append("Size: ").append(size()).append("\n")
+			.append("Filenames: ").append(this.oFilenames).append("\n")
+			.append("TrainingSample Source code revision: ").append(getMARFSourceCodeRevision()).append("\n");
+
+		return oBuffer.toString();
+	}
+
+	/**
 	 * Returns source code revision information.
 	 * @return revision string
 	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.10 $";
+		return "$Revision: 1.18 $";
 	}
 }
 

@@ -1,5 +1,6 @@
 package marf.Preprocessing.FFTFilter;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 import marf.MARF;
@@ -14,10 +15,8 @@ import marf.util.Debug;
  * <p>HighFrequencyBoost class implements filtering using high frequency booster on
  * top of the FFTFilter.</p>
  *
- * <p>$Id: HighFrequencyBoost.java,v 1.24 2005/12/31 23:17:37 mokhov Exp $</p>
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.24 $
+ * @version $Id: HighFrequencyBoost.java,v 1.31 2011/11/21 20:47:05 mokhov Exp $
  * @since 0.0.1
  */
 public class HighFrequencyBoost
@@ -31,7 +30,7 @@ extends FFTFilter
 	public static final int DEFAULT_HIGH_FREQUENCY_CUTOFF = 25;
 
 	/**
-	 * Default boost rate of 5*PI to be applied to apmplitude values.
+	 * Default boost rate of 5*PI to be applied to amplitude values.
 	 * Made up out of the blue.
 	 * @since 0.3.0.3
 	 */
@@ -46,7 +45,7 @@ extends FFTFilter
 	protected double dBoostCoefficient = BASE_BOOST_COEFFICIENT; 
 
 	/**
-	 * Current high frequenct cut off. By default is set to
+	 * Current high frequency cut off. By default is set to
 	 * <code>DEFAULT_HIGH_FREQUENCY_CUTOFF</code>.
 	 * @see #DEFAULT_HIGH_FREQUENCY_CUTOFF
 	 * @since 0.3.0.5
@@ -75,7 +74,7 @@ extends FFTFilter
 
 	/**
 	 * Pipelined preprocessing constructor.
-	 * @param poPreprocessing followup preprocessing module
+	 * @param poPreprocessing follow-up preprocessing module
 	 * @throws PreprocessingException
 	 * @since 0.3.0.3
 	 */
@@ -83,7 +82,14 @@ extends FFTFilter
 	throws PreprocessingException
 	{
 		super(poPreprocessing);
-		Debug.debug("HighFrequencyBoost constructed with preprocessing [" + poPreprocessing + "].");
+/*
+		Debug.debug
+		(
+			new StringBuffer("HighFrequencyBoost constructed with preprocessing [")
+			//.append(poPreprocessing)
+			.append("].")
+		);
+*/
 	}
 
 	/**
@@ -95,17 +101,24 @@ extends FFTFilter
 	throws PreprocessingException
 	{
 		super(poSample);
-		Debug.debug("HighFrequencyBoost constructed with sample [" + poSample + "].");
+/*
+		Debug.debug
+		(
+			new StringBuffer("HighFrequencyBoost constructed with sample [")
+			//.append(poSample)
+			.append("].")
+		);
+*/
 	}
 
 	/**
 	 * Overrides FFTFilter's <code>preprocess()</code> with extra normalization after the boost.
-	 * TODO: Normalization only applied to the boosted part.
+	 * TODO: Normalization should only be applied to the boosted part.
 	 *
 	 * @return <code>true</code> if there were changes to the sample
 	 * @since 0.2.0
 	 * @throws PreprocessingException if there were problems during
-	 * undelying <code>supper.preprocess()</code> or <code>normalize()</code>.
+	 * underlying <code>super.preprocess()</code> or <code>normalize()</code>.
 	 */
 	public final boolean preprocess()
 	throws PreprocessingException
@@ -117,30 +130,6 @@ extends FFTFilter
 		Debug.debug("HighFrequencyBoost preprocess() done: [" + bChanges + "].");
 
 		return bChanges;
-	}
-
-	/**
-	 * Stub implementation of <code>removeNoise()</code>.
-	 * @return <code>false</code>
-	 * @throws PreprocessingException never thrown
-	 */
-	public final boolean removeNoise()
-	throws PreprocessingException
-	{
-		Debug.debug("HighFrequencyBoost.removeNoise()");
-		return false;
-	}
-
-	/**
-	 * Stub implementation of <code>removeSilence()</code>.
-	 * @return <code>false</code>
-	 * @throws PreprocessingException never thrown
-	 */
-	public final boolean removeSilence()
-	throws PreprocessingException
-	{
-		Debug.debug("HighFrequencyBoost.removeSilence()");
-		return false;
 	}
 
 	/**
@@ -161,9 +150,10 @@ extends FFTFilter
 	 * Creates high-frequency boost response coefficients and sets applies
 	 * them to the frequency response vector.
 	 *
-	 * @since 0.3.0
+	 * @since 0.3.0.2
+	 * @see marf.Preprocessing.FFTFilter.FFTFilter#generateResponseCoefficients()
 	 */
-	public void genereateResponseCoefficients()
+	public void generateResponseCoefficients()
 	{
 		double[] adResponse = new double[DEFAULT_FREQUENCY_RESPONSE_SIZE];
 
@@ -234,7 +224,7 @@ extends FFTFilter
 
 		if(oModuleParams != null)
 		{
-			Vector oFilterParams = oModuleParams.getPreprocessingParams();
+			Vector<Serializable> oFilterParams = oModuleParams.getPreprocessingParams();
 
 			if(oFilterParams != null)
 			{
@@ -258,7 +248,7 @@ extends FFTFilter
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.24 $";
+		return "$Revision: 1.31 $";
 	}
 }
 

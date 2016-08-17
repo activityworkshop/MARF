@@ -13,10 +13,10 @@ import marf.util.InvalidSampleFormatException;
  * <p>Loads (by computing) a simple sine wave into the sample.
  * Used for simple and quick testing of fake waves.</p>
  *
- * $Id: SineLoader.java,v 1.12 2006/01/14 22:30:13 mokhov Exp $
+ * $Id: SineLoader.java,v 1.13 2007/02/04 07:51:30 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  * @since 0.3.0.2
  */
 public class SineLoader
@@ -49,7 +49,7 @@ extends SampleLoader
 	 * @return the length of padSampleData
 	 * @throws StorageException
 	 */
-	public final int readAudioData(double[] padSampleData)
+	public final int readSampleData(double[] padSampleData)
 	throws StorageException
 	{
 		for(int i = 0; i < padSampleData.length; i++)
@@ -69,13 +69,15 @@ extends SampleLoader
 	 * @return the smallest of padSample.length or piLength
 	 * @throws StorageException if piLength is less than zero
 	 */
-	public final int writeAudioData(final double[] padSample, final int piLength)
+	public final int writeSampleData(final double[] padSample, final int piLength)
 	throws StorageException
 	{
 		int iSampleArrayLength = padSample == null ? 0 : padSample.length;
 
 		if(piLength < 0)
+		{
 			throw new StorageException("Parameter length of a sample should not be < 0.");
+		}
 
 		return iSampleArrayLength < piLength ? iSampleArrayLength : piLength;
 	}
@@ -85,13 +87,13 @@ extends SampleLoader
 	 * Internally calls <code>readAudioData()</code>.
 	 * @param poInFile unused, can be null
 	 * @return generated sample reference
-	 * @see #readAudioData(double[])
+	 * @see #readSampleData(double[])
 	 * @throws StorageException
 	 */
 	public Sample loadSample(File poInFile)
 	throws StorageException
 	{
-		readAudioData(this.oSample.getSampleArray());
+		readSampleData(this.oSample.getSampleArray());
 		return this.oSample;
 	}
 
@@ -110,12 +112,12 @@ extends SampleLoader
 	 * @param pstrFilename unused, can be null
 	 * @return Sample object reference
 	 * @throws StorageException if readAudioData fails
-	 * @see #readAudioData(double[])
+	 * @see #readSampleData(double[])
 	 */
 	public Sample loadSample(final String pstrFilename)
 	throws StorageException
 	{
-		readAudioData(this.oSample.getSampleArray());
+		readSampleData(this.oSample.getSampleArray());
 		return this.oSample;
 	}
 
@@ -156,7 +158,7 @@ extends SampleLoader
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.12 $";
+		return "$Revision: 1.13 $";
 	}
 }
 

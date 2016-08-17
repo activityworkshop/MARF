@@ -3,18 +3,18 @@ package marf.Storage.Loaders;
 import java.io.File;
 
 import marf.Storage.Sample;
-import marf.Storage.SampleLoader;
 import marf.Storage.StorageException;
 import marf.util.NotImplementedException;
 
 
 /**
- * Not Implemented.
+ * TODO: Not Implemented.
  * @author Serguei Mokhov
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.16 $
  * @since 0.0.1
  */
-public class ULAWLoader extends SampleLoader
+public class ULAWLoader
+extends AudioSampleLoader
 {
 	/**
 	 * ULAWLoader Constructor.
@@ -35,9 +35,9 @@ public class ULAWLoader extends SampleLoader
 
 	/**
 	 * Not Implemented.
-	 * @see marf.Storage.ISampleLoader#readAudioData(double[])
+	 * @see marf.Storage.ISampleLoader#readSampleData(double[])
 	 */
-	public final int readAudioData(double[] padSample)
+	public final int readSampleData(double[] padSample)
 	throws StorageException
 	{
 		throw new NotImplementedException("ULAWLoader.readAudioData()");
@@ -45,9 +45,9 @@ public class ULAWLoader extends SampleLoader
 
 	/**
 	 * Not Implemented.
-	 * @see marf.Storage.ISampleLoader#writeAudioData(double[], int)
+	 * @see marf.Storage.ISampleLoader#writeSampleData(double[], int)
 	 */
-	public final int writeAudioData(final double[] padSample, final int piNbrData)
+	public final int writeSampleData(final double[] padSample, final int piNbrData)
 	throws StorageException
 	{
 		throw new NotImplementedException("ULAWLoader.writeAudioData()");
@@ -70,7 +70,7 @@ public class ULAWLoader extends SampleLoader
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.14 $";
+		return "$Revision: 1.16 $";
 	}
 }
 

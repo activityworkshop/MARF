@@ -6,14 +6,14 @@ import marf.util.Debug;
 
 
 /**
- * <p>A GUI panel container that is capabale of resizing itself.
+ * <p>A GUI panel container that is capable of resizing itself.
  * </p>
  *
- * $Id: SmartSizablePanel.java,v 1.11 2006/01/30 04:21:22 mokhov Exp $
+ * $Id: SmartSizablePanel.java,v 1.12 2007/12/18 03:46:08 mokhov Exp $
  *
  * @author Serguei Mokhov
  * @since 0.3.0.2
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class SmartSizablePanel
 extends Panel
@@ -194,7 +194,7 @@ extends Panel
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.11 $";
+		return "$Revision: 1.12 $";
 	}
 }
 

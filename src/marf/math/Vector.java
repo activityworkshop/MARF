@@ -8,11 +8,11 @@ import marf.util.Debug;
  * <p><b>NOTE:</b> this class has the same considerations as
  * <code>marf.math.Matrix</code>.</p>
  *
- * <p>$Id: Vector.java,v 1.12 2005/08/13 23:09:39 susan_fan Exp $</p>
+ * $Id: Vector.java,v 1.14 2007/12/18 03:45:42 mokhov Exp $
  *
  * @author Serguei A. Mokhov
- * @since 0.3.0
- * @version $Revision: 1.12 $
+ * @since 0.3.0.1
+ * @version $Revision: 1.14 $
  * @see Matrix
  */
 public class Vector
@@ -84,7 +84,7 @@ extends Matrix
 	}
 
 	/**
-	 * Allows having a transposed vector upon consuctrion.
+	 * Allows having a transposed vector upon construction.
 	 * Useful for example before doing linear operations.
 	 * @param pad1DMatrix vector data
 	 * @param pbTransposed <code>true</code> if the transposed vector is desired
@@ -111,15 +111,19 @@ extends Matrix
 
 	/**
 	 * Allows setting the value of vector's element at specified position.
-	 * @param piPosition index to det the element at
+	 * @param piPosition index to set the element at
 	 * @param pdValue the element's value
 	 */
 	public void setElement(final int piPosition, final double pdValue)
 	{
 		if(this.iRows == 1)
+		{
 			super.setElement(0, piPosition, pdValue);
+		}
 		else
+		{
 			super.setElement(piPosition, 0, pdValue);
+		}
 	}
 
 	/**
@@ -131,7 +135,9 @@ extends Matrix
 		double dSqSum = 0.0;
 
 		for(int i = 0; i < getElements(); i++)
+		{
 			dSqSum += this.adMatrix[i] * this.adMatrix[i];
+		}
 
 		return Math.sqrt(dSqSum);
 	}
@@ -201,12 +207,16 @@ extends Matrix
 		Debug.debug("Vector.getInnerProduct() - WARNING: Implementation is incomplete!\n");
 
 		if(poLHSVector.getElements() != poRHSVector.getElements())
+		{
 			return new Vector(0);
+		}
 
 		Vector oVectorIP = new Vector(poLHSVector.getElements());
 
 		for(int i = 0; i < oVectorIP.getElements(); i++)
+		{
 			oVectorIP.setElement(i, poLHSVector.getElement(i) * poRHSVector.getElement(i));
+		}
 
 		return oVectorIP;
 	}
@@ -233,7 +243,9 @@ extends Matrix
 		}
 
 		for(int i = 0; i < poLHSVector.getElements(); i++)
+		{
 			dDotProduct += poLHSVector.getElement(i) * poRHSVector.getElement(i);
+		}
 
 		return dDotProduct;
 	}
@@ -264,13 +276,15 @@ extends Matrix
 		else
 		{
 			for(int i = 0; i < this.iCols * this.iRows; i++)
+			{
 				this.adMatrix[i] /= dLength;
+			}
 		}
 	}
 
 	/**
 	 * Creates a unit-vector "i".
-	 * @return a new vector instante of {1, 0, 0}
+	 * @return a new vector instance of {1, 0, 0}
 	 */
 	public final static Vector i()
 	{
@@ -279,7 +293,7 @@ extends Matrix
 
 	/**
 	 * Creates a unit-vector "j".
-	 * @return a new vector instante of {0, 1, 0}
+	 * @return a new vector instance of {0, 1, 0}
 	 */
 	public final static Vector j()
 	{
@@ -288,7 +302,7 @@ extends Matrix
 
 	/**
 	 * Creates a unit-vector "k".
-	 * @return a new vector instante of {0, 0, 1}
+	 * @return a new vector instance of {0, 0, 1}
 	 */
 	public final static Vector k()
 	{
@@ -310,10 +324,11 @@ extends Matrix
 	/**
 	 * Retrieves class' revision.
 	 * @return revision string
+	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.12 $";
+		return "$Revision: 1.14 $";
 	}
 }
 

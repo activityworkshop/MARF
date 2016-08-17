@@ -7,122 +7,30 @@ import marf.util.Debug;
 
 
 /**
- * <p>Math Matrix Operations.</p>
+ * <p>Provides linear math and storage matrix operations.
+ * This class implements a 2-dimensional matrix of doubles;
+ * internally implemented as a single-dimensional array with
+ * a common linear algebra operations as well as methods to
+ * cut/add rows or columns and glue matrices together.
+ * </p>
  *
  * <p><b>NOTE:</b> this class provides a lot of useful and working functionality, but
  * requires a lot of improvements. In particular in performance, documentation, and
  * styles and consistency in operators. Some missing features will be added/filled in as well.
  * Requires a lot of thorough testing and <code>MathTestApp</code> serves that purpose.</p>
  *
- * <p>$Id: Matrix.java,v 1.34 2005/12/31 23:09:14 mokhov Exp $</p>
+ * $Id: Matrix.java,v 1.47 2007/12/18 03:45:42 mokhov Exp $
  *
  * @author Serguei Mokhov
  * @author Shuxin Fan
  *
- * @version $Revision: 1.34 $
- * @since 0.3.0
- * @see Vector
+ * @version $Revision: 1.47 $
+ * @since 0.3.0.1
+ * @see marf.math.Vector
  */
 public class Matrix
 implements Cloneable, Serializable
 {
-    /**
-	 * For serialization versioning.
-	 * When adding new members or make other structural
-	 * changes regenerate this number with the
-	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
-	 */
-	 private static final long serialVersionUID = -4663728617934529725L;
-
-	/**
-	 * Indicates the direction in which a matrix to be extended.
-	 * Might emerge to generic integer Enum in marf.util eventually.
-	 */
-	public static class Direction
-	{
-		/**
-		 * Indicates East direction.
-		 */
-		public static final int EAST  = 0;
-
-		/**
-		 * Indicates West direction.
-		 */
-		public static final int WEST  = 1;
-
-		/**
-		 * Indicates North direction.
-		 */
-		public static final int NORTH = 2;
-
-		/**
-		 * Indicates South direction.
-		 */
-		public static final int SOUTH = 3;
-
-		/**
-		 * Default direction is <code>EAST</code>.
-		 */
-		private int iDirection = EAST;
-
-		/**
-		 * Default constructor.
-		 */
-		public Direction()
-		{
-		}
-
-		/**
-		 * Direction Constructor. Calls <code>setDirection()</code> internally.
-		 * @param piDirection custom direction to extend
-		 * @throws RuntimeException if piDirection is out of range
-		 * @see #setDirection(int)
-		 */
-		public Direction(final int piDirection)
-		{
-			setDirection(piDirection);
-		}
-
-		/**
-		 * Copy Constructor.
-		 * @param poDirection custom direction object to extend
-		 */
-		public Direction(final Direction poDirection)
-		{
-			this.iDirection = poDirection.getDirection();
-		}
-
-		/**
-		 * Retrieves curret direction.
-		 * @return current value of direction
-		 */
-		public int getDirection()
-		{
-			return this.iDirection;
-		}
-
-		/**
-		 * Sets new value of current direction.
-		 * @param piDirection current value of direction to be
-		 * @throws RuntimeException if piDirection is outside of valid range of values.
-		 */
-		public void setDirection(final int piDirection)
-		{
-			if(piDirection < EAST || piDirection > SOUTH)
-			{
-				throw new RuntimeException
-				(
-					getClass().getName() +
-					".setDirection() - Invalid direction: " +
-					piDirection
-				);
-			}
-
-			this.iDirection = piDirection;
-		}
-	}
-
 	/**
 	 * Default dimension of Y of matrix is 4.
 	 */
@@ -156,6 +64,15 @@ implements Cloneable, Serializable
 	 * Matrix itself.
 	 */
 	protected double[] adMatrix = null;
+
+	/**
+	 * For serialization versioning.
+	 * When adding new members or make other structural
+	 * changes regenerate this number with the
+	 * <code>serialver</code> tool that comes with JDK.
+	 * @since 0.3.0.4
+	 */
+	private static final long serialVersionUID = -4663728617934529725L;
 
 
 	/*
@@ -207,9 +124,9 @@ implements Cloneable, Serializable
 	 */
 	public Matrix(final Matrix poMatrix)
 	{
-		this.iRows    = poMatrix.getRows();
-		this.iCols    = poMatrix.getCols();
-		this.adMatrix = (double[])poMatrix.getMatrixArray().clone();
+		this.iRows    = poMatrix.iRows;
+		this.iCols    = poMatrix.iCols;
+		this.adMatrix = (double[])poMatrix.adMatrix.clone();
 	}
 
 	/**
@@ -318,7 +235,7 @@ implements Cloneable, Serializable
 	}
 
 	/**
-	 * Allows getting internal array represeting the matrix data.
+	 * Allows getting internal array representing the matrix data.
 	 * @return inner array of doubles
 	 */
 	public final double[] getMatrixArray()
@@ -328,7 +245,7 @@ implements Cloneable, Serializable
 
 	/**
 	 * Allows setting the new internal array of matrix data
-	 * from the paramter. The cardinality is kept before
+	 * from the parameter. The cardinality is kept before
 	 * the setting as no assumptions is made about the new
 	 * data. The array is copied entirely into internal storage.
 	 * @param padNewMatrix new matrix data
@@ -368,15 +285,11 @@ implements Cloneable, Serializable
 	 * Used primarily for testing. The range of the values
 	 * is [- Double.MAX_VALUE / 2, Double.MAX_VALUE / 2].
 	 * @since 0.3.0.3
-	 * @see Double#MIN_VALUE
 	 * @see Double#MAX_VALUE
 	 */
 	public void setAllRandom()
 	{
-		for(int i = 0; i < this.adMatrix.length; i++)
-		{
-			this.adMatrix[i] = (Math.random() - 0.5) * 100;
-		}
+		Arrays.fillRandom(this.adMatrix);
 	}
 
 	/**
@@ -396,7 +309,7 @@ implements Cloneable, Serializable
 	}
 
 	/**
-	 * Analoguous to <code>getElements()</code>.
+	 * Analogous to <code>getElements()</code>.
 	 * @return element count
 	 * @since 0.3.0.1
 	 * @see #getElements()
@@ -415,7 +328,15 @@ implements Cloneable, Serializable
 	 */
 	public final double getElement(final int piRow, final int piCol)
 	{
-		return this.adMatrix[piRow * this.iCols + piCol];
+		int iOffset = piRow * this.iCols + piCol; 
+
+		assert
+			(iOffset < this.adMatrix.length && iOffset >= 0) :
+				"row or column (" + piRow + "," + piCol
+				+ ") out of limits (" + (this.iRows - 1) + "," + (this.iCols - 1)
+				+ "); target offset is: " + iOffset + ", array length: " + this.adMatrix.length;
+
+		return this.adMatrix[iOffset];
 	}
 
 	/**
@@ -431,7 +352,7 @@ implements Cloneable, Serializable
 	}
 
 	/**
-	 * Alows loading a row of a matrix with values from a vector.
+	 * Allows loading a row of a matrix with values from a vector.
 	 * @param piRowNum index of the row to load
 	 * @param poVector the values to take
 	 * @throws ArrayIndexOutOfBoundsException if the row number is out
@@ -439,13 +360,63 @@ implements Cloneable, Serializable
 	 */
 	public void loadRow(final int piRowNum, final Vector poVector)
 	{
-		// Needs Validation
+		// TODO: Needs Validation
 		Debug.debug("public loadRow() - row: " + piRowNum + "\n");
 
 		// memcpy(&adMatrix[piRowNum * iCols], p_oVector.getMatrixArray(), sizeof(double) * p_oVector.getElements());
-		Arrays.copy(this.adMatrix, piRowNum * this.iCols, poVector.getMatrixArray(), poVector.size());
+		Arrays.copy(this.adMatrix, piRowNum * this.iCols, poVector.adMatrix, poVector.size());
 	}
 
+	/**
+	 * @param piRowNum
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	public Vector getRow(final int piRowNum)
+	{
+		Vector oVector = new Vector(this.iCols);
+		Arrays.copy(oVector.adMatrix, 0, this.adMatrix, piRowNum * this.iCols, this.iCols); 
+		return oVector;
+	}
+
+	/**
+	 * Allows loading a row of a matrix with values from a vector.
+	 *
+	 * @param piColNum index of the column to load
+	 * @param poVector the values to take
+	 * @throws ArrayIndexOutOfBoundsException if the column number is out
+	 * of range or there are insufficient number of elements in the vector
+	 *
+	 * @since 0.3.0.6
+	 */
+	public void loadColumn(final int piColNum, final Vector poVector)
+	{
+		// TODO: Needs Validation
+		Debug.debug("public loadColumn() - row: " + piColNum + "\n");
+
+		for(int i = 0; i < this.iRows; i++)
+		{
+			setElement(i, piColNum, poVector.getElement(i));
+		}
+	}
+
+	/**
+	 * @param piColNum
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	public Vector getColumn(final int piColNum)
+	{
+		Vector oVector = new Vector(this.iRows);
+		
+		for(int i = 0; i < this.iRows; i++)
+		{
+			oVector.setElement(i, getElement(i, piColNum));
+		}
+		
+		return oVector;
+	}
+	
 	/**
 	 * Calculates determinant of this matrix using Laplace's formula.
 	 * Also, det(0) = 0, i.e. a square matrix of 0x0 has a determinant
@@ -521,7 +492,7 @@ implements Cloneable, Serializable
 	 * Performs a specified linear row operation given the parameters.
 	 * @param pdA A
 	 * @param piRc Rc
-	 * @param pcOp operation
+	 * @param pcOp operation ('+' or '-')
 	 * @param pdB B
 	 * @param piRp Rb
 	 * @return <code>true</code> if the operation was successful
@@ -536,7 +507,9 @@ implements Cloneable, Serializable
 	)
 	{
 		if(pdA < 0 || pdB < 0 || piRc > this.iRows - 1 || piRp > this.iRows - 1)
+		{
 			return false;
+		}
 
 		int iRowChangeOffset = piRc * this.iCols;
 		int iRowPivotOffset = piRp * this.iCols;
@@ -566,7 +539,7 @@ implements Cloneable, Serializable
 
 		return true;
 	}
-
+	
 	/**
 	 * Applies row-reduce operation in this matrix.
 	 * @return <code>true</code> if the operation was successful
@@ -613,7 +586,7 @@ implements Cloneable, Serializable
 
 			for(j = 0; j < this.iCols; j++)
 			{
-				setElement(i, j, getElement(i , j) / dPivot);
+				setElement(i, j, getElement(i, j) / dPivot);
 			}
 		}
 
@@ -628,16 +601,17 @@ implements Cloneable, Serializable
 	public boolean isReduced()
 	{
 		Matrix oM = (Matrix)clone();
+		//Matrix oM = getMatrixCopy(this);
 		oM.rowReduce();
 
 		return equals(oM);
 	}
 
 	/**
-	 * Extends this matrix by another (by glueing two matrices together) assuming
+	 * Extends this matrix by another (by gluing two matrices together) assuming
 	 * the extension direction of <code>Direction.EAST</code>. NOTICE, if doubling
-	 * the same <code>this</code> matrix, make a copy for the argument istead.
-	 * @param poExtensionMatrix the matrix to exten the current by
+	 * the same <code>this</code> matrix, make a copy for the argument instead.
+	 * @param poExtensionMatrix the matrix to extend the current by
 	 * @return <code>true</code> if the operation was successful
 	 * @see Direction#EAST
 	 */
@@ -647,21 +621,76 @@ implements Cloneable, Serializable
 	}
 
 	/**
-	 * Extends this matrix by another (by glueing two matrices together) given
+	 * Extends this matrix by another (by gluing two matrices together) given
 	 * the extension direction.  NOTICE, if doubling the same matrix,
-	 * make a copy for the argument istead.
+	 * make a copy for the argument instead.
 	 *
-	 * @param poExtensionMatrix the matrix to exten the current by
+	 * @param poExtensionMatrix the matrix to extend the current by
 	 * @param poDirection in which direction the extension should happen
 	 * @return <code>true</code> if the operation was successful
 	 * @see Direction
 	 */
 	public boolean extend(final Matrix poExtensionMatrix, final Direction poDirection)
 	{
-		int iOldMatrixCols = this.iCols;
+		//boolean bExtendedSuccess = extend
+		//double[] bExtendedSuccess = extend
+		Matrix bExtendedSuccess = extend
+		(
+			this.adMatrix,
+			this.iRows,
+			this.iCols,
+			poExtensionMatrix.adMatrix,
+			poExtensionMatrix.iRows,
+			poExtensionMatrix.iCols,
+			poDirection
+		);
+		
+//		this.adMatrix = bExtendedSuccess;
+		this.adMatrix = bExtendedSuccess.getMatrixArray();
+		
+		// Update the new dimensionality
+//		this.iRows += poExtensionMatrix.iRows;
+//		this.iCols += poExtensionMatrix.iCols;
+		this.iRows = bExtendedSuccess.iRows;
+		this.iCols = bExtendedSuccess.iCols;
+		
+//		return bExtendedSuccess;
+		return bExtendedSuccess != null;
+	}
 
-		int iNewCols = this.iCols;
-		int iNewRows = this.iRows;
+	/**
+	 * Refactors matrix array extension to operate on raw arrays.
+	 * @param padMatrixToExtend
+	 * @param piMatrixToExtendRows
+	 * @param piMatrixToExtendCols
+	 * @param padExtensionMatrix
+	 * @param piExtensionMatrixRows
+	 * @param piExtensionMatrixCols
+	 * @param poDirection
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	public static Matrix extend
+	//public static double[] extend
+	//public static boolean extend
+	(
+		//double[] padMatrixToExtend,
+		final double[] padMatrixToExtend,
+		int piMatrixToExtendRows,
+		int piMatrixToExtendCols,
+		final double[] padExtensionMatrix,
+		int piExtensionMatrixRows,
+		int piExtensionMatrixCols,
+		final Direction poDirection
+	)
+	{
+		//int iOldMatrixCols = this.iCols;
+		int iOldMatrixCols = piMatrixToExtendCols;
+
+		//int iNewCols = this.iCols;
+		//int iNewRows = this.iRows;
+		int iNewCols = piMatrixToExtendCols;
+		int iNewRows = piMatrixToExtendRows;
 
 		// Determine new dimensions of the extended matrix
 		switch(poDirection.getDirection())
@@ -669,43 +698,53 @@ implements Cloneable, Serializable
 			case Direction.EAST:
 			case Direction.WEST:
 			{
-				if(getRows() != poExtensionMatrix.getRows())
+				//if(getRows() != poExtensionMatrix.getRows())
+				if(piMatrixToExtendRows != piExtensionMatrixRows)
 				{
-					return false;
+//					return false;
+					return null;
 				}
 
-				iNewCols += poExtensionMatrix.getCols();
+				//iNewCols += poExtensionMatrix.getCols();
+				iNewCols += piExtensionMatrixCols;
 				break;
 			}
 
 			case Direction.NORTH:
 			case Direction.SOUTH:
 			{
-				if(getCols() != poExtensionMatrix.getCols())
+//				if(getCols() != poExtensionMatrix.getCols())
+				if(piMatrixToExtendCols != piExtensionMatrixCols)
 				{
-					return false;
+//					return false;
+					return null;
 				}
 
-				iNewRows += poExtensionMatrix.getRows();
+//				iNewRows += poExtensionMatrix.getRows();
+				iNewRows += piExtensionMatrixRows;
 				break;
 			}
 
 			// Disallow any other directions
 			default:
 			{
-				return false;
+//				return false;
+				return null;
 			}
 		}
 
-		double[] adExtendedMatrix = new double[size() + poExtensionMatrix.size()];
+//		double[] adExtendedMatrix = new double[size() + poExtensionMatrix.size()];
+		double[] adExtendedMatrix = new double[padMatrixToExtend.length + padExtensionMatrix.length];
 
 		// Do actual extension in the specified direction
 		switch(poDirection.getDirection())
 		{
 			case Direction.EAST:
 			{
-				double[] adExtensionMatrix = poExtensionMatrix.getMatrixArray();
-				double[] adThisMatrix = getMatrixArray();
+//				double[] adExtensionMatrix = poExtensionMatrix.getMatrixArray();
+//				double[] adThisMatrix = getMatrixArray();
+				double[] adExtensionMatrix = padExtensionMatrix;
+				double[] adThisMatrix = padMatrixToExtend;
 
 				for(int i = 0; i < iNewRows; i++)
 				{
@@ -723,8 +762,10 @@ implements Cloneable, Serializable
 						adExtendedMatrix,
 						i * iNewCols + iOldMatrixCols,
 						adExtensionMatrix,
-						i * poExtensionMatrix.getCols(),
-						poExtensionMatrix.getCols()
+//						i * poExtensionMatrix.getCols(),
+//						poExtensionMatrix.getCols()
+						i * piExtensionMatrixCols,
+						piExtensionMatrixCols
 					);
 				}
 
@@ -733,8 +774,10 @@ implements Cloneable, Serializable
 
 			case Direction.WEST:
 			{
-				double[] adExtensionMatrix = poExtensionMatrix.getMatrixArray();
-				double[] adThisMatrix = getMatrixArray();
+//				double[] adExtensionMatrix = poExtensionMatrix.getMatrixArray();
+//				double[] adThisMatrix = getMatrixArray();
+				double[] adExtensionMatrix = padExtensionMatrix;
+				double[] adThisMatrix = padMatrixToExtend;
 
 				for(int i = 0; i < iNewRows; i++)
 				{
@@ -743,14 +786,17 @@ implements Cloneable, Serializable
 						adExtendedMatrix,
 						i * iNewCols,
 						adExtensionMatrix,
-						i * poExtensionMatrix.getCols(),
-						poExtensionMatrix.getCols()
+//						i * poExtensionMatrix.getCols(),
+//						poExtensionMatrix.getCols()
+						i * piExtensionMatrixCols,
+						piExtensionMatrixCols
 					);
 
 					Arrays.copy
 					(
 						adExtendedMatrix,
-						i * iNewCols + poExtensionMatrix.getCols(),
+//						i * iNewCols + poExtensionMatrix.getCols(),
+						i * iNewCols + piExtensionMatrixCols,
 						adThisMatrix,
 						i * iOldMatrixCols,
 						iOldMatrixCols
@@ -759,25 +805,30 @@ implements Cloneable, Serializable
 
 				break;
 			}
-
+			
 			case Direction.NORTH:
 			{
 				Arrays.copy
 				(
 					adExtendedMatrix,
 					0,
-					poExtensionMatrix.getMatrixArray(),
+//					poExtensionMatrix.getMatrixArray(),
+					padExtensionMatrix,
 					0,
-					poExtensionMatrix.size()
+//					poExtensionMatrix.size()
+					padExtensionMatrix.length
 				);
 
 				Arrays.copy
 				(
 					adExtendedMatrix,
-					poExtensionMatrix.size(),
-					getMatrixArray(),
+//					poExtensionMatrix.size(),
+//					getMatrixArray(),
+					padExtensionMatrix.length,
+					padMatrixToExtend,
 					0,
-					size()
+//					size()
+					padMatrixToExtend.length
 				);
 
 				break;
@@ -789,18 +840,22 @@ implements Cloneable, Serializable
 				(
 					adExtendedMatrix,
 					0,
-					getMatrixArray(),
+//					getMatrixArray(),
+					padMatrixToExtend,
 					0,
-					size()
+					padMatrixToExtend.length
 				);
 
 				Arrays.copy
 				(
 					adExtendedMatrix,
-					size(),
-					poExtensionMatrix.getMatrixArray(),
+//					size(),
+//					poExtensionMatrix.getMatrixArray(),
+					padMatrixToExtend.length,
+					padExtensionMatrix,
 					0,
-					poExtensionMatrix.size()
+//					poExtensionMatrix.size()
+					padExtensionMatrix.length
 				);
 
 				break;
@@ -808,21 +863,31 @@ implements Cloneable, Serializable
 
 			default:
 			{
-				return false;
+				//return false;
+				return null;
 			}
 		}
 
 		// Finalize setting the new matrix and its dimensions
-		this.iRows = iNewRows;
-		this.iCols = iNewCols;
-		setMatrixArray(adExtendedMatrix);
+//		this.iRows = iNewRows;
+//		this.iCols = iNewCols;
+//		setMatrixArray(adExtendedMatrix);
+
+		//padMatrixToExtend = adExtendedMatrix;
 
 		// Hint the JVM to recycle the copy faster
-		adExtendedMatrix = null;
+//		adExtendedMatrix = null;
 
-		return true;
+		//return true;
+		//Matrix oMatrix = createMatrix(iNewRows, iNewCols);
+		Matrix oMatrix = new Matrix(iNewRows, iNewCols);
+		oMatrix.setMatrixArray(adExtendedMatrix);
+//		oMatrix.setRows(iNewRows);
+//		oMatrix.setCols(iNewCols);
+		
+		return oMatrix;
 	}
-
+	
 	/**
 	 * A general routine that allows arbitrary cropping of a matrix.
 	 * The cropping rectangle specified by the parameters is
@@ -837,18 +902,63 @@ implements Cloneable, Serializable
 	 */
 	public boolean crop(final int piLeft, final int piTop, final int piRight, final int piBottom)
 	{
+		/*boolean bChanges*/ Matrix bChanges = crop(this.adMatrix, this.iRows, this.iCols, piLeft, piTop, piRight, piBottom);
+		
+		// Update cardinality after successful cropping.
+		//if(bChanges == true)
+		if(bChanges != null)
+		{
+			this.iCols = piRight  - piLeft + 1;
+			this.iRows = piBottom - piTop  + 1;
+			setMatrixArray(bChanges.adMatrix);
+		}
+		
+		return bChanges != null;
+	}
+
+	/**
+	 * @param padMatrixToCrop
+	 * @param piRows
+	 * @param piCols
+	 * @param piLeft
+	 * @param piTop
+	 * @param piRight
+	 * @param piBottom
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	public static Matrix crop
+	(
+		final double[] padMatrixToCrop,
+		final int piRows,
+		final int piCols,
+		final int piLeft,
+		final int piTop,
+		final int piRight,
+		final int piBottom
+	)
+	{
 		Debug.debug("Cropping rect: (" + piLeft + "," + piTop + ") - (" + piRight + "," + piBottom + ")\n");
 
 		if
 		(
-			piLeft   < 0 || piLeft   > this.iCols - 1 ||
-			piTop    < 0 || piTop    > this.iRows - 1 ||
-			piRight  < 0 || piRight  > this.iCols - 1 ||
-			piBottom < 0 || piBottom > this.iRows - 1
+//			piLeft   < 0 || piLeft   > this.iCols - 1 ||
+//			piTop    < 0 || piTop    > this.iRows - 1 ||
+//			piRight  < 0 || piRight  > this.iCols - 1 ||
+//			piBottom < 0 || piBottom > this.iRows - 1
+//			piLeft   < 0 || piLeft   > poMatrixToCrop.iCols - 1 ||
+//			piTop    < 0 || piTop    > poMatrixToCrop.iRows - 1 ||
+//			piRight  < 0 || piRight  > poMatrixToCrop.iCols - 1 ||
+//			piBottom < 0 || piBottom > poMatrixToCrop.iRows - 1
+			piLeft   < 0 || piLeft   > piCols - 1 ||
+			piTop    < 0 || piTop    > piRows - 1 ||
+			piRight  < 0 || piRight  > piCols - 1 ||
+			piBottom < 0 || piBottom > piRows - 1
 		)
 		{
 			Debug.debug("Cropping rectangle is out of range.");
-			return false;
+//			return false;
+			return null;
 		}
 
 		// Set the new dimensions of the cropped-to-be matrix.
@@ -856,33 +966,45 @@ implements Cloneable, Serializable
 		int iNewRows = piBottom - piTop  + 1;
 
 		// Allocate enough storage for the contents of the new matrix data.
-		double[] pdCroppedMatrix = new double[iNewRows * iNewCols];
+		double[] adCroppedMatrix = new double[iNewRows * iNewCols];
 
 		// Temporary index pointer within the cropped matrix.
-		int iTmpPtr     = 0;
+		int iTmpPtr = 0;
 
 		// Temporary index pointer within the current matrix.
-		int iTmpThisPtr = piLeft + piTop * this.iCols;
+//		int iTmpThisPtr = piLeft + piTop * this.iCols;
+//		int iTmpThisPtr = piLeft + piTop * poMatrixToCrop.iCols;
+		int iTmpThisPtr = piLeft + piTop * piCols;
 
 		// Perform data copy row-by-row WRT the new dimensions.
 		for(int i = 0; i < iNewRows; i++)
 		{
-			Arrays.copy(pdCroppedMatrix, iTmpPtr, this.adMatrix, iTmpThisPtr, iNewCols);
+//			Arrays.copy(pdCroppedMatrix, iTmpPtr, this.adMatrix, iTmpThisPtr, iNewCols);
+//			Arrays.copy(pdCroppedMatrix, iTmpPtr, poMatrixToCrop.adMatrix, iTmpThisPtr, iNewCols);
+			Arrays.copy(adCroppedMatrix, iTmpPtr, padMatrixToCrop, iTmpThisPtr, iNewCols);
 
 			iTmpPtr     += iNewCols;
-			iTmpThisPtr += this.iCols;
+//			iTmpThisPtr += this.iCols;
+			iTmpThisPtr += piCols;
 		}
 
 		// Update the current matrix's attributes.
-		this.iRows = iNewRows;
-		this.iCols = iNewCols;
+//		this.iRows = iNewRows;
+//		this.iCols = iNewCols;
+		//poMatrixToCrop.iRows = iNewRows;
+		//poMatrixToCrop.iCols = iNewCols;
 
-		setMatrixArray(pdCroppedMatrix);
-
+//		setMatrixArray(pdCroppedMatrix);
+		//poMatrixToCrop.adMatrix = pdCroppedMatrix;
+		//padMatrixToCrop = adCroppedMatrix;
+		Matrix oMatrix = new Matrix(iNewRows, iNewCols);
+		oMatrix.setMatrixArray(adCroppedMatrix);
+		
 		// Garbage-collect the tmp matrix
-		pdCroppedMatrix = null;
+//		pdCroppedMatrix = null;
 
-		return true;
+		//return true;
+		return oMatrix;
 	}
 
 	/**
@@ -900,18 +1022,20 @@ implements Cloneable, Serializable
 		// First row
 		if(piRowNum == 0)
 		{
-			return crop(0, 1, this.iCols - 1, this.iRows - 1);
+			return cutFirstRow();
 		}
 
 		// Last row
 		if(piRowNum == this.iRows - 1)
 		{
-			return crop(0, 0, this.iCols - 1, this.iRows - 2);
+			return cutLastRow();
 		}
 
 		// Middle row
-		Matrix oUpperMatrix = new Matrix(this);
-		Matrix oLowerMatrix = new Matrix(this);
+//		Matrix oUpperMatrix = new Matrix(this);
+//		Matrix oLowerMatrix = new Matrix(this);
+		Matrix oUpperMatrix = getMatrixCopy(this);
+		Matrix oLowerMatrix = getMatrixCopy(this);
 
 		oUpperMatrix.crop(0, 0, this.iCols - 1, piRowNum - 1);
 		oLowerMatrix.crop(0, piRowNum + 1, this.iCols - 1, this.iRows - 1);
@@ -920,13 +1044,52 @@ implements Cloneable, Serializable
 
 		this.iRows--;
 
-		setMatrixArray(oUpperMatrix.getMatrixArray());
+//		setMatrixArray(oUpperMatrix.getMatrixArray());
+		setMatrixData(oUpperMatrix);
 
 		// Hint garbage collector earlier than later
 		oUpperMatrix = null;
 		oLowerMatrix = null;
 
 		return true;
+	}
+
+	
+	/**
+	 * @param poMatrix
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	private /*static*/ Matrix getMatrixCopy(final Matrix poMatrix)
+	{
+		return new Matrix(poMatrix);
+	}
+	
+	/**
+	 * @param poMatrix
+	 * @since 0.3.0.6
+	 */
+	private void setMatrixData(final Matrix poMatrix)
+	{
+		setMatrixArray(poMatrix.getMatrixArray());
+	}
+	
+	/**
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	public boolean cutLastRow()
+	{
+		return crop(0, 0, this.iCols - 1, this.iRows - 2);
+	}
+
+	/**
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	public boolean cutFirstRow()
+	{
+		return crop(0, 1, this.iCols - 1, this.iRows - 1);
 	}
 
 	/**
@@ -941,16 +1104,16 @@ implements Cloneable, Serializable
 			return false;
 		}
 
-		// If the first colum, just crop it.
+		// If the first column, just crop it.
 		if(piColNum == 0)
 		{
-			return crop(1, 0, this.iCols - 1, this.iRows - 1);
+			return cutFirstColumn();
 		}
 
-		// If the last colum, just crop it.
+		// If the last column, just crop it.
 		if(piColNum == this.iCols - 1)
 		{
-			return crop(0, 0, this.iCols - 2, this.iRows - 1);
+			return cutLastColumn();
 		}
 
 		/*
@@ -959,8 +1122,8 @@ implements Cloneable, Serializable
 		 * - Glue the two pieces
 		 */
 
-		Matrix oLeftMatrix = new Matrix(this);
-		Matrix oRightMatrix = new Matrix(this);
+		Matrix oLeftMatrix = getMatrixCopy(this);
+		Matrix oRightMatrix = getMatrixCopy(this);
 
 		oLeftMatrix.crop(0, 0, piColNum - 1, this.iRows - 1);
 		oRightMatrix.crop(piColNum + 1, 0, this.iCols - 1, this.iRows - 1);
@@ -969,12 +1132,30 @@ implements Cloneable, Serializable
 
 		this.iCols--;
 
-		setMatrixArray(oLeftMatrix.getMatrixArray());
+		setMatrixData(oLeftMatrix);
 
 		oLeftMatrix = null;
 		oRightMatrix = null;
 
 		return true;
+	}
+
+	/**
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	public boolean cutLastColumn()
+	{
+		return crop(0, 0, this.iCols - 2, this.iRows - 1);
+	}
+
+	/**
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	public boolean cutFirstColumn()
+	{
+		return crop(1, 0, this.iCols - 1, this.iRows - 1);
 	}
 
 	/**
@@ -1007,6 +1188,26 @@ implements Cloneable, Serializable
 	}
 
 	/**
+	 * @return
+	 */
+	protected Matrix getNewMatrix()
+	{
+		System.out.println("[[[ in default Matrix ]]]");
+		return new Matrix(this.iRows, this.iCols);		
+	}
+
+	/**
+	 * @param piRows
+	 * @param piCols
+	 * @return
+	 */
+	protected /*static*/ Matrix getNewMatrix(int piRows, int piCols)
+	{
+		System.out.println("[[[ in Matrix ]]]");
+		return new Matrix(piRows, piCols);
+	}
+	
+	/**
 	 * Matrix inversion.
 	 * @return <code>true</code> if matrix was possible to invert, <code>false</code> otherwise
 	 */
@@ -1018,31 +1219,42 @@ implements Cloneable, Serializable
 			return false;
 		}
 
-		Matrix oI = new Matrix(this.iRows, this.iCols);
+		Matrix oI = getNewMatrix();
 
 		if(!oI.makeIdentity())
 		{
 			return false;
 		}
 
-		Matrix oCombo = new Matrix(this);
+		Matrix oCombo = getMatrixCopy(this);
 
+		//System.out.println("Boo copy");
+		//System.out.println(oCombo);
+		
 		if(!oCombo.extend(oI))
 		{
 			return false;
 		}
+
+		//System.out.println("Baa extension");
+		//System.out.println(oCombo);
 
 		if(!oCombo.rowReduce())
 		{
 			return false;
 		}
 
+		//System.out.println("Bee row reduction");
+		//System.out.println(oCombo);
+
 		if(!oCombo.crop(oCombo.getCols() / 2, 0, oCombo.getCols() - 1, oCombo.getRows() - 1))
 		{
 			return false;
 		}
 
-		setMatrixArray(oCombo.getMatrixArray());
+		//System.out.println(oCombo);
+
+		setMatrixData(oCombo);
 
 		return true;
 	}
@@ -1059,7 +1271,8 @@ implements Cloneable, Serializable
 		}
 
 		// Create a copy
-		Matrix oM = (Matrix)clone();
+//		Matrix oM = (Matrix)clone();
+		Matrix oM = getMatrixCopy(this);
 
 		// Swap dimensions
 		int iOldRows = this.iRows;
@@ -1075,7 +1288,7 @@ implements Cloneable, Serializable
 				{
 					if(i != j)
 					{
-						setElement(j, i, oM.getElement(i, j));
+						swapElement(oM, i, j);
 					}
 				}
 			}
@@ -1084,6 +1297,16 @@ implements Cloneable, Serializable
 		oM = null;
 
 		return true;
+	}
+
+	/**
+	 * @param poSourceMatrix
+	 * @param i
+	 * @param j
+	 */
+	private void swapElement(Matrix poSourceMatrix, int i, int j)
+	{
+		setElement(j, i, poSourceMatrix.getElement(i, j));
 	}
 
 	/**
@@ -1107,7 +1330,7 @@ implements Cloneable, Serializable
 
 	/**
 	 * Checks for strict identity matrix.
-	 * Any diviations due to errors in floarting point arithmetic
+	 * Any deviations due to errors in floating point arithmetic
 	 * will return <code>false</code>. If imprecise values are allowed,
 	 * consider using <code>isNearlyIdentity()</code>.
 	 * @return <code>true</code> if the matrix is strictly identity
@@ -1125,7 +1348,7 @@ implements Cloneable, Serializable
 	/**
 	 * Tests nearly-identity matrices with the specified delta.
 	 * @param pdDelta the FP error to assume when checking for identity
-	 * @return <code>true</code> if the matrix is nearly indentity
+	 * @return <code>true</code> if the matrix is nearly identity
 	 */
 	public final boolean isNearlyIdentity(final double pdDelta)
 	{
@@ -1155,7 +1378,7 @@ implements Cloneable, Serializable
 
 	/**
 	 * Tests nearly-identity matrices with the default delta.
-	 * @return <code>true</code> if the matrix is nearly indentity
+	 * @return <code>true</code> if the matrix is nearly identity
 	 * @see #DEFAULT_ERROR_DELTA
 	 */
 	public final boolean isNearlyIdentity()
@@ -1173,11 +1396,12 @@ implements Cloneable, Serializable
 	 * M3 = M1 + M2.
 	 * @param poLHSMatrix M1
 	 * @param poRHSMatrix M2
-	 * @return M3
+	 * @return M3; if cardinalities of M1 and M2 do not match; M1 is returned
 	 */
 	public static Matrix add(final Matrix poLHSMatrix, final Matrix poRHSMatrix)
 	{
 		Matrix oMatrix = (Matrix)poLHSMatrix.clone();
+		//Matrix oMatrix = getMatrixCopy(poLHSMatrix);
 
 		if(poLHSMatrix.getCols() != poRHSMatrix.getCols() || poLHSMatrix.getRows() != poRHSMatrix.getRows())
 		{
@@ -1188,13 +1412,63 @@ implements Cloneable, Serializable
 		{
 			for(int j = 0; j < poLHSMatrix.getCols(); j++)
 			{
-				oMatrix.setElement(i, j, poLHSMatrix.getElement(i, j) + poRHSMatrix.getElement(i, j));
+				oMatrix.applyAdd(poLHSMatrix, poRHSMatrix, i, j);
 			}
 		}
 
 		return oMatrix;
 	}
 
+	/**
+	 * Actually applies the addition of operation to two elements of a
+	 * matrix. Designed to be overridden for complex or otherwise matrices.
+	 * @param poLHSMatrix
+	 * @param poRHSMatrix
+	 * @param i
+	 * @param j
+	 */
+	protected Matrix applyAdd(final Matrix poLHSMatrix, final Matrix poRHSMatrix, int i, int j)
+	{
+		setElement(i, j, poLHSMatrix.getElement(i, j) + poRHSMatrix.getElement(i, j));
+		return this;
+	}
+
+	/**
+	 * Adds a scalar to the matrix: this = this + N.
+	 * @param pdNum the scalar N
+	 * @since 0.3.0.6 
+	 * @return this
+	 */
+	public Matrix add(double pdNum)
+	{
+		for(int i = 0; i < this.adMatrix.length; i++)
+		{
+			this.adMatrix[i] += pdNum;
+		}
+		
+		return this;
+	}
+
+	/**
+	 * Adds a scalar to the matrix: M1 = M + N.
+	 * @param poLHSMatrix M
+	 * @param pdNum the scalar N
+	 * @since 0.3.0.6
+	 * @return M1
+	 */
+	public static Matrix add(final Matrix poLHSMatrix, double pdNum)
+	{
+		//Matrix oMatrix = getMatrixCopy(poLHSMatrix);
+		Matrix oMatrix = (Matrix)poLHSMatrix.clone();
+
+		for(int i = 0; i < poLHSMatrix.adMatrix.length; i++)
+		{
+			oMatrix.adMatrix[i] += pdNum;
+		}
+		
+		return oMatrix; 
+	}
+	
 	/**
 	 * M3 = M1 - M2.
 	 * @param poLHSMatrix M1
@@ -1203,22 +1477,35 @@ implements Cloneable, Serializable
 	 */
 	public static Matrix minus(final Matrix poLHSMatrix, final Matrix poRHSMatrix)
 	{
+		//Matrix oMatrix = getMatrixCopy(poLHSMatrix);
 		Matrix oMatrix = (Matrix)poLHSMatrix.clone();
 
-		if(poLHSMatrix.getCols() != poRHSMatrix.getCols() || poRHSMatrix.getRows() != poRHSMatrix.getRows())
+		if(poLHSMatrix.iCols != poRHSMatrix.iCols || poRHSMatrix.iRows != poRHSMatrix.iRows)
 		{
 			return oMatrix;
 		}
 
-		for(int i = 0; i < poLHSMatrix.getRows(); i++)
+		for(int i = 0; i < poLHSMatrix.iRows; i++)
 		{
-			for(int j = 0; j < poLHSMatrix.getCols(); j++)
+			for(int j = 0; j < poLHSMatrix.iCols; j++)
 			{
-				oMatrix.setElement(i, j, poLHSMatrix.getElement(i, j) - poRHSMatrix.getElement(i, j));
+				oMatrix.applyMinus(poLHSMatrix, poRHSMatrix, i, j);
 			}
 		}
 
 		return oMatrix;
+	}
+
+	/**
+	 * @param poLHSMatrix
+	 * @param poRHSMatrix
+	 * @param i
+	 * @param j
+	 */
+	protected Matrix applyMinus(final Matrix poLHSMatrix, final Matrix poRHSMatrix, int i, int j)
+	{
+		setElement(i, j, poLHSMatrix.getElement(i, j) - poRHSMatrix.getElement(i, j));
+		return this;
 	}
 
 	/**
@@ -1228,7 +1515,9 @@ implements Cloneable, Serializable
 	 */
 	public static Matrix minusUnary(final Matrix poMatrix)
 	{
-		Matrix oM = new Matrix(poMatrix.getRows(), poMatrix.getCols());
+		//Matrix oM = new Matrix(poMatrix.getRows(), poMatrix.getCols());
+		//Matrix oM = getNewMatrix(poMatrix.iRows, poMatrix.iCols);
+		Matrix oM = poMatrix.getNewMatrix(poMatrix.iRows, poMatrix.iCols);
 
 		// -M = 0 - M
 		oM = minus(oM, poMatrix);
@@ -1247,12 +1536,46 @@ implements Cloneable, Serializable
 
 		if(this.equals(oNewMatrix) == false)
 		{
-			setMatrixArray(oNewMatrix.getMatrixArray());
+			//setMatrixArray(oNewMatrix.getMatrixArray());
+			setMatrixData(oNewMatrix);
 		}
 
 		oNewMatrix = null;
 
 		return this;
+	}
+
+	/**
+	 * Subtracts a scalar from the matrix's each element: this = this - N.
+	 * @param pdNum the scalar
+	 * @since 0.3.0.6 
+	 */
+	public Matrix minus(double pdNum)
+	{
+		for(int i = 0; i < this.adMatrix.length; i++)
+		{
+			this.adMatrix[i] -= pdNum;
+		}
+		
+		return this;
+	}
+
+	/**
+	 * Subtracts a scalar from the matrix's each element: M1 = M - N.
+	 * @param pdNum the scalar
+	 * @since 0.3.0.6 
+	 */
+	public static Matrix minus(final Matrix poLHSMatrix, double pdNum)
+	{
+		Matrix oMatrix = (Matrix)poLHSMatrix.clone();
+//		Matrix oMatrix = getMatrixCopy(poLHSMatrix);
+
+		for(int i = 0; i < poLHSMatrix.adMatrix.length; i++)
+		{
+			oMatrix.adMatrix[i] -= pdNum;
+		}
+		
+		return oMatrix; 
 	}
 
 	/**
@@ -1273,29 +1596,67 @@ implements Cloneable, Serializable
 	 */
 	public static Matrix multiply(final Matrix poLHSMatrix, final Matrix poRHSMatrix)
 	{
-		if(poLHSMatrix.getCols() != poRHSMatrix.getRows())
+		if(poLHSMatrix.iCols != poRHSMatrix.iRows)
 		{
-			return new Matrix(0, 0);
+			//return new Matrix(0, 0);
+			//return getNewMatrix(0, 0);
+			return poLHSMatrix.getNewMatrix(0, 0);
 		}
 
-		Matrix oMatrix = new Matrix(poLHSMatrix.getRows(), poRHSMatrix.getCols());
-
-		for(int i = 0; i < oMatrix.getRows(); i++)
+		//Matrix oMatrix = new Matrix(poLHSMatrix.getRows(), poRHSMatrix.getCols());
+		//Matrix oMatrix = getNewMatrix(poLHSMatrix.iRows, poRHSMatrix.iCols);
+		Matrix oMatrix = poLHSMatrix.getNewMatrix(poLHSMatrix.iRows, poRHSMatrix.iCols);
+		oMatrix.applyMultiply(poLHSMatrix, poRHSMatrix);
+/*
+		for(int i = 0; i < oMatrix.iRows; i++)
 		{
-			for(int j = 0; j < oMatrix.getCols(); j++)
+			for(int j = 0; j < oMatrix.iCols; j++)
+			{
+				oMatrix.applyMultiply(poLHSMatrix, poRHSMatrix, i, j);
+			}
+		}
+*/
+		return oMatrix;
+	}
+
+	protected Matrix applyMultiply(final Matrix poLHSMatrix, final Matrix poRHSMatrix)
+	{
+		for(int i = 0; i < iRows; i++)
+		{
+			for(int j = 0; j < iCols; j++)
 			{
 				double dRowColSum = 0;
-
-				for(int k = 0; k < poLHSMatrix.getCols(); k++)
+		
+				for(int k = 0; k < poLHSMatrix.iCols; k++)
 				{
 					dRowColSum += poLHSMatrix.getElement(i, k) * poRHSMatrix.getElement(k, j);
 				}
-
-				oMatrix.setElement(i, j, dRowColSum);
+		
+				setElement(i, j, dRowColSum);
 			}
 		}
+		
+		return this;
+	}
 
-		return oMatrix;
+	/**
+	 * @param poLHSMatrix
+	 * @param poRHSMatrix
+	 * @param i
+	 * @param j
+	 */
+	protected Matrix applyMultiply(final Matrix poLHSMatrix, final Matrix poRHSMatrix, int i, int j)
+	{
+		double dRowColSum = 0;
+
+		for(int k = 0; k < poLHSMatrix.iCols; k++)
+		{
+			dRowColSum += poLHSMatrix.getElement(i, k) * poRHSMatrix.getElement(k, j);
+		}
+
+		setElement(i, j, dRowColSum);
+		
+		return this;
 	}
 
 	/**
@@ -1307,6 +1668,8 @@ implements Cloneable, Serializable
 	 */
 	public static Vector multiply(final Matrix poMatrix, final Vector poVector)
 	{
+		// Here the cast of Vector to Matrix is necessary
+		// to avoid infinite recursive calls to self
 		return new Vector(multiply(poMatrix, (Matrix)poVector));
 	}
 
@@ -1322,45 +1685,53 @@ implements Cloneable, Serializable
 	}
 
 	/**
-	 * M = M * d.
+	 * M1 = M * d.
 	 * @param poMatrix M
 	 * @param pdNum d
+	 * @return M1
 	 */
-	public static void multiply(Matrix poMatrix, final double pdNum)
+	public static Matrix multiply(final Matrix poMatrix, final double pdNum)
 	{
-		double[] pdMd = poMatrix.getMatrixArray();
+		Matrix oMatrix = (Matrix)poMatrix.clone();
+		//Matrix oMatrix = getMatrixCopy(poMatrix);
 
 		for(int i = 0; i < poMatrix.getElements(); i++)
 		{
-			pdMd[i] *= pdNum;
+			oMatrix.adMatrix[i] *= pdNum;
 		}
+		
+		return oMatrix;
 	}
 
 	/**
 	 * this = this * d.
 	 * @param pdNum d
+	 * @return this
 	 */
-	public void multiply(final double pdNum)
+	public Matrix multiply(final double pdNum)
 	{
-		multiply(this, pdNum);
+		setMatrixArray(multiply(this, pdNum).getMatrixArray());
+		return this;
 	}
 
 	/**
-	 * M = d * M.
+	 * M1 = d * M.
 	 * @param pdNum d
 	 * @param poMatrix M
+	 * @return M1
 	 */
-	public static void multiply(final double pdNum, Matrix poMatrix)
+	public static Matrix multiply(final double pdNum, final Matrix poMatrix)
 	{
-		multiply(poMatrix, pdNum);
+		return multiply(poMatrix, pdNum);
 	}
 
 	/**
 	 * M = M / d.
 	 * @param poMatrix M
 	 * @param pdNum d
+	 * @return modified M
 	 */
-	public static void divide(Matrix poMatrix, final double pdNum)
+	public static Matrix divide(Matrix poMatrix, final double pdNum)
 	{
 		double[] pdMd = poMatrix.getMatrixArray();
 
@@ -1368,18 +1739,102 @@ implements Cloneable, Serializable
 		{
 			pdMd[i] /= pdNum;
 		}
+		
+		return poMatrix;
 	}
 
+	/**
+	 * @param poLHSMatrix
+	 * @param poRHSMatrix
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	public static Matrix divide(final Matrix poLHSMatrix, final Matrix poRHSMatrix)
+	{
+		Matrix oMatrix = (Matrix)poRHSMatrix.clone();
+//		Matrix oMatrix = getMatrixCopy(poRHSMatrix);
+
+		// Multiply by the inverse if possible.
+		if(oMatrix.inverse() == true)
+		{
+			return multiply(poLHSMatrix, oMatrix);
+		}
+		else
+		{
+			assert false : "Matrix is not invertible";
+			return null;
+		}
+	}
+	
 	/**
 	 * this = this / d.
 	 * @param pdNum d
 	 * @since 0.3.0.3
 	 */
-	public void divide(final double pdNum)
+	public Matrix divide(final double pdNum)
 	{
-		divide(this, pdNum);
+		return divide(this, pdNum);
 	}
 
+	/**
+	 * @param piPow
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	public Matrix pow(int piPow)
+	{
+		Matrix oMatrix = pow(this, piPow);
+		setMatrixData(oMatrix);
+		return this;
+	}
+	
+	/**
+	 * @param poMatrix
+	 * @param piPow
+	 * @return
+	 * @since 0.3.0.6
+	 */
+	public static Matrix pow(final Matrix poMatrix, int piPow)
+	{
+		Matrix oMatrix = null;
+
+		if(piPow == 0)
+		{
+			oMatrix = new Matrix(poMatrix.iRows, poMatrix.iCols);
+			oMatrix.makeIdentity();
+		}
+		else
+		{
+			//oMatrix = getMatrixCopy(poMatrix);
+			oMatrix = (Matrix)poMatrix.clone();
+
+			if(piPow == 1)
+			{
+				// just do nothing
+			}
+			else
+			{
+				// This is true for both > or < 0
+				// M ^ n
+				for(int i = 0; i < Math.abs(piPow); i++)
+				{
+					oMatrix.multiply(oMatrix);
+				}
+				
+				// < 0; I / M ^ n
+				if(piPow < 0)
+				{
+					Matrix oI = new Matrix(oMatrix.iRows, oMatrix.iCols);
+					oI.makeIdentity();
+
+					oMatrix = divide(oI, oMatrix);
+				}
+			}
+		}
+		
+		return oMatrix;
+	}
+	
 	/**
 	 * this == M.
 	 * @param poMatrix M
@@ -1391,7 +1846,8 @@ implements Cloneable, Serializable
 	}
 
 	/**
-	 * M1 == M2.
+	 * M1 == M2. The equality of two matrices determined by
+	 * the equality of their dimensions and the contents.
 	 * @param poLHSMatrix M1
 	 * @param poRHSMatrix M2
 	 * @return <code>true</code> of the matrices are equal
@@ -1399,10 +1855,27 @@ implements Cloneable, Serializable
 	public static boolean equals(final Matrix poLHSMatrix, final Matrix poRHSMatrix)
 	{
 		return
-			poLHSMatrix.getRows() == poRHSMatrix.getRows() &&
-			poLHSMatrix.getCols() == poRHSMatrix.getCols() &&
-			Arrays.equals(poLHSMatrix.getMatrixArray(), poRHSMatrix.getMatrixArray());
+			poLHSMatrix.iRows == poRHSMatrix.iRows &&
+			poLHSMatrix.iCols == poRHSMatrix.iCols &&
+			Arrays.equals(poLHSMatrix.adMatrix, poRHSMatrix.adMatrix);
 	}
+
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object poMatrix)
+	{
+		if(poMatrix instanceof Matrix)
+		{
+			return this.equals((Matrix)poMatrix);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 
 	/**
 	 * Returns internal matrix representation as 2-dimensional array of doubles.
@@ -1739,7 +2212,97 @@ implements Cloneable, Serializable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.34 $";
+		return "$Revision: 1.47 $";
+	}
+
+	/**
+	 * Indicates the direction in which a matrix to be extended.
+	 * Might emerge to generic integer Enum in marf.util eventually.
+	 *
+	 * @author Serguei Mokhov
+	 */
+	public static class Direction
+	{
+		/**
+		 * Indicates East direction.
+		 */
+		public static final int EAST  = 0;
+
+		/**
+		 * Indicates West direction.
+		 */
+		public static final int WEST  = 1;
+
+		/**
+		 * Indicates North direction.
+		 */
+		public static final int NORTH = 2;
+
+		/**
+		 * Indicates South direction.
+		 */
+		public static final int SOUTH = 3;
+
+		/**
+		 * Default direction is <code>EAST</code>.
+		 */
+		private int iDirection = EAST;
+
+		/**
+		 * Default constructor.
+		 */
+		public Direction()
+		{
+		}
+
+		/**
+		 * Direction Constructor. Calls <code>setDirection()</code> internally.
+		 * @param piDirection custom direction to extend
+		 * @throws RuntimeException if piDirection is out of range
+		 * @see #setDirection(int)
+		 */
+		public Direction(final int piDirection)
+		{
+			setDirection(piDirection);
+		}
+
+		/**
+		 * Copy Constructor.
+		 * @param poDirection custom direction object to extend
+		 */
+		public Direction(final Direction poDirection)
+		{
+			this.iDirection = poDirection.getDirection();
+		}
+
+		/**
+		 * Retrieves current direction.
+		 * @return current value of direction
+		 */
+		public int getDirection()
+		{
+			return this.iDirection;
+		}
+
+		/**
+		 * Sets new value of current direction.
+		 * @param piDirection current value of direction to be
+		 * @throws RuntimeException if piDirection is outside of valid range of values.
+		 */
+		public void setDirection(final int piDirection)
+		{
+			if(piDirection < EAST || piDirection > SOUTH)
+			{
+				throw new RuntimeException
+				(
+					getClass().getName() +
+					".setDirection() - Invalid direction: " +
+					piDirection
+				);
+			}
+
+			this.iDirection = piDirection;
+		}
 	}
 }
 

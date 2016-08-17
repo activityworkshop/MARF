@@ -14,10 +14,10 @@ import marf.util.Debug;
  * and reloaded on demand.
  * </p>
  *
- * $Id: Grammar.java,v 1.21 2006/01/21 02:35:32 mokhov Exp $
+ * $Id: Grammar.java,v 1.23 2010/06/27 22:18:12 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.23 $
  * @since 0.3.0.2
  */
 public class Grammar
@@ -41,17 +41,17 @@ implements Serializable
 	/**
 	 * List of terminals.
 	 */
-	protected Vector oTerminalList = new Vector();
+	protected Vector<GrammarElement> oTerminalList = new Vector<GrammarElement>();
 
 	/**
 	 * List of non-terminals.
 	 */
-	protected Vector oNonTerminalList = new Vector();
+	protected Vector<GrammarElement> oNonTerminalList = new Vector<GrammarElement>();
 
 	/**
 	 * A vector of rules.
 	 */
-	protected Vector oRules = new Vector();
+	protected Vector<Rule> oRules = new Vector<Rule>();
 
 	/**
 	 * A local EOF terminal reference.
@@ -88,7 +88,7 @@ implements Serializable
 	}
 
 	/**
-	 * Computes first sets for all non-ternimals
+	 * Computes first sets for all non-terminals
 	 * from the non-terminals list.
 	 */
 	public void computeFirstSets()
@@ -109,7 +109,7 @@ implements Serializable
 				Debug.debug("Current rule: " + oRule);
 
 				NonTerminal oLHS = oRule.getLHS();
-				Vector oRHS = oRule.getRHS();
+				Vector<GrammarElement> oRHS = oRule.getRHS();
 
 				// Add first set of every RHS grammar element
 				// to the existing first set of the LHS minus epsilon
@@ -125,7 +125,7 @@ implements Serializable
 						continue;
 					}
 
-					Vector oRHSFirstSet = (Vector)oGrammarElement.getFirstSet().clone();
+					Vector<GrammarElement> oRHSFirstSet = (Vector<GrammarElement>)oGrammarElement.getFirstSet().clone();
 
 					if(oRHSFirstSet.contains(this.oEpsilonTerminal))
 					{
@@ -163,7 +163,7 @@ implements Serializable
 	}
 
 	/**
-	 * Computes follow sets for all non-ternimals
+	 * Computes follow sets for all non-terminals
 	 * from the non-terminals list.
 	 *
 	 * @throws SyntaxError if there is no starting non-terminal
@@ -199,7 +199,7 @@ implements Serializable
 			for(int k = 0; k < this.oRules.size(); k++)
 		    {
 				oRule = (Rule)this.oRules.elementAt(k);
-				Vector oRHSList = oRule.getRHS();
+				Vector<GrammarElement> oRHSList = oRule.getRHS();
 
 				// For every RHS elements and add the first set of each and
 				// everyone to our current follow set
@@ -210,7 +210,7 @@ implements Serializable
 		        {
 					GrammarElement oRHSElem = (GrammarElement)oRHSList.elementAt(i);
 
-					// Skip Semaantic Tokens
+					// Skip Semantic Tokens
 					if(oRHSElem.isNonTerminal() == false && oRHSElem.isTerminal() == false)
 					{
 						continue;
@@ -228,7 +228,7 @@ implements Serializable
 		                {
 							GrammarElement oNextRHSElem = (GrammarElement)oRHSList.elementAt(j);
 
-							Vector oNextRHSElemFirstSet = (Vector)oNextRHSElem.getFirstSet().clone();
+							Vector<GrammarElement> oNextRHSElemFirstSet = (Vector<GrammarElement>)oNextRHSElem.getFirstSet().clone();
 
 							if(oNextRHSElemFirstSet.contains(this.oEpsilonTerminal))
 							{
@@ -242,7 +242,7 @@ implements Serializable
 							}
 
 							// Terminate upon a given RHS here doesn't have
-							// the espsilon in it's first set
+							// the epsilon in it's first set
 							if(((GrammarElement)oRHSList.elementAt(j)).getFirstSet().contains(this.oEpsilonTerminal) == false)
 							{
 								break;
@@ -254,7 +254,7 @@ implements Serializable
 						// the RHS being processed.
 		                if(j == iRHSLen)
 		                {
-							Vector oLHSFollowSet = oRule.getLHS().getFollowSet();
+							Vector<GrammarElement> oLHSFollowSet = oRule.getLHS().getFollowSet();
 
 							if(((NonTerminal)oRHSElem).addToFollowSet(oLHSFollowSet))
 							{
@@ -328,7 +328,7 @@ implements Serializable
 	}
 
 	/**
-	 * Similarly to <code>contains(String)</code> lookss up
+	 * Similarly to <code>contains(String)</code> looks up
 	 * the index of the specified grammar element.
 	 * @param poGrammarElement a grammar element to look up.
 	 * @return the index of the grammar element with the given name or -1 if not found
@@ -344,7 +344,7 @@ implements Serializable
 	 * terminal and the index of the non-terminal grammar elements.
 	 * @param pstrTerminal the name of the terminal
 	 * @param piNonTerminalIndex the index of the non-terminal in the table
-	 * @return a reference tot he corresponding rule if found; null otherwise
+	 * @return a reference to the corresponding rule if found; null otherwise
 	 */
 	public final Rule getRule(final String pstrTerminal, final int piNonTerminalIndex)
 	{
@@ -390,7 +390,7 @@ implements Serializable
 	 * @param piA
 	 * @param piB
 	 * @param piC
-	 * @return a reference to the rule objec given parameters; or null if not found
+	 * @return a reference to the rule object given parameters; or null if not found
 	 * @throws RuntimeException if the rule found is not in CNF
 	 */
 	public final Rule getRule(int piA, int piB, int piC)
@@ -430,7 +430,7 @@ implements Serializable
 					continue;
 				}
 
-				Vector oRHS = oCurrentRule.getRHS();
+				Vector<GrammarElement> oRHS = oCurrentRule.getRHS();
 
 				if(oRHS.size() > 2)
 				{
@@ -465,9 +465,9 @@ implements Serializable
 	}
 
 	/**
-	 * Prforms serialization of this grammar data structure.
+	 * Performs serialization of this grammar data structure.
 	 * This particular implementation dumps the data in
-	 * the textula form to screen to STDOUT.
+	 * the textual form to screen to STDOUT.
 	 *
 	 * TODO: migrate to the MARF's dump/restore mechanisms
 	 *
@@ -643,7 +643,7 @@ implements Serializable
 	 * Allows querying for the collection of terminals of this grammar.
 	 * @return the collection of terminals
 	 */
-	public final Vector getTerminalList()
+	public final Vector<GrammarElement> getTerminalList()
 	{
 		return this.oTerminalList;
 	}
@@ -652,7 +652,7 @@ implements Serializable
 	 * Allows querying for the collection of non-terminals of this grammar.
 	 * @return the collection of non-terminals
 	 */
-	public final Vector getNonTerminalList()
+	public final Vector<GrammarElement> getNonTerminalList()
 	{
 		return this.oNonTerminalList;
 	}
@@ -661,7 +661,7 @@ implements Serializable
 	 * Allows querying for the collection of rules of this grammar.
 	 * @return the rules collection
 	 */
-	public final Vector getRules()
+	public final Vector<Rule> getRules()
 	{
 		return this.oRules;
 	}
@@ -672,7 +672,7 @@ implements Serializable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.21 $";
+		return "$Revision: 1.23 $";
 	}
 }
 

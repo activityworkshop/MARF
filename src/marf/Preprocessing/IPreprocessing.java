@@ -5,18 +5,19 @@ import marf.Storage.Sample;
 /**
  * <p>Preprocessing Interface.</p>
  *
- * <p>$Id: IPreprocessing.java,v 1.6 2005/12/27 23:55:30 mokhov Exp $</p>
+ * $Id: IPreprocessing.java,v 1.7 2006/07/28 16:56:22 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  * @since 0.3.0
  */
 public interface IPreprocessing
+extends Cloneable
 {
 	/**
 	 * Interface source code revision.
 	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.6 $";
+	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.7 $";
 
 	/**
 	 * Derivatives must implement this method to do general

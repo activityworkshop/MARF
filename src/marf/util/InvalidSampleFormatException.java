@@ -6,10 +6,10 @@ package marf.util;
  * a mismatch of a loader and file being loader or sample type
  * and its data.</p>
  * 
- * <p>$Id: InvalidSampleFormatException.java,v 1.11 2005/12/28 03:21:12 mokhov Exp $</p>
+ * $Id: InvalidSampleFormatException.java,v 1.12 2007/12/23 06:29:47 mokhov Exp $
  * 
  * @author Serguei Mokhov
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  * @since 0.0.1
  */
 public class InvalidSampleFormatException
@@ -81,7 +81,7 @@ extends MARFException
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.11 $";
+		return "$Revision: 1.12 $";
 	}
 }
 

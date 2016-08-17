@@ -1,8 +1,3 @@
-/*
- * SymbolTable Class
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
-
 package marf.nlp.Parsing;
 
 import java.util.Enumeration;
@@ -16,10 +11,8 @@ import marf.util.NotImplementedException;
  * TODO: complete implementation.
  * </p>
  *
- * $Id: SymbolTable.java,v 1.15 2006/01/16 21:43:44 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
+ * @version $Id: SymbolTable.java,v 1.24 2012/07/18 02:45:45 mokhov Exp $
  * @since 0.3.0.2
  */
 public class SymbolTable
@@ -27,13 +20,13 @@ public class SymbolTable
 	/**
 	 * This is a container for SymTabEnries.
 	 */
-	private Hashtable oSymTabEntries = null;
+	private Hashtable<String, SymTabEntry> oSymTabEntries = null;
 
 	/**
 	 * Global Index 'pointing' to all SymbolTables
 	 * to speedup search.
 	 */
-	protected Hashtable oSymTabIndex = new Hashtable();
+	protected Hashtable<String, SymbolTable> oSymTabIndex = new Hashtable<String, SymbolTable>();
 
 	/**
 	 * Backward reference.
@@ -60,7 +53,7 @@ public class SymbolTable
 	public SymbolTable(String pstrName)
 	{
 		this.strName = pstrName;
-		this.oSymTabEntries = new Hashtable();
+		this.oSymTabEntries = new Hashtable<String, SymTabEntry>();
 	}
 
 	/**
@@ -121,7 +114,7 @@ public class SymbolTable
 	 * This method adds also a type along
 	 * with the token. This as well assumes
 	 * that the token is defined because
-	 * invokation o fthe method can happen
+	 * invocation of the method can happen
 	 * only during the declaration of a symbol
 	 * in the source code.
 	 * 
@@ -231,7 +224,7 @@ public class SymbolTable
 		}
 
 		// Cascade down the tables
-		Enumeration oEnum = this.oSymTabEntries.elements();
+		Enumeration<SymTabEntry> oEnum = this.oSymTabEntries.elements();
 
 		while(oEnum.hasMoreElements() && oEntry == null)
 		{
@@ -251,7 +244,7 @@ public class SymbolTable
 	}
 
 	/**
-	 * Finds a reserved entry ginen table and ID and
+	 * Finds a reserved entry given table and ID and
 	 * marks it unreserved. This completes the insertion
 	 * (and definition) of the entry in the table.
 	 * @param pstrTable symbol table name to search for
@@ -306,7 +299,7 @@ public class SymbolTable
 	 * Allows querying for the contained entries.
 	 * @return the hashtable with SymTab entries
 	 */
-	public Hashtable getSymTabEntries()
+	public Hashtable<String, SymTabEntry> getSymTabEntries()
 	{
 		return this.oSymTabEntries;
 	}
@@ -402,7 +395,7 @@ public class SymbolTable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.15 $";
+		return "$Revision: 1.24 $";
 	}
 }
 

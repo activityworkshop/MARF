@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
@@ -18,7 +19,7 @@ import marf.MARF;
 import marf.Classification.Classification;
 import marf.Classification.ClassificationException;
 import marf.FeatureExtraction.IFeatureExtraction;
-import marf.Storage.Cluster;
+import marf.Storage.ITrainingSample;
 import marf.Storage.Result;
 import marf.Storage.StorageException;
 import marf.util.Debug;
@@ -34,12 +35,10 @@ import org.xml.sax.SAXParseException;
 /**
  * <p>Artificial Neural Network-based Classifier.</p>
  *
- * <p>$Id: NeuralNetwork.java,v 1.52 2006/01/23 00:03:34 mokhov Exp $</p>
- *
  * @author Ian Clement
  * @author Serguei Mokhov
  *
- * @version $Revision: 1.52 $
+ * @version $Id: NeuralNetwork.java,v 1.64 2012/07/09 03:53:32 mokhov Exp $
  * @since 0.0.1
  */
 public class NeuralNetwork
@@ -84,34 +83,34 @@ extends Classification
 	 */
 
 	/**
-	 * Array of Layers.
+	 * Collection of layers.
 	 */
-	private ArrayList oLayers = new ArrayList();
+	private ArrayList<Layer> oLayers = new ArrayList<Layer>();
 
 	/**
 	 * Current layer.
 	 */
-	private Layer oCurrentLayer;
+	private transient Layer oCurrentLayer;
 
 	/**
 	 * Current layer's #.
 	 */
-	private int iCurrenLayer = 0;
+	private transient int iCurrenLayer = 0;
 
 	/**
 	 * Number of the buffered layer.
 	 */
-	private int iCurrLayerBuf = 0;
+	private transient int iCurrLayerBuf = 0;
 
 	/**
 	 * Current Neuron.
 	 */
-	private Neuron oCurrNeuron;
+	private transient Neuron oCurrNeuron;
 
 	/**
 	 * Neuron Type.
 	 */
-	private int iNeuronType = Neuron.UNDEF;
+	private transient int iNeuronType = Neuron.UNDEF;
 
 	/**
 	 * Input layer.
@@ -171,21 +170,54 @@ extends Classification
 	public NeuralNetwork(IFeatureExtraction poFeatureExtraction)
 	{
 		super(poFeatureExtraction);
+		//this.oObjectToSerialize = this;
+//		this.iCurrentDumpMode = DUMP_XML;
+		this.iCurrentDumpMode = DUMP_GZIP_BINARY;
+//		this.iCurrentDumpMode = DUMP_BINARY;
+		this.strFilename = getDefaultFilename();
 	}
 
 	/* Classification API */
 
 	/**
-	 * Implementes training of Neural Net.
-	 * @return <code>true</code>
+	 * Implements training of Neural Net.
+	 * @return <code>true</code> if training was successful
 	 * @throws ClassificationException if there are any errors
 	 * @throws NullPointerException if module parameters are incorrectly set
 	 */
 	public final boolean train()
 	throws ClassificationException
 	{
-		Vector oTrainingSamples = null;
-		Vector oParams = null;
+		return trainImplementation(null);
+	}
+
+	/**
+	 * Implements training of Neural Net given the feature vector.
+	 * @param padFeatureVector the feature vector to train on
+	 * @return <code>true</code> if training was successful
+	 * @throws ClassificationException if there are any errors
+	 * @throws NullPointerException if module parameters are incorrectly set
+	 * @since 0.3.0.6
+	 */
+	public final boolean train(double[] padFeatureVector)
+	throws ClassificationException
+	{
+		return trainImplementation(padFeatureVector);
+	}
+
+	/**
+	 * Implements training of Neural Net.
+	 * @param padFeatureVector the feature vector to train on; if null pipelining mode is used
+	 * @return <code>true</code> if training was successful
+	 * @throws ClassificationException if there are any errors
+	 * @throws NullPointerException if module parameters are incorrectly set
+	 * @since 0.3.0.6
+	 */
+	private final boolean trainImplementation(double[] padFeatureVector)
+	throws ClassificationException
+	{
+		Vector<ITrainingSample> oTrainingSamples = null;
+		Vector<Serializable> oParams = null;
 
 		try
 		{
@@ -193,7 +225,20 @@ extends Classification
 			 * Get newly coming feature vector into the TrainingSet cluster
 			 * in case it's not there.
 			 */
-			super.train();
+			int iBackupDumpMode = this.iCurrentDumpMode;
+//			this.iCurrentDumpMode = DUMP_BINARY;
+			this.iCurrentDumpMode = DUMP_GZIP_BINARY;
+
+			if(padFeatureVector == null)
+			{
+				super.train();
+			}
+			else
+			{
+				super.train(padFeatureVector);
+			}
+
+			this.iCurrentDumpMode = iBackupDumpMode;
 
 			// Defaults
 			double dTrainConst = DEFAULT_TRAINING_CONSTANT;
@@ -230,8 +275,9 @@ extends Classification
 				// Execute the training for each training cluster of utterances
 				for(int i = 0; i < oTrainingSamples.size(); i++)
 				{
-					Cluster oCluster = (Cluster)oTrainingSamples.get(i);
-					train(oCluster.getMeanVector(), oCluster.getSubjectID(), dTrainConst);
+//					Cluster oCluster = (Cluster)oTrainingSamples.get(i);
+					ITrainingSample oTrainingSample = (ITrainingSample)oTrainingSamples.get(i);
+					train(oTrainingSample.getMeanVector(), oTrainingSample.getSubjectID(), dTrainConst);
 
 					// Commit modified weight
 					commit();
@@ -244,17 +290,19 @@ extends Classification
 
 				for(iCount = 0; iCount < oTrainingSamples.size(); iCount++)
 				{
-					Cluster oCluster = (Cluster)oTrainingSamples.get(iCount);
+//					Cluster oCluster = (Cluster)oTrainingSamples.get(iCount);
+					ITrainingSample oTrainingSample = (ITrainingSample)oTrainingSamples.get(iCount);
 
-					setInputs(oCluster.getMeanVector());
+					// XXX: can be median and feature vectors
+					setInputs(oTrainingSample.getMeanVector());
 					runNNet();
 
 					int iID = interpretAsBinary();
 
 //					dError += Math.abs(oCluster.getSubjectID() - iID);
-					dError += dMinErr * Math.abs(oCluster.getSubjectID() - iID);
+					dError += dMinErr * Math.abs(oTrainingSample.getSubjectID() - iID);
 
-					Debug.debug("Expected: " + oCluster.getSubjectID() + ", Got: " + iID + ", Error: " + dError);
+					Debug.debug("Expected: " + oTrainingSample.getSubjectID() + ", Got: " + iID + ", Error: " + dError);
 				}
 
 				if(iCount == 0)
@@ -274,6 +322,8 @@ extends Classification
 		}
 		catch(StorageException e)
 		{
+			e.printStackTrace(System.err);
+
 			throw new ClassificationException
 			(
 				"StorageException while dumping/restoring neural net: " +
@@ -282,6 +332,8 @@ extends Classification
 		}
 		catch(NullPointerException e)
 		{
+			e.printStackTrace(System.err);
+
 			throw new ClassificationException
 			(
 				"NeuralNetwork.train(): Missing required ModuleParam (" + oParams +
@@ -290,21 +342,28 @@ extends Classification
 		}
 	}
 
+	
 	/**
 	 * Neural Network implementation of classification routine.
+	 * In 0.3.0.6 the generic pipelined version of this API
+	 * <code>classify()</code> was refactored into the
+	 * <code>Classification</code>.
 	 *
 	 * @return <code>true</code> upon successful classification
 	 *
 	 * @throws ClassificationException when input feature vector
 	 * length does not match the size of the input neuron layer or
 	 * if there was a StorageException during dump/restore.
+	 * 
+	 * @since 0.3.0.6
 	 */
-	public final boolean classify()
+	public final boolean classify(double[] padFeatureVector)
 	throws ClassificationException
 	{
 		try
 		{
-			double[] adFeatures = this.oFeatureExtraction.getFeaturesArray();
+//			double[] adFeatures = this.oFeatureExtraction.getFeaturesArray();
+			double[] adFeatures = padFeatureVector;
 
 			// Reload trained net
 			restore();
@@ -336,6 +395,7 @@ extends Classification
 		}
 		catch(StorageException e)
 		{
+			e.printStackTrace(System.err);
 			throw new ClassificationException(e);
 		}
 	}
@@ -364,13 +424,13 @@ extends Classification
 	//----------- Methods for Creating the NNet -----------------
 
 	/**
-	 * Parses XML and produces NNet.
-	 * @param pstrFilename net's filename
-	 * @param pbDumpDTD if true DTD will be generated
+	 * Parses XML and produces a neural network data structure.
+	 * @param pstrFilename net's XML filename
+	 * @param pbValidateDTD if true DTD will be validated
 	 * @throws StorageException if there was an I/O or otherwise error
 	 * during initialization of the net
 	 */
-	public final void initialize(final String pstrFilename, final boolean pbDumpDTD)
+	public final void initialize(final String pstrFilename, final boolean pbValidateDTD)
 	throws StorageException
 	{
 		try
@@ -380,7 +440,7 @@ extends Classification
 			DocumentBuilderFactory oDBF = DocumentBuilderFactory.newInstance();
 
 			oDBF.setNamespaceAware(true);
-			oDBF.setValidating(pbDumpDTD);
+			oDBF.setValidating(pbValidateDTD);
 
 			DocumentBuilder oBuilder = oDBF.newDocumentBuilder();
 			OutputStreamWriter oErrorWriter = new OutputStreamWriter(System.err, OUTPUT_ENCODING);
@@ -409,48 +469,66 @@ extends Classification
 		{
 			try
 			{
-				Debug.debug("Generating new net...");
-
-				int iFeaturesNum = this.oFeatureExtraction.getFeaturesArray().length;
-
-				int iLastHiddenNeurons = Math.abs(iFeaturesNum - DEFAULT_OUTPUT_NEURON_BITS) / 2;
-
-				if(iLastHiddenNeurons == 0)
-				{
-					iLastHiddenNeurons = iFeaturesNum / 2;
-				}
-
-				// Generate fully linked 3-layer neural net with random weights
-				generate
-				(
-					// As many inputs as features
-					iFeaturesNum,
-
-					// "Middleware", from air
-					new int[]
-					{
-						iFeaturesNum * 2,
-						iFeaturesNum,
-						iLastHiddenNeurons
-					},
-
-					// Output layer
-					DEFAULT_OUTPUT_NEURON_BITS
-				);
-
-				Debug.debug("Dumping newly generated net...");
+				generate();
 				dump();
 			}
 			catch(ClassificationException oClassificationException)
 			{
+				oClassificationException.printStackTrace(System.err);
 				throw new StorageException(oClassificationException);
 			}
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
 			throw new StorageException(e);
 		}
     }
+
+	/**
+	 * Generates the initial network at random with the default parameters.
+	 * The defaults include the number of input neurons is the same as number of
+	 * features <it>f</it>, the number of output layer neurons is the same as the
+	 * number of bits in an integer <it>n</it>, and one middle (hidden) layer that has
+	 * <it>h = |f - n| / 2</i>. If  <it>f = n</it>, then <it>h = f / 2</it>.
+	 * @throws ClassificationException
+	 * @since 0.3.0.6
+	 * @see #DEFAULT_OUTPUT_NEURON_BITS
+	 */
+	public void generate()
+	throws ClassificationException
+	{
+		Debug.debug("Generating new net...");
+
+		int iFeaturesNum = this.oFeatureExtraction.getFeaturesArray().length;
+
+		int iLastHiddenNeurons = Math.abs(iFeaturesNum - DEFAULT_OUTPUT_NEURON_BITS) / 2;
+
+		if(iLastHiddenNeurons == 0)
+		{
+			iLastHiddenNeurons = iFeaturesNum / 2;
+		}
+
+		// Generate fully linked 3-layer neural net with random weights
+		generate
+		(
+			// As many inputs as features
+			iFeaturesNum,
+
+			// "Middleware", from air
+			new int[]
+			{
+				iFeaturesNum * 2,
+				iFeaturesNum,
+				iLastHiddenNeurons
+			},
+
+			// Output layer
+			DEFAULT_OUTPUT_NEURON_BITS
+		);
+
+		Debug.debug("Dumping newly generated net...");
+	}
 
 	/**
 	 * Performs DOM tree traversal to build neural network structure.
@@ -505,7 +583,7 @@ extends Classification
 					}
 					else if(strAttName.equals("index"))
 					{
-						Debug.debug("Indexing layers currently not supported... Assumings written order.");
+						Debug.debug("Indexing layers currently not supported... Assuming written order.");
 					}
 					else
 					{
@@ -738,7 +816,7 @@ extends Classification
 
 				if(this.iCurrenLayer >= 0)
 				{
-					Neuron oNeuronToAdd = ((Layer)this.oLayers.get(this.iCurrenLayer + 1)).getNeuron(strIndex);
+					Neuron oNeuronToAdd = this.oLayers.get(this.iCurrenLayer + 1).getNeuron(strIndex);
 
 					if(oNeuronToAdd == null)
 					{
@@ -863,7 +941,7 @@ extends Classification
 					oWriter.write("hidden");
 				}
 
-				oWriter.write("\" index=\"" + i + "\">");
+				oWriter.write(new StringBuffer("\" index=\"").append(i).append("\">").toString());
 				oWriter.newLine();
 
 				for(int j = 0; j < oTmpLayer.size(); j++)
@@ -1076,39 +1154,132 @@ extends Classification
     /* From Storage Manager */
 
 	/**
-	 * Dumps Neural Net to an XML file.
+	 * Dumps Neural Net to an XML or serialized file.
 	 * @throws StorageException
 	 */
 	public void dump()
 	throws StorageException
 	{
-		dumpXML
-		(
-			new StringBuffer()
-				.append(getClass().getName()).append(".")
-				.append(MARF.getPreprocessingMethod()).append(".")
-				.append(MARF.getFeatureExtractionMethod()).append(".xml")
-				.toString()
-		);
+		try
+		{
+			switch(this.iCurrentDumpMode)
+			{
+				case DUMP_GZIP_BINARY:
+				case DUMP_BINARY:
+				{
+					// No initialization was done for binary mode
+					if(this.oInputs.size() == 0)
+					{
+						generate();
+					}
+					
+					Vector<Serializable> oNeuralNetLayersData = new Vector<Serializable>(3);
+					oNeuralNetLayersData.add(this.oInputs);
+					oNeuralNetLayersData.add(this.oLayers);
+					oNeuralNetLayersData.add(this.oOutputs);
+					
+					this.oObjectToSerialize = oNeuralNetLayersData; 
+				}
+			}
+		}
+		catch(ClassificationException e)
+		{
+			e.printStackTrace(System.err);
+			throw new StorageException(e);
+		}
+
+		switch(this.iCurrentDumpMode)
+		{
+			case DUMP_GZIP_BINARY:
+				dumpGzipBinary();
+				break;
+
+			case DUMP_BINARY:
+				dumpBinary();
+				break;
+
+			default:
+				super.dump();
+		}
+		//dumpXML();
 	}
 
 	/**
-	 * Restores Neural Net from an XML file.
+	 * Restores Neural Net from an XML or serialized file.
 	 * @throws StorageException
 	 */
 	public void restore()
 	throws StorageException
 	{
-		initialize
-		(
-			new StringBuffer()
-				.append(getClass().getName()).append(".")
-				.append(MARF.getPreprocessingMethod()).append(".")
-				.append(MARF.getFeatureExtractionMethod()).append(".xml")
-				.toString(),
+		switch(this.iCurrentDumpMode)
+		{
+			case DUMP_GZIP_BINARY:
+				restoreGzipBinary();
+				break;
 
-			false
-		);
+			case DUMP_BINARY:
+				restoreBinary();
+				break;
+
+			default:
+				super.restore();
+		}
+		//restoreXML();
+	}
+
+	/**
+	 * Overrides the default implementation of <code>dumpXML()</code>.
+	 * Merely calls <code>dumpXML(String)</code>.
+	 * @see marf.Storage.IStorageManager#dumpXML()
+	 * @see #dumpXML(String)
+	 * @since 0.3.0.6
+	 */
+	public void dumpXML()
+	throws StorageException
+	{
+		dumpXML(getDefaultFilename());
+	}
+	
+	/**
+	 * Overrides the default implementation of <code>restoreXML()</code>.
+	 * Merely calls <code>initialize()</code>.
+	 * @see marf.Storage.IStorageManager#restoreXML()
+	 * @see #initialize(String, boolean)
+	 * @since 0.3.0.6
+	 */
+	public void restoreXML()
+	throws StorageException
+	{
+		initialize(getDefaultFilename(), false);
+	}
+
+	/**
+	 * @see marf.Storage.StorageManager#backSynchronizeObject()
+	 * @since 0.3.0.6
+	 */
+	@SuppressWarnings("unchecked")
+	public void backSynchronizeObject()
+	{
+		Vector<Serializable> oLoadedCopy = (Vector<Serializable>)this.oObjectToSerialize;
+
+		this.oInputs = (Layer)oLoadedCopy.firstElement();
+		this.oLayers = (ArrayList<Layer>)oLoadedCopy.elementAt(1);
+		this.oOutputs = (Layer)oLoadedCopy.lastElement();
+	}
+	
+	/**
+	 * Generates typical filename for dump/restore.
+	 * @return canonical filename for dump/restore based on the current dump mode.
+	 * @since 0.3.0.6 
+	 */
+	protected String getDefaultFilename()
+	{
+		return new StringBuffer()
+			.append(getClass().getName()).append(".")
+			.append(MARF.getPreprocessingMethod()).append(".")
+			.append(MARF.getFeatureExtractionMethod()).append(".")
+			.append(getDefaultExtension())
+			.toString();
 	}
 
 	/**
@@ -1135,7 +1306,7 @@ extends Classification
 		private PrintWriter oOut;
 
 		/**
-		 * Constructs our error handlier with the given writer.
+		 * Constructs our error handler with the given writer.
 		 * @param poOut writer to write errors to
 		 */
 		NeuralNetworkErrorHandler(PrintWriter poOut)
@@ -1215,7 +1386,7 @@ extends Classification
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.52 $";
+		return "$Revision: 1.64 $";
 	}
 }
 

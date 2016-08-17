@@ -3,10 +3,10 @@ package marf.Stats;
 /**
  * <p>A pure container for statistics of a word --- no business logic.</p>
  *
- * $Id: WordStats.java,v 1.20 2006/01/17 22:41:14 mokhov Exp $
+ * $Id: WordStats.java,v 1.21 2007/12/18 21:57:15 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  * @since 0.3.0.2
  */
 public class WordStats
@@ -75,7 +75,7 @@ extends StatisticalObject
 	}
 
 	/**
-	 * Reports lexeme, frequency, and rank of an occurence of a word.
+	 * Reports lexeme, frequency, and rank of an occurrence of a word.
 	 * @see java.lang.Object#toString()
 	 * @since 0.3.0.5
 	 */
@@ -103,7 +103,7 @@ extends StatisticalObject
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.20 $";
+		return "$Revision: 1.21 $";
 	}
 }
 

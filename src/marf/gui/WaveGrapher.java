@@ -14,10 +14,8 @@ import marf.util.NotImplementedException;
 /**
  * Class WaveGrapher.
  *
- * <p>$Id: WaveGrapher.java,v 1.15 2006/01/21 02:35:32 mokhov Exp $</p>
- *
  * @author Stephen Sinclair
- * @version $Revision: 1.15 $
+ * @version $Id: WaveGrapher.java,v 1.17 2012/07/18 16:00:20 mokhov Exp $
  * @since 0.0.1
  */
 public class WaveGrapher
@@ -115,11 +113,11 @@ extends StorageManager
 	/**
 	 * Returns source code revision information.
 	 * @return revision string
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.15 $";
+		return "$Revision: 1.17 $";
 	}
 }
 

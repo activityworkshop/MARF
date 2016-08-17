@@ -1,14 +1,7 @@
 package marf.Classification.RandomClassification;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Random;
 import java.util.Vector;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import marf.MARF;
 import marf.Classification.Classification;
@@ -22,14 +15,12 @@ import marf.util.Debug;
 /**
  * <p>Random Classification Module is for testing purposes.</p>
  *
- * <p>This represents the bottomline of the classification results.
+ * <p>This represents the bottom-line of the classification results.
  * All the other modules should be better than this 99% of the time.
  * If they are not, debug them.</p>
  *
- * <p>$Id: RandomClassification.java,v 1.17 2006/01/02 19:26:44 mokhov Exp $</p>
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.17 $
+ * @version $Id: RandomClassification.java,v 1.22 2012/07/09 03:53:32 mokhov Exp $
  * @since 0.2.0
  */
 public class RandomClassification
@@ -38,7 +29,7 @@ extends Classification
 	/**
 	 * Vector of integer IDs.
 	 */
-	private Vector oIDs = new Vector();
+	private Vector<Integer> oIDs = new Vector<Integer>();
 
 	/**
 	 * For serialization versioning.
@@ -57,19 +48,28 @@ extends Classification
 	{
 		super(poFeatureExtraction);
 
-		this.strFilename =
-			getClass().getName() + "." +
-			MARF.getPreprocessingMethod() + "." +
-			MARF.getFeatureExtractionMethod() + "." +
-			getDefaultExtension();
+		this.strFilename = new StringBuffer()
+			.append(getClass().getName()).append(".")
+			.append(MARF.getPreprocessingMethod()).append(".")
+			.append(MARF.getFeatureExtractionMethod()).append(".")
+			.append(getDefaultExtension())
+			.toString();
+		
+		this.oObjectToSerialize = this.oIDs;
 	}
 
 	/**
 	 * Picks an ID at random.
+	 * In 0.3.0.6 the generic pipelined version of this API
+	 * <code>classify()</code> was refactored into the
+	 * <code>Classification</code>.
+	 *
+	 * @param padFeatureVector unused
 	 * @return <code>true</code>
 	 * @throws ClassificationException
+	 * @since 0.3.0.6
 	 */
-	public final boolean classify()
+	public final boolean classify(double[] padFeatureVector)
 	throws ClassificationException
 	{
 		try
@@ -83,7 +83,7 @@ extends Classification
 			{
 				Debug.debug("RandomClassification.classify() --- ID set is of 0 length.");
 
-				this.oIDs.add(new Integer(iFirstID));
+				this.oIDs.add(iFirstID);
 
 				this.oResultSet.addResult
 				(
@@ -97,13 +97,13 @@ extends Classification
 			{
 				// Collect for stats
 				// XXX: Move to StatsCollector
-				iFirstID = ((Integer)this.oIDs.elementAt((int)(this.oIDs.size() * (new Random().nextDouble())))).intValue();
+				iFirstID = this.oIDs.elementAt((int)(this.oIDs.size() * (new Random().nextDouble())));
 				iSecondID = iFirstID;
 
 				// Pick a different second best ID if there are > 1 IDs in there
 				while(iSecondID == iFirstID && this.oIDs.size() > 1)
 				{
-					iSecondID = ((Integer)this.oIDs.elementAt((int)(this.oIDs.size() * (new Random().nextDouble())))).intValue();
+					iSecondID = this.oIDs.elementAt((int)(this.oIDs.size() * (new Random().nextDouble())));
 				}
 
 				// If they are still equal (in case of one ID in oIDs), just add one.
@@ -122,21 +122,24 @@ extends Classification
 		}
 		catch(StorageException e)
 		{
+			e.printStackTrace(System.err);
 			throw new ClassificationException(e);
 		}
 	}
 
 	/**
 	 * Simply stores incoming ID's to later pick one at random.
+	 * @param padFeatureVector unused
 	 * @return <code>true</code> if training was successful
 	 * @throws ClassificationException
+	 * @since 0.3.0.6
 	 */
-	public final boolean train()
+	public final boolean train(double[] padFeatureVector)
 	throws ClassificationException
 	{
 		try
 		{
-			Integer oIntegerID = new Integer(MARF.getCurrentSubject());
+			Integer oIntegerID = MARF.getCurrentSubject();
 
 			restore();
 
@@ -149,8 +152,9 @@ extends Classification
 
 				Debug.debug
 				(
-					"RandomClassification.train() --- added ID: " + MARF.getCurrentSubject() + ",\n" +
-					"all IDs: " + this.oIDs
+					new StringBuffer("RandomClassification.train() --- added ID: ")
+						.append(MARF.getCurrentSubject()).append(",\n")
+						.append("all IDs: ").append(this.oIDs)
 				);
 			}
 
@@ -158,6 +162,7 @@ extends Classification
 		}
 		catch(StorageException e)
 		{
+			e.printStackTrace(System.err);
 			throw new ClassificationException("Exception in RandomClassification.train() --- " + e.getMessage());
 		}
 	}
@@ -171,19 +176,18 @@ extends Classification
 	public final void dump()
 	throws StorageException
 	{
-		try
+		switch(this.iCurrentDumpMode)
 		{
-			FileOutputStream oFOS = new FileOutputStream(this.strFilename);
-			GZIPOutputStream oGZOS = new GZIPOutputStream(oFOS);
-			ObjectOutputStream oOOS = new ObjectOutputStream(oGZOS);
+			case DUMP_BINARY:
+				dumpBinary();
+				break;
 
-			oOOS.writeObject(this.oIDs);
-			oOOS.flush();
-			oOOS.close();
-		}
-		catch(Exception e)
-		{
-			throw new StorageException(e);
+			case DUMP_GZIP_BINARY:
+				dumpGzipBinary();
+				break;
+
+			default:
+				super.dump();
 		}
 	}
 
@@ -194,33 +198,35 @@ extends Classification
 	public final void restore()
 	throws StorageException
 	{
-		try
+		switch(this.iCurrentDumpMode)
 		{
-			FileInputStream oFIS = new FileInputStream(this.strFilename);
-			GZIPInputStream oGZIS = new GZIPInputStream(oFIS);
-			ObjectInputStream oOIS = new ObjectInputStream(oGZIS);
+			case DUMP_BINARY:
+				restoreBinary();
+				break;
 
-			this.oIDs = (Vector)oOIS.readObject();
+			case DUMP_GZIP_BINARY:
+				restoreGzipBinary();
+				break;
 
-			oOIS.close();
+			default:
+				super.restore();
 		}
-		catch(FileNotFoundException e)
+		
+		if(this.oIDs == null)
 		{
-			this.oIDs = new Vector();
-			dump();
+			this.oIDs = new Vector<Integer>();
+			this.oObjectToSerialize = this.oIDs;
 		}
-		catch(ClassNotFoundException e)
-		{
-			throw new StorageException
-			(
-				"RandomClassification.restore() --- ClassNotFoundException: " +
-				e.getMessage()
-			);
-		}
-		catch(Exception e)
-		{
-			throw new StorageException(e);
-		}
+	}
+
+	/**
+	 * @see marf.Storage.StorageManager#backSynchronizeObject()
+	 * @since 0.3.0.6
+	 */
+	@SuppressWarnings("unchecked")
+	public synchronized void backSynchronizeObject()
+	{
+		this.oIDs = (Vector<Integer>)this.oObjectToSerialize;
 	}
 
 	/**
@@ -228,7 +234,7 @@ extends Classification
 	 *
 	 * @return Result object
 	 *
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public Result getResult()
 	{
@@ -238,7 +244,7 @@ extends Classification
 	/**
 	 * Returns string representation of the internals of this object.
 	 * @return String
-	 * @since 0.3.0
+	 * @since 0.3.0.1
 	 */
 	public String toString()
 	{
@@ -259,7 +265,7 @@ extends Classification
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.17 $";
+		return "$Revision: 1.22 $";
 	}
 }
 

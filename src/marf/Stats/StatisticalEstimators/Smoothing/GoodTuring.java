@@ -9,10 +9,10 @@ import marf.Stats.Ngram;
  * TODO: complete.
  * </p>
  *
- * $Id: GoodTuring.java,v 1.20 2006/01/29 22:28:22 mokhov Exp $
+ * $Id: GoodTuring.java,v 1.21 2007/12/18 21:57:15 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  * @since 0.3.0.2
  */
 public class GoodTuring
@@ -78,7 +78,7 @@ extends Smoothing
 				{
 					for(int j = 0; j < iV; j++)
 					{
-						int iOccurence = (int)this.oProbabilityTable.getOccurence(j);
+						int iOccurence = (int)this.oProbabilityTable.getOccurrence(j);
 
 						if(iOccurence <= this.iThreshold + 1)
 						{
@@ -88,27 +88,27 @@ extends Smoothing
 
 					for(int j = 0; j < iV; j++)
 					{
-						double dNewOccurence;
+						double dNewOccurrence;
 
-						int iOccurence = (int)this.oProbabilityTable.getOccurence(j);
+						int iOccurrence = (int)this.oProbabilityTable.getOccurrence(j);
 
-						if(iOccurence > this.iThreshold)
+						if(iOccurrence > this.iThreshold)
 						{
 							continue;
 						}
 						else
 						{
-							dNewOccurence =
+							dNewOccurrence =
 								(
-									(iOccurence + 1) * (alN[iOccurence + 1] / (double)alN[iOccurence])
+									(iOccurrence + 1) * (alN[iOccurrence + 1] / (double)alN[iOccurrence])
 									-
-									(iOccurence * (this.iThreshold + 1) * alN[this.iThreshold + 1] / (double)alN[1])
+									(iOccurrence * (this.iThreshold + 1) * alN[this.iThreshold + 1] / (double)alN[1])
 								)
 								/
 								(1 - (this.iThreshold + 1) * alN[this.iThreshold + 1] / (double)alN[1]);
 						}
 
-						this.oProbabilityTable.setOccurence(j, dNewOccurence);
+						this.oProbabilityTable.setOccurrence(j, dNewOccurrence);
 					}
 
 					break;
@@ -123,7 +123,7 @@ extends Smoothing
 					{
 						for(int j = 0; j < iV; j++)
 						{
-							int iOccurence = (int)this.oProbabilityTable.getOccurence(j, i);
+							int iOccurence = (int)this.oProbabilityTable.getOccurrence(j, i);
 
 							if(iOccurence <= this.iThreshold + 1)
 							{
@@ -142,7 +142,7 @@ extends Smoothing
 						{
 							double dNewOccurence;
 
-							int iOccurence = (int)this.oProbabilityTable.getOccurence(j, i);
+							int iOccurence = (int)this.oProbabilityTable.getOccurrence(j, i);
 
 							if(iOccurence > this.iThreshold)
 							{
@@ -163,11 +163,11 @@ extends Smoothing
 /*
 							Debug.debug
 							(
-								"Old Occurence: " + lOccurence + "\n" +
-								"New Occurence: " + dNewOccurence
+								"Old Occurrence: " + lOccurence + "\n" +
+								"New Occurrence: " + dNewOccurence
 							);
 */
-							this.oProbabilityTable.setOccurence(j, i, dNewOccurence);
+							this.oProbabilityTable.setOccurrence(j, i, dNewOccurence);
 						}
 					}
 
@@ -183,7 +183,7 @@ extends Smoothing
 						{
 							for(int j = 0; j < iV; j++)
 							{
-								int iOccurence = (int)this.oProbabilityTable.getOccurence(j, i, k);
+								int iOccurence = (int)this.oProbabilityTable.getOccurrence(j, i, k);
 
 								if(iOccurence <= this.iThreshold + 1)
 								{
@@ -197,23 +197,23 @@ extends Smoothing
 						for(int i = 0; i < iV; i++)
 							for(int j = 0; j < iV; j++)
 							{
-								double dNewOccurence;
+								double dNewOccurrence;
 
-								int lOccurence = (int)this.oProbabilityTable.getOccurence(j, i, k);
+								int iOccurrence = (int)this.oProbabilityTable.getOccurrence(j, i, k);
 
-								if(lOccurence > this.iThreshold)
+								if(iOccurrence > this.iThreshold)
 									continue;
 								else
-									dNewOccurence =
+									dNewOccurrence =
 										(
-											(lOccurence + 1) * (alN[lOccurence + 1] / (double)alN[lOccurence])
+											(iOccurrence + 1) * (alN[iOccurrence + 1] / (double)alN[iOccurrence])
 											-
-											(lOccurence * (this.iThreshold + 1) * alN[this.iThreshold + 1] / (double)alN[1])
+											(iOccurrence * (this.iThreshold + 1) * alN[this.iThreshold + 1] / (double)alN[1])
 										)
 										/
 										(1 - (this.iThreshold + 1) * alN[this.iThreshold + 1] / (double)alN[1]);
 
-								this.oProbabilityTable.setOccurence(j, i, k, dNewOccurence);
+								this.oProbabilityTable.setOccurrence(j, i, k, dNewOccurrence);
 							}
 
 					break;
@@ -253,7 +253,7 @@ extends Smoothing
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.20 $";
+		return "$Revision: 1.21 $";
 	}
 }
 

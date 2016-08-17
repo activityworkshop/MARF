@@ -1,5 +1,6 @@
 package marf.Classification;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 import marf.MARF;
@@ -8,20 +9,18 @@ import marf.Storage.ResultSet;
 import marf.Storage.StorageException;
 import marf.Storage.StorageManager;
 import marf.Storage.TrainingSet;
-import marf.util.Debug;
+import marf.Storage.Loaders.AudioSampleLoader;
 
 
 /**
  * <p>Abstract Classification Module.
- * A generic implementation of the IClassification interface.
- * The derivatives must inherit from this module, and if they cannot,
- * they should implement IClassification themselves. 
+ * A generic implementation of the <code>IClassification</code> interface.
+ * The derivatives must inherit from this class, and if they cannot,
+ * they should implement <code>IClassification</code> themselves. 
  * </p>
  *
- * <p>$Id: Classification.java,v 1.41 2006/01/02 22:24:00 mokhov Exp $</p>
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.41 $
+ * @version $Id: Classification.java,v 1.56 2015/03/22 19:32:08 mokhov Exp $
  * @since 0.0.1
  */
 public abstract class Classification
@@ -40,6 +39,17 @@ implements IClassification
 	 */
 	protected TrainingSet oTrainingSet = null;
 
+	/**
+	 * Local reference to the array of features, either obtained
+	 * from the feature extraction module or passed directly to
+	 * train() or classify.
+	 * Used in prevention of NullPointerException, bug #1539695.
+	 * @since 0.3.0.6
+	 * @see #train(double[])
+	 * @see IClassification#classify(double[])
+	 */
+	protected double[] adFeatureVector = null;
+	
 	/**
 	 * Classification result set. May contain
 	 * one or more results (in case of similarity).
@@ -61,17 +71,16 @@ implements IClassification
 
 	/**
 	 * Generic Classification Constructor.
-	 * @param poFeatureExtraction FeatureExtraction module reference
+	 * @param poFeatureExtraction FeatureExtraction module reference; may be null
 	 */
 	protected Classification(IFeatureExtraction poFeatureExtraction)
 	{
-		// TODO: null validation?
 		this.oFeatureExtraction = poFeatureExtraction;
 
 		// See if there is a request for dump format
 		if(MARF.getModuleParams() != null)
 		{
-			Vector oParams = MARF.getModuleParams().getClassificationParams();
+			Vector<Serializable> oParams = MARF.getModuleParams().getClassificationParams();
 
 			// TODO: Must be validated of what's coming in
 			if(oParams != null && oParams.size() > 0)
@@ -85,7 +94,8 @@ implements IClassification
 
 	/**
 	 * Generic training routine for building/updating
-	 * mean vectors in the training set.
+	 * mean vectors in the training set. Assumes presence
+	 * of a non-null feature extraction module for pipelining.
 	 * Can be overridden, and if the overriding classifier is using
 	 * <code>TrainingSet</code>, it should call <code>super.train();</code>
 	 *
@@ -97,8 +107,30 @@ implements IClassification
 	public boolean train()
 	throws ClassificationException
 	{
+		return train(this.oFeatureExtraction.getFeaturesArray());
+	}
+
+	/**
+	 * Generic training routine for building/updating
+	 * mean vectors in the training set.
+	 * Can be overridden, and if the overriding classifier is using
+	 * <code>TrainingSet</code>, it should call <code>super.train();</code>
+	 *
+	 * @param padFeatureVector feature vector to train on
+	 * @return <code>true</code> if training was successful
+	 * (i.e. mean vector was updated); <code>false</code> otherwise
+	 * @throws ClassificationException if there was a problem while training
+	 * @see TrainingSet
+	 * @since 0.3.0.6
+	 */
+	public boolean train(double[] padFeatureVector)
+	throws ClassificationException
+	{
 		// For exception handling
 		String strPhase = "[start]";
+		
+		// Bug #1539695
+		this.adFeatureVector = padFeatureVector;
 
 		/*
 		 * It is important to use saveTrainingSet() and loadTrainingSet()
@@ -132,7 +164,7 @@ implements IClassification
 
 			boolean bVectorAdded = this.oTrainingSet.addFeatureVector
 			(
-				this.oFeatureExtraction.getFeaturesArray(),
+				this.adFeatureVector,
 				MARF.getSampleFile(),
 				MARF.getCurrentSubject(),
 				MARF.getPreprocessingMethod(),
@@ -140,7 +172,7 @@ implements IClassification
 			);
 
 			// No point of doing I/O if we didn't add anything.
-			if(bVectorAdded)
+			if(bVectorAdded == true)
 			{
 				strPhase = "[dumping updated training set]";
 				saveTrainingSet();
@@ -150,20 +182,36 @@ implements IClassification
 		}
 		catch(NullPointerException e)
 		{
+			e.printStackTrace(System.err);
+
 			throw new ClassificationException
 			(
 				new StringBuffer()
 					.append("NullPointerException in Classification.train(): oTrainingSet = ")
 					.append(this.oTrainingSet)
 					.append(", oFeatureExtraction = ").append(this.oFeatureExtraction)
-					.append(", FeaturesArray = ").append(this.oFeatureExtraction.getFeaturesArray())
-					.append(", phase: ").append(strPhase).toString()
+					.append(", FeaturesArray = ").append(this.adFeatureVector)
+					.append(", phase: ").append(strPhase)
+					.toString()
 			);
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
 			throw new ClassificationException("Phase: " + strPhase, e);
 		}
+	}
+
+	/**
+	 * Generic classification routine that assumes a presence of
+	 * a valid non-null feature extraction module for pipeline operation.
+	 * @see marf.Classification.IClassification#classify()
+	 * @since 0.3.0.6
+	 */
+	public boolean classify()
+	throws ClassificationException
+	{
+		return classify(this.oFeatureExtraction.getFeaturesArray());
 	}
 
 	/* From Storage Manager */
@@ -176,7 +224,16 @@ implements IClassification
 	public void dump()
 	throws StorageException
 	{
-		saveTrainingSet();
+		switch(this.iCurrentDumpMode)
+		{
+			case DUMP_GZIP_BINARY:
+			case DUMP_BINARY:
+				saveTrainingSet();
+				break;
+
+			default:
+				super.dump();
+		}
 	}
 
 	/**
@@ -187,7 +244,16 @@ implements IClassification
 	public void restore()
 	throws StorageException
 	{
-		loadTrainingSet();
+		switch(this.iCurrentDumpMode)
+		{
+			case DUMP_GZIP_BINARY:
+			case DUMP_BINARY:
+				loadTrainingSet();
+				break;
+
+			default:
+				super.restore();
+		}
 	}
 
 	/**
@@ -215,7 +281,7 @@ implements IClassification
 			{
 				// [SM, 2003-05-02] Should here be something? Like a debug() call or
 				// more severe things?
-				Debug.debug
+				System.err.println
 				(
 					"WARNING: Classification.saveTrainingSet() -- TrainingSet is null.\n" +
 					"         No TrainingSet is saved."
@@ -224,6 +290,7 @@ implements IClassification
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
 			throw new StorageException(e);
 		}
 	}
@@ -232,6 +299,7 @@ implements IClassification
 	 * Loads TrainingSet from a file. Called by <code>restore()</code>.
 	 * @since 0.2.0
 	 * @throws StorageException if there is a problem loading the training set from disk
+	 * @see #restore()
 	 */
 	private final void loadTrainingSet()
 	throws StorageException
@@ -240,10 +308,7 @@ implements IClassification
 		{
 			if(this.oTrainingSet == null)
 			{
-				this.oTrainingSet = new TrainingSet();
-				this.oTrainingSet.setDumpMode(this.iCurrentDumpMode);
-				this.oTrainingSet.setFilename(getTrainingSetFilename());
-				this.oTrainingSet.restore();
+				this.oTrainingSet = loadTrainingSet(this.iCurrentDumpMode, getTrainingSetFilename());
 			}
 
 			//TODO: if TrainingSet is not null
@@ -251,15 +316,56 @@ implements IClassification
 			{
 				// [SM, 2003-05-02] Should here be something? Like a debug() call or
 				// more severe things?
-				Debug.debug
+				System.err.println
 				(
 					"WARNING: Classification.loadTrainingSet() -- TrainingSet is not null.\n" +
 					"         No TrainingSet is loaded."
 				);
 			}
 		}
+		catch(StorageException e)
+		{
+			e.printStackTrace(System.err);
+			throw e;
+		}
 		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
+			throw new StorageException(e);
+		}
+	}
+
+	/**
+	 * Allows loading of the training sets for
+	 * debugging and browsing purposes by external
+	 * classes.
+	 *
+	 * @param piDumpMode
+	 * @param pstrFilename
+	 * @throws StorageException
+	 * @return loaded training set bean if I/O was successful
+	 * 
+	 * @since 0.3.0.6
+	 */
+	public static TrainingSet loadTrainingSet(int piDumpMode, String pstrFilename)
+	throws StorageException
+	{
+		try
+		{
+			TrainingSet oTrainingSet = new TrainingSet();
+			oTrainingSet.setDumpMode(piDumpMode);
+			oTrainingSet.setFilename(pstrFilename);
+			oTrainingSet.restore();
+			return oTrainingSet;
+		}
+		catch(StorageException e)
+		{
+			e.printStackTrace(System.err);
+			throw e;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace(System.err);
 			throw new StorageException(e);
 		}
 	}
@@ -280,28 +386,105 @@ implements IClassification
 	 * <p>Filename is constructed using fully-qualified class of
 	 * either TrainingSet or a classifier name with global
 	 * clustering info such as preprocessing and feature
-	 * extraction methods, so that ony that cluster can be reloaded
+	 * extraction methods, so that only that cluster can be reloaded
 	 * after.</p>
 	 *
-	 * May be overridden by the drivatives when necessary.
+	 * May be overridden by the derivatives when necessary.
 	 *
 	 * @return String, filename
 	 * @since 0.2.0
 	 */
 	protected String getTrainingSetFilename()
 	{
-		return
-			// Fully-qualified class name
-			this.oTrainingSet.getClass().getName() + "." +
+		// Prevents NullPointerException, bug #1539695
+		int iFeaturesCount
+			= this.oFeatureExtraction == null
+			? (this.adFeatureVector == null ? 0 : this.adFeatureVector.length)
+			: this.oFeatureExtraction.getFeaturesArray().length;
 
-			// Global cluster: <PR>.<FE>.<FVS>
-			// For the same FE method we may have different feature vector sizes
-			MARF.getPreprocessingMethod() + "." +
-			MARF.getFeatureExtractionMethod() + "." +
-			this.oFeatureExtraction.getFeaturesArray().length + "." +
+		// For comparison, distinguish samples with or without
+		// noise and silence removed
+		int iNoiseRemoved = 0;
+		int iSilenceRemoved = 0;
+
+		if(MARF.getModuleParams() != null)
+		{
+			Vector<Serializable> oPreprocessingParams = MARF.getModuleParams().getPreprocessingParams();
+			
+			if(oPreprocessingParams != null)
+			{
+				switch(oPreprocessingParams.size())
+				{
+					case 0:
+						break;
+					
+					case 1:
+					{
+						if(oPreprocessingParams.firstElement() instanceof Boolean)
+						{
+							iNoiseRemoved = ((Boolean)oPreprocessingParams.firstElement()).booleanValue() == true ? 1 : 0;
+						}
+						
+						break;
+					}
+					
+					default:
+					{
+						if(oPreprocessingParams.firstElement() instanceof Boolean)
+						{
+							iNoiseRemoved = ((Boolean)oPreprocessingParams.firstElement()).booleanValue() == true ? 1 : 0;
+						}
+						
+						if(oPreprocessingParams.elementAt(1) instanceof Boolean)
+						{
+							iSilenceRemoved = ((Boolean)oPreprocessingParams.elementAt(1)).booleanValue() == true ? 1 : 0;
+						}
+
+						break;
+					}
+				}
+			}
+		}
+
+		// To partition saved cluster by their sampling frequency
+		float fDefaultLoadingFrequency = 0f;
+		
+		if(MARF.getSampleLoader() instanceof AudioSampleLoader)
+		{
+			fDefaultLoadingFrequency = ((AudioSampleLoader)MARF.getSampleLoader()).getRequiredFrequency(); 
+		}
+		
+		return new StringBuffer()
+			// Any prefix specified by an application
+			.append(MARF.getTrainingSetFilenamePrefix())
+			
+			// Fully-qualified class name
+			.append(TrainingSet.class.getName()).append(".")
+			
+			// Loaders affect the training sets, so put the loader info here;
+			// all custom loader plug-ins also get the class name in the mix in
+			// case there are more than one custom loader in the same application.
+			.append(MARF.getSampleFormat())
+			.append(MARF.getSampleFormat() == MARF.CUSTOM ? "-".concat(MARF.getSampleLoader().getClass().getName()) : "")
+			.append(fDefaultLoadingFrequency)
+			.append(".")
+
+			// Distinguish between samples with removed noise or silence
+			// or both or none
+			.append(iNoiseRemoved).append(".")
+			.append(iSilenceRemoved).append(".")
+
+			// Global cluster: <PR>.<FE>.<FVCLTYPE>.<FVS>
+			// For the same FE method we may have different feature vector sizes or
+			// how they are clustered.
+			.append(MARF.getPreprocessingMethod()).append(".")
+			.append(MARF.getFeatureExtractionMethod()).append(".")
+			.append(MARF.getConfiguration().getClusterFormat()).append(".")
+			.append(iFeaturesCount).append(".")
 
 			// Extension depending on the dump type
-			getDefaultExtension();
+			.append(getDefaultExtension())
+			.toString();
 	}
 
 	/**
@@ -315,7 +498,7 @@ implements IClassification
 	}
 
 	/**
-	 * Allows setting the features surce.
+	 * Allows setting the features source.
 	 * @param poFeatureExtraction the FeatureExtraction object to set
 	 * @since 0.3.0.4
 	 */
@@ -325,7 +508,7 @@ implements IClassification
 	}
 
 	/**
-	 * Implementes Cloneable interface for the Classification object.
+	 * Implements Cloneable interface for the Classification object.
 	 * The contained FeatureExtraction isn't cloned at this point,
 	 * and is just assigned to the clone.
 	 * @see java.lang.Object#clone()
@@ -347,7 +530,7 @@ implements IClassification
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.41 $";
+		return "$Revision: 1.56 $";
 	}
 }
 

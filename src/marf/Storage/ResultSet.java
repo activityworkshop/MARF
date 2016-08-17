@@ -11,12 +11,11 @@ import marf.util.comparators.ResultComparator;
 
 /**
  * <p>Class ResultSet represents classification result
- * set - IDs and some stats.</p>
- *
- * <p>$Id: ResultSet.java,v 1.20 2006/01/02 22:24:00 mokhov Exp $</p>
+ * set - IDs and some stats. May be sorted.
+ * </p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.20 $
+ * @version $Id: ResultSet.java,v 1.24 2010/09/27 23:56:03 mokhov Exp $
  * @since 0.3.0.2
  */
 public class ResultSet
@@ -30,9 +29,9 @@ implements Serializable, Cloneable
 
 	/**
 	 * Distances from other samples and other stats or
-	 * probabilities and likelyhood (growable and shrinkable).
+	 * probabilities and likelihood (growable and shrinkable).
 	 */
-	protected Vector oResultSet = null;
+	protected Vector<Result> oResultSet = null;
 
 	/**
 	 * References to the objects in the oResultSet
@@ -72,7 +71,7 @@ implements Serializable, Cloneable
 	 */
 	public ResultSet()
 	{
-		this(new Vector());
+		this(new Vector<Result>());
 	}
 
 	/**
@@ -80,7 +79,7 @@ implements Serializable, Cloneable
 	 * @param poResultSet Vector of relevant data
 	 * @throws IllegalArgumentException if the parameter is null
 	 */
-	public ResultSet(Vector poResultSet)
+	public ResultSet(Vector<Result> poResultSet)
 	{
 		if(poResultSet == null)
 		{
@@ -95,11 +94,12 @@ implements Serializable, Cloneable
 	 * @param poResultSet ResultSet object reference to make a copy of
 	 * @since 0.3.0.5
 	 */
+	@SuppressWarnings("unchecked")
 	public ResultSet(final ResultSet poResultSet)
 	{
-		this.oResultSet = (Vector)poResultSet.getResultSetVector().clone();
-		this.iSortMode = poResultSet.getSortMode();
-		this.aoResultSetSorted = (Result[])poResultSet.getResultSetSorted().clone();
+		this.oResultSet = (Vector<Result>)poResultSet.oResultSet.clone();
+		this.iSortMode = poResultSet.iSortMode;
+		this.aoResultSetSorted = (Result[])poResultSet.aoResultSetSorted.clone();
 	}
 
 	/**
@@ -201,7 +201,7 @@ implements Serializable, Cloneable
 	 */
 	public final int getRandomID()
 	{
-		return ((Result)this.oResultSet.elementAt((int)(Math.random() * size()))).getID();
+		return this.oResultSet.elementAt((int)(Math.random() * size())).getID();
 	}
 
 	/**
@@ -219,7 +219,7 @@ implements Serializable, Cloneable
 		if(this.iSortMode != piMode)
 		{
 			this.iSortMode = piMode;
-			this.aoResultSetSorted = (Result[])oResultSet.toArray(new Result[0]);
+			this.aoResultSetSorted = this.oResultSet.toArray(new Result[0]);
 			Arrays.sort(this.aoResultSetSorted, new ResultComparator(this.iSortMode));
 		}
 	}
@@ -227,7 +227,7 @@ implements Serializable, Cloneable
 	/**
 	 * Add result to the result set.
 	 * @param piID subject ID recognized
-	 * @param pdOutcome outcome of the recongnition distance or likelyhood
+	 * @param pdOutcome outcome of the recognition distance or likelihood
 	 * @param pstrDescription textual description of the result
 	 */
 	public final void addResult(int piID, double pdOutcome, String pstrDescription)
@@ -242,17 +242,22 @@ implements Serializable, Cloneable
 	 * Add result to the result set. Generates description based
 	 * on the two parameters.
 	 * @param piID subject ID recognized
-	 * @param pdOutcome outcome of the recongnition distance or likelyhood
+	 * @param pdOutcome outcome of the recognition distance or likelihood
 	 */
 	public final void addResult(int piID, double pdOutcome)
 	{
-		addResult(piID, pdOutcome, "ID=" + piID + ", outcome=" + pdOutcome);
+		addResult
+		(
+			piID,
+			pdOutcome,
+			new StringBuffer("ID=").append(piID).append(", outcome=").append(pdOutcome).toString()
+		);
 	}
 
 	/**
 	 * Add result to the result set based on already pre-constructed
 	 * object.
-	 * @param poResult Result object prepared ouside
+	 * @param poResult Result object prepared outside
 	 * @throws IllegalArgumentException of the parameter is null
 	 */
 	public final void addResult(Result poResult)
@@ -278,6 +283,18 @@ implements Serializable, Cloneable
 
 	/**
 	 * Retrieves the result from the result set with the
+	 * second minimum outcome value.
+	 * @return corresponding Result object
+	 * @since 0.3.0.6
+	 */
+	public Result getSecondMinimumResult()
+	{
+		getMininumID();
+		return this.aoResultSetSorted[1];
+	}
+
+	/**
+	 * Retrieves the result from the result set with the
 	 * average outcome value.
 	 * @return corresponding Result object
 	 */
@@ -294,7 +311,7 @@ implements Serializable, Cloneable
 	 */
 	public Result getRandomResult()
 	{
-		return (Result)this.oResultSet.elementAt((int)(Math.random() * size()));
+		return this.oResultSet.elementAt((int)(Math.random() * size()));
 	}
 
 	/**
@@ -319,14 +336,57 @@ implements Serializable, Cloneable
 	}
 
 	/**
+	 * Retrieves the result from the result set with the
+	 * second maximum outcome value.
+	 * @return corresponding Result object
+	 * @since 0.3.0.6
+	 */
+	public Result getSecondMaximumResult()
+	{
+		getMaximumResult();
+		return this.aoResultSetSorted[1];
+	}
+
+	/**
+	 * Retrieves the result from the result set with the second closest
+	 * (minimum or maximum depending on the sort order) outcome value.
+	 * @return corresponding Result object
+	 * @since 0.3.0.6
+	 * @see #getMaximumResult()
+	 * @see #getMinimumResult()
+	 */
+	public Result getSecondClosestResult()
+	{
+		switch(this.iSortMode)
+		{
+			case SortComparator.ASCENDING:
+			{
+				return getSecondMinimumResult();
+			}
+
+			case SortComparator.DESCENDING:
+			{
+				return getSecondMaximumResult();
+			}
+
+			default:
+			{
+				Debug.debug(getClass(), "Call to getSecondClosestResult() when not sorted.");
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Retrieves the underlying unsorted result collection.
 	 * @return Vector of Results
 	 */
-	public Vector getResultSetVector()
+	public Vector<Result> getResultSetVector()
 	{
 		/*
 		 * Be pessimistic about what can be done with the
-		 * retured result set vector reference outside of this.
+		 * returned result set vector reference outside of this.
 		 * Thus, don't trust the client code anymore to keep
 		 * the stuff unmodified (i.e. adding/deleting new records)
 		 * and force a resorting internally in the sort() method.
@@ -337,22 +397,59 @@ implements Serializable, Cloneable
 	}
 
 	/**
-	 * Allows querying the curren array of references to
-	 * the contained Result object sorted (if sorting was performed).
+	 * Allows querying the current array of references to
+	 * the contained Result objects sorted (if sorting was performed).
 	 * The sorting is usually done when querying for minimum or
 	 * maximum results.
 	 * @return Returns the aoResultSetSorted.
 	 * @since 0.3.0.5
 	 */
-	public final Result[] getResultSetSorted()
+	public Result[] getResultSetSorted()
 	{
 		return this.aoResultSetSorted;
 	}
 
 	/**
+	 * Sets the underlying unsorted result collection.
+	 * @param poResultSet the result set vector to set
+	 * @since 0.3.0.6
+	 */
+	public void setResultSetVector(Vector<Result> poResultSet)
+	{
+		this.iSortMode = UNSORTED;
+		this.oResultSet = poResultSet;
+	}
+
+	/**
+	 * Allows setting the current array of sorted references to
+	 * the contained Result objects if sorted outside.
+	 * @param paoResultSetSorted the new collection of sorted references
+	 * @since 0.3.0.6
+	 */
+	public void setResultSetSorted(Result[] paoResultSetSorted)
+	{
+		this.aoResultSetSorted = paoResultSetSorted;
+	}
+
+	/**
+	 * Allows setting the sort mode the result set
+	 * may be sorted next time in accordance with.
+	 * @param piSortMode the sort mode to set
+	 * @since 0.3.0.6
+	 * @see #UNSORTED
+	 * @see SortComparator#ASCENDING
+	 * @see SortComparator#DESCENDING
+	 * @see #iSortMode
+	 */
+	public void setSortMode(int piSortMode)
+	{
+		this.iSortMode = piSortMode;
+	}
+
+	/**
 	 * Allows querying the sort mode the result set
 	 * may be currently sorted in accordance with.
-	 * @return the curren sort mode
+	 * @return the current sort mode
 	 * @since 0.3.0.5
 	 * @see #UNSORTED
 	 * @see SortComparator#ASCENDING
@@ -428,7 +525,7 @@ implements Serializable, Cloneable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.20 $";
+		return "$Revision: 1.24 $";
 	}
 }
 

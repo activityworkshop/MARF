@@ -8,18 +8,20 @@ import marf.Storage.Loaders.MIDILoader;
 import marf.Storage.Loaders.MP3Loader;
 import marf.Storage.Loaders.SNDLoader;
 import marf.Storage.Loaders.SineLoader;
+import marf.Storage.Loaders.TextLoader;
 import marf.Storage.Loaders.ULAWLoader;
 import marf.Storage.Loaders.WAVLoader;
+import marf.util.Debug;
 import marf.util.InvalidSampleFormatException;
 
 
 /**
  * <p>Provides a factory to instantiate requested SampleLoader module(s).</p>
  *
- * $Id: SampleLoaderFactory.java,v 1.1 2005/12/28 03:21:12 mokhov Exp $
+ * $Id: SampleLoaderFactory.java,v 1.3 2007/12/23 06:29:46 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.3 $
  * @since 0.3.0.5
  */
 public final class SampleLoaderFactory
@@ -39,7 +41,7 @@ public final class SampleLoaderFactory
 	 * desired SampleLoader module
 	 * @return a reference to the instance of the created sample loader
 	 * @throws InvalidSampleFormatException if the indicated module is
-	 * uknown or could not be loaded due sample format mismatch
+	 * unknown or could not be loaded due sample format mismatch
 	 *
 	 * @see MARF#WAV
 	 * @see MARF#MP3
@@ -75,7 +77,7 @@ public final class SampleLoaderFactory
 	 * desired SampleLoader module
 	 * @return a reference to the instance of the created sample loader
 	 * @throws InvalidSampleFormatException if the indicated module is
-	 * uknown or could not be loaded due sample format mismatch
+	 * unknown or could not be loaded due sample format mismatch
 	 *
 	 * @see MARF#WAV
 	 * @see MARF#MP3
@@ -103,6 +105,8 @@ public final class SampleLoaderFactory
 	{
 		ISampleLoader oSampleLoader = null;
 
+		Debug.debug("Requested loader: " + piSampleFormat);
+		
 		switch(piSampleFormat)
 		{
 			case MARF.WAV:
@@ -155,6 +159,10 @@ public final class SampleLoaderFactory
 				break;
 			}
 
+			case MARF.TEXT:
+				oSampleLoader = new TextLoader();
+				break;
+
 			default:
 			{
 				throw new InvalidSampleFormatException
@@ -173,7 +181,7 @@ public final class SampleLoaderFactory
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.1 $";
+		return "$Revision: 1.3 $";
 	}
 }
 

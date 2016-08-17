@@ -9,10 +9,10 @@ import marf.util.Debug;
 /**
  * <p>Bandpass Filter Implementation based on the FFTFilter.</p>
  *
- * <p>$Id: BandpassFilter.java,v 1.23 2005/12/31 23:17:37 mokhov Exp $</p>
+ * $Id: BandpassFilter.java,v 1.26 2007/12/16 01:11:06 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.26 $
  * @since 0.2.0
  * @see FFTFilter
  */
@@ -63,30 +63,6 @@ extends FFTFilter
 	}
 
 	/**
-	 * Stub implementation of removeNoise().
-	 * @return <code>false</code>
-	 * @throws PreprocessingException never thrown
-	 */
-	public final boolean removeNoise()
-	throws PreprocessingException
-	{
-		Debug.debug("BandpassFilter.removeNoise()");
-		return false;
-	}
-
-	/**
-	 * Stub implementation of removeSilence().
-	 * @return <code>false</code>
-	 * @throws PreprocessingException never thrown
-	 */
-	public final boolean removeSilence()
-	throws PreprocessingException
-	{
-		Debug.debug("BandpassFilter.removeSilence()");
-		return false;
-	}
-
-	/**
 	 * Stub implementation of <code>cropAudio()</code>.
 	 * @param pdStartingFrequency unused
 	 * @param pdEndFrequency unused
@@ -106,7 +82,7 @@ extends FFTFilter
 	 *
 	 * @since 0.3.0
 	 */
-	public void genereateResponseCoefficients()
+	public void generateResponseCoefficients()
 	{
 		double[] adResponse = new double[DEFAULT_FREQUENCY_RESPONSE_SIZE];
 
@@ -129,7 +105,7 @@ extends FFTFilter
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.23 $";
+		return "$Revision: 1.26 $";
 	}
 }
 

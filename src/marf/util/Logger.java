@@ -12,11 +12,11 @@ import java.util.Date;
  * <p>All methods are properly synchronized should multiple threads
  * access the same logger.</p>
  *
- * $Id: Logger.java,v 1.8 2005/06/16 19:58:58 mokhov Exp $
+ * $Id: Logger.java,v 1.10 2007/12/23 06:29:47 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.8 $
- * @since 0.3.0
+ * @version $Revision: 1.10 $
+ * @since 0.3.0.2
  */
 public class Logger
 extends BaseThread
@@ -92,7 +92,7 @@ extends BaseThread
 
 	/**
 	 * Creates a logger with output filename and desired direction.
-	 * Timestampes are always added.
+	 * Timestamps are always added.
 	 * 
 	 * @param pstrFilename desired log filename
 	 * @param piLogDirection desired logging direction
@@ -195,7 +195,8 @@ extends BaseThread
 			// java 1.5: super(pstrFilename);
 
 			// workaround for java 1.4
-			super(new FileOutputStream(pstrFilename), false);
+			// since 0.3.0.6 appends
+			super(new FileOutputStream(pstrFilename, true), false);
 
 			this.oLPS = null;
 		}
@@ -211,8 +212,8 @@ extends BaseThread
 		}
 
 		/**
-		 * Sets the output to go to the two destionations of the first
-		 * and second paramters.
+		 * Sets the output to go to the two destinations of the first
+		 * and second parameters.
 		 * @param poOutputStream possibly a file or STDOUT/STDERR
 		 * @param poLogPrintStream possibly a file or STDOUT/STDERR
 		 */
@@ -229,14 +230,22 @@ extends BaseThread
 		 */
 		public synchronized void println(String pstrMessage)
 		{
-			String strMsg =
-				(bNoTimestamp ? "" : "[" + new Date() + "]: ") +
-				pstrMessage;
+			StringBuffer strMsg = new StringBuffer();
+			
+			if(bNoTimestamp == false)
+			{
+				strMsg.append("[").append(new Date()).append("]: ");
+			}
+			
+			strMsg.append(pstrMessage);
 
 			super.println(strMsg);
 
 			if(this.oLPS != null)
-				this.oLPS.println(strMsg);
+			{
+				// Using pstrMessage instead of strMsg to avoid double timestamps
+				this.oLPS.println(pstrMessage);
+			}
 		}
 
 		/**
@@ -260,7 +269,7 @@ extends BaseThread
 
 	/**
 	 * Enables or disables timestamps.
-	 * @param pbEnable <code>true</code> to enable timestamming
+	 * @param pbEnable <code>true</code> to enable timestamping
 	 */
 	public synchronized void enableTimestamp(boolean pbEnable)
 	{
@@ -283,12 +292,14 @@ extends BaseThread
 	public synchronized void setLogDirection(int piLogDirection)
 	{
 		if(piLogDirection < LOG_TO_FILE_STDOUT_STDERR || piLogDirection > LOG_STDOUT_STDERR_TO_FILE)
+		{
 			throw new IllegalArgumentException
 			(
 				"Log direction should be between [" +
 				LOG_TO_FILE_STDOUT_STDERR + "," +
 				LOG_STDOUT_STDERR_TO_FILE +"]"
 			);
+		}
 			
 		this.iLogDirection = piLogDirection;
 	}
@@ -312,7 +323,7 @@ extends BaseThread
 	}
 
 	/**
-	 * @return teturns the log filename.
+	 * @return returns the log filename.
 	 */
 	public synchronized String getLogFilename()
 	{
@@ -333,7 +344,7 @@ extends BaseThread
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.8 $";
+		return "$Revision: 1.10 $";
 	}
 }
 

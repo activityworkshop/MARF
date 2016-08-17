@@ -7,17 +7,17 @@ import marf.util.Debug;
  * <p>General Compiler Class.
  *
  * This class instantiates the parser with the given command-line
- * arguments and invokes it then. Aftewards, it collects the results
+ * arguments and invokes it then. Afterwards, it collects the results
  * of lexical and syntax analysis and outputs them out.</p>
  *
  * TODO: complete review.
  *
- * <p>(C) 2001 - 2006 Serguei Mokhov, mokhov@cs.concordia.ca</p>
+ * <p>(C) 2001 - 2012 Serguei Mokhov, mokhov@cs.concordia.ca</p>
  * 
- * $Id: Compiler.java,v 1.14 2006/01/15 20:51:55 mokhov Exp $
+ * $Id: Compiler.java,v 1.21 2012/01/09 04:03:23 mokhov Exp $
  * 
  * @author Serguei Mokhov
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.21 $
  * @since 0.3.0.2
  */
 public class Compiler
@@ -60,8 +60,8 @@ public class Compiler
 		{
 			if(argv[0].equals("--version") || argv[0].equals("-v"))
 			{
-				System.out.println("MARF Language Compiler $Revision: 1.14 $");
-				System.out.println("Copyright (C) 2001 - 2006 Serguei A. Mokhov");
+				System.out.println("MARF Language Compiler $Revision: 1.21 $");
+				System.out.println("Copyright (C) 2001 - 2012 Serguei A. Mokhov");
 				System.out.println("Report bugs to: <mailto:marf-bugs@lists.sf.net>");
 			}
 			else
@@ -82,7 +82,7 @@ public class Compiler
 					System.out.println("Parsing failed for the source program from \"" + argv[0] + "\". :-( \n");
 				}
 
-				// Ouput stats
+				// Output stats
 				LexicalAnalyzer oLexer = this.oParser.getLexer();
 				oLexer.serialize(1);
 
@@ -130,7 +130,7 @@ public class Compiler
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.14 $";
+		return "$Revision: 1.21 $";
 	}
 }
 

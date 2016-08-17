@@ -1,6 +1,6 @@
 /*
  * Token Class
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
+ * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
  */
 
 package marf.nlp.Parsing;
@@ -14,10 +14,10 @@ import java.io.Serializable;
 /**
  * <p>This class denotes a Token data structure.</p>
  *
- * $Id: Token.java,v 1.19 2006/01/19 04:13:16 mokhov Exp $
+ * $Id: Token.java,v 1.26 2012/01/09 04:03:23 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.26 $
  * @since 0.3.0.2
  */
 public class Token
@@ -29,7 +29,7 @@ implements Serializable
 	protected String strLexeme;
 
 	/**
-	 * Line and column where the token occured.
+	 * Line and column where the token occurred.
 	 */
 	protected Point oPosition;
 
@@ -72,7 +72,7 @@ implements Serializable
 	 * Constructor that maps values produced by StreamTokenizer.
 	 *
 	 * @param pstrLexeme token's lexeme
-	 * @param piLineNumber line number of the oken
+	 * @param piLineNumber line number of the token
 	 * @param piTokenType type of a token
 	 * @param pdNumericalValue numerical value of the token
 	 *
@@ -236,7 +236,7 @@ implements Serializable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.19 $";
+		return "$Revision: 1.26 $";
 	}
 }
 

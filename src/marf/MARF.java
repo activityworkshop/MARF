@@ -1,8 +1,10 @@
-/*
+/**
  * The MARF System.
  */
-
 package marf;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import marf.Classification.ClassificationException;
 import marf.Classification.ClassificationFactory;
@@ -18,6 +20,7 @@ import marf.Storage.Result;
 import marf.Storage.ResultSet;
 import marf.Storage.Sample;
 import marf.Storage.SampleLoaderFactory;
+import marf.Storage.TrainingSet;
 import marf.gui.WaveGrapher;
 import marf.nlp.NLPException;
 import marf.util.Debug;
@@ -26,16 +29,13 @@ import marf.util.NotImplementedException;
 
 
 /**
- * <p>Provides basic recognition pipeline and its configuration.</p>
- * <p>Implements a so-called MARF server.</p>
- *
- * <p>$Id: MARF.java,v 1.98 2006/02/06 12:00:33 mokhov Exp $</p>
+ * Provides basic recognition pipeline and its configuration.
  *
  * @author Serguei Mokhov
  * @author Stephen Sinclair
  * @author The MARF Research and Development Group
  *
- * @version $Revision: 1.98 $
+ * @version $Id: MARF.java,v 1.122 2015/04/05 00:20:53 mokhov Exp $
  * @since 0.0.1
  */
 public class MARF
@@ -47,7 +47,7 @@ public class MARF
 	 */
 
 	/**
-	 * Value indecating that some configuration param is not set.
+	 * Value indicating that some configuration parameter is not set.
 	 */
 	public static final int UNSET = -1;
 
@@ -105,23 +105,71 @@ public class MARF
 	public static final int RAW                             = 107;
 
 	/**
-	 * Indicates to employ user-defined preprocessing plugin.
+	 * Indicates to employ user-defined preprocessing plug-in.
 	 * @since 0.3.0.3
 	 */
 	public static final int PREPROCESSING_PLUGIN            = 108;
 
 	/**
-	 * Upper boundary for classificantion methods enumeration.
+	 * Indicates to use low-pass CFE filter.
+	 * @since 0.3.0.6
+	 */
+	public static final int LOW_PASS_CFE_FILTER             = 109;
+
+	/**
+	 * Indicates to use high-pass CFE filter.
+	 * @since 0.3.0.6
+	 */
+	public static final int HIGH_PASS_CFE_FILTER            = 110;
+
+	/**
+	 * Indicates to use band-pass CFE filter.
+	 * @since 0.3.0.6
+	 */
+	public static final int BAND_PASS_CFE_FILTER            = 111;
+
+	/**
+	 * Indicates to use band-stop CFE filter.
+	 * @since 0.3.0.6
+	 */
+	public static final int BAND_STOP_CFE_FILTER            = 112;
+
+	/**
+	 * Indicates to use band-stop FFT filter.
+	 * @since 0.3.0.6
+	 */
+	public static final int BAND_STOP_FFT_FILTER            = 113;
+
+	/**
+	 * Indicates to use separable discreet wavelet transform filter.
+	 * @since 0.3.0.6, November 2011
+	 */
+	public static final int SEPARABLE_DWT_FILTER            = 114;
+
+	/**
+	 * Indicates to use dual-tree discreet wavelet transform filter.
+	 * @since 0.3.0.6, November 2011
+	 */
+	public static final int DUAL_DTREE_DWT_FILTER           = 115;
+	
+	/**
+	 * Indicates to use dyadic discreet wavelet transform filter.
+	 * @since 0.3.0.6, November 2011
+	 */
+	public static final int DYADIC_DWT_FILTER               = 116;
+	
+	/**
+	 * Upper boundary for preprocessing methods enumeration.
 	 * Used in error checks.
 	 *
-	 * *Update it when add more methods.*
+	 * *Update it when add more algorithm constants.*
 	 *
 	 * @since 0.3.0.1
 	 */
-	public static final int MAX_PREPROCESSING_METHOD = PREPROCESSING_PLUGIN;
+	public static final int MAX_PREPROCESSING_METHOD = DYADIC_DWT_FILTER;
 
 	/**
-	 * Lower boundary for classificantion methods enumeration.
+	 * Lower boundary for preprocessing methods enumeration.
 	 * Used in error checks.
 	 * @since 0.3.0.1
 	 */
@@ -171,7 +219,7 @@ public class MARF
 	public static final int MIN_MAX_AMPLITUDES            = 306;
 
 	/**
-	 * Indicates to employ user-defined feature extraction plugin.
+	 * Indicates to employ user-defined feature extraction plug-in.
 	 * @since 0.3.0.3
 	 */
 	public static final int FEATURE_EXTRACTION_PLUGIN     = 307;
@@ -179,7 +227,7 @@ public class MARF
 	/**
 	 * Indicates to use an aggregation of several feature extraction
 	 * modules. The modules to aggregate must be specified in the
-	 * MARF's ModuleParams.
+	 * MARF's <code>ModuleParams</code>.
 	 *
 	 * @since 0.3.0.5
 	 * @see marf.FeatureExtraction.FeatureExtractionAggregator
@@ -188,14 +236,14 @@ public class MARF
 	public static final int FEATURE_EXTRACTION_AGGREGATOR = 308;
 
 	/**
-	 * Upper boundary for classificantion methods enumeration.
+	 * Upper boundary for feature extraction methods enumeration.
 	 * Used in error checks. *Update it when add more methods.*
 	 * @since 0.3.0.1
 	 */
 	public static final int MAX_FEATUREEXTRACTION_METHOD = FEATURE_EXTRACTION_AGGREGATOR;
 
 	/**
-	 * Lower boundary for classificantion methods enumeration.
+	 * Lower boundary for feature extraction methods enumeration.
 	 * Used in error checks.
 	 * @since 0.3.0.1
 	 */
@@ -211,79 +259,97 @@ public class MARF
 	/**
 	 * Indicates to use Neural Network for classification.
 	 */
-	public static final int NEURAL_NETWORK        = 500;
+	public static final int NEURAL_NETWORK            = 500;
 
 	/**
 	 * Indicates to use stochastic models for classification.
 	 */
-	public static final int STOCHASTIC            = 501;
+	public static final int STOCHASTIC                = 501;
 
 	/**
 	 *  Indicates to use Hidden Markov Models for classification.
 	 */
-	public static final int MARKOV                = 502;
+	public static final int MARKOV                    = 502;
 
 	/**
 	 * Indicates to use Euclidean distance for classification.
 	 */
-	public static final int EUCLIDEAN_DISTANCE    = 503;
+	public static final int EUCLIDEAN_DISTANCE        = 503;
 
 	/**
 	 * Indicates to use Chebyshev distance for classification.
 	 */
-	public static final int CHEBYSHEV_DISTANCE    = 504;
+	public static final int CHEBYSHEV_DISTANCE        = 504;
 
 	/**
 	 * A synonym to Chebyshev distance.
 	 * @since 0.2.0
 	 */
-	public static final int MANHATTAN_DISTANCE    = 504;
+	public static final int MANHATTAN_DISTANCE        = 504;
 
 	/**
 	 * A synonym to Chebyshev distance.
 	 * @since 0.3.0.1
 	 */
-	public static final int CITYBLOCK_DISTANCE    = 504;
+	public static final int CITYBLOCK_DISTANCE        = 504;
 
 	/**
 	 * Indicates to use Minkowski distance for classification.
 	 * @since 0.2.0
 	 */
-	public static final int MINKOWSKI_DISTANCE    = 505;
+	public static final int MINKOWSKI_DISTANCE        = 505;
 
 	/**
 	 * Indicates to use Mahalanobis distance for classification.
 	 * @since 0.2.0
 	 */
-	public static final int MAHALANOBIS_DISTANCE  = 506;
+	public static final int MAHALANOBIS_DISTANCE      = 506;
 
 	/**
 	 * Indicates to use random classification.
 	 * @since 0.2.0
 	 */
-	public static final int RANDOM_CLASSIFICATION = 507;
+	public static final int RANDOM_CLASSIFICATION     = 507;
 
 	/**
 	 * Indicates to use diff-distance classification.
 	 * @since 0.3.0.2
 	 */
-	public static final int DIFF_DISTANCE         = 508;
+	public static final int DIFF_DISTANCE             = 508;
 
 	/**
-	 * Indicates to employ user-defined classification plugin.
+	 * Indicates to employ user-defined classification plug-in.
 	 * @since 0.3.0.3
 	 */
-	public static final int CLASSIFICATION_PLUGIN = 509;
+	public static final int CLASSIFICATION_PLUGIN     = 509;
 
 	/**
-	 * Upper boundary for classificantion methods enumeration.
+	 * Indicates to employ Zipf's Law-based classifier.
+	 * @since 0.3.0.6
+	 */
+	public static final int ZIPFS_LAW                 = 510;
+
+	/**
+	 * Indicates to use the Hamming distance classifier.
+	 * @since 0.3.0.6
+	 */
+	public static final int HAMMING_DISTANCE          = 511;
+
+	/**
+	 * Indicates to use the cosine similarity measure classifier.
+	 * @since 0.3.0.6
+	 */
+	public static final int COSINE_SIMILARITY_MEASURE = 512;
+
+	/**
+	 * Upper boundary for classification methods enumeration.
 	 * Used in error checks. *Update it when add more methods.*
 	 * @since 0.3.0.1
 	 */
-	public static final int MAX_CLASSIFICATION_METHOD = CLASSIFICATION_PLUGIN;
+	public static final int MAX_CLASSIFICATION_METHOD = COSINE_SIMILARITY_MEASURE;
 
 	/**
-	 * Lower boundary for classificantion methods enumeration.
+	 * Lower boundary for classification methods enumeration.
 	 * Used in error checks.
 	 * @since 0.3.0.1
 	 */
@@ -348,12 +414,119 @@ public class MARF
 	public static final int MIDI   = MARFAudioFileFormat.MIDI;
 
 	/**
-	 * Custom (plugin) sample format.
+	 * Custom (plug-in) sample format.
 	 * @since 0.3.0.5
 	 */
 	public static final int CUSTOM = MARFAudioFileFormat.CUSTOM;
 
-	
+	/**
+	 * Textual sample format.
+	 * @since 0.3.0.6
+	 */
+	public static final int TEXT   = MARFAudioFileFormat.TEXT;
+
+	/**
+	 * Indicates single training sample (a simplest "cluster" of one).
+	 * @since March 2015
+	 */
+	public static final int CLUSTER_SINGLE          = 1;
+
+	/**
+	 * Indicates a mean feature set clustering (averaging of feature vectors).
+	 * Default.
+	 * @since March 2015
+	 */
+	public static final int CLUSTER_MEAN            = 2;
+
+	/**
+	 * Indicates a media feature set clustering (picking medians of feature vectors).
+	 * @since March 2015
+	 */
+	public static final int CLUSTER_MEDIAN          = 3;
+
+	/**
+	 * Indicates no clustering; preserve all feature vectors as-is.
+	 * @since March 2015
+	 */
+	public static final int CLUSTER_FEATURE_VECTORS = 4;
+
+
+	/*
+	 * --------------------------------------------------------
+	 * Mapping of Constants to Human-Readable Descriptions
+	 * --------------------------------------------------------
+	 */
+
+	/**
+	 * Provides human-readable description by mapping module constants
+	 * to their names.
+	 * @since 0.3.0.6
+	 */
+	public static final Map<Integer, String> MODULE_NAMES_MAPPING = new HashMap<Integer, String>();
+
+	static
+	{
+		// Misc
+		MODULE_NAMES_MAPPING.put(new Integer(UNSET), "UNSET (" + UNSET + ")");
+
+		// Preprocessing modules
+		MODULE_NAMES_MAPPING.put(new Integer(DUMMY), "NORMALIZATION (" + DUMMY + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(HIGH_FREQUENCY_BOOST_FFT_FILTER), "HIGH_FREQUENCY_BOOST_FFT_FILTER (" + HIGH_FREQUENCY_BOOST_FFT_FILTER + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(BANDPASS_FFT_FILTER), "BANDPASS_FFT_FILTER (" + BANDPASS_FFT_FILTER + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(ENDPOINT), "ENDPOINT (" + ENDPOINT + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(LOW_PASS_FFT_FILTER), "LOW_PASS_FFT_FILTER (" + LOW_PASS_FFT_FILTER + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(HIGH_PASS_FFT_FILTER), "HIGH_PASS_FFT_FILTER (" + HIGH_PASS_FFT_FILTER + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(HIGH_PASS_BOOST_FILTER), "HIGH_PASS_BOOST_FILTER (" + HIGH_PASS_BOOST_FILTER + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(BAND_STOP_FFT_FILTER), "BAND_STOP_FFT_FILTER (" + BAND_STOP_FFT_FILTER + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(RAW), "RAW (" + RAW + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(PREPROCESSING_PLUGIN), "PREPROCESSING_PLUGIN (" + PREPROCESSING_PLUGIN + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(LOW_PASS_CFE_FILTER), "LOW_PASS_CFE_FILTER (" + LOW_PASS_CFE_FILTER + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(HIGH_PASS_CFE_FILTER), "HIGH_PASS_CFE_FILTER (" + HIGH_PASS_CFE_FILTER + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(BAND_PASS_CFE_FILTER), "BAND_PASS_CFE_FILTER (" + BAND_PASS_CFE_FILTER + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(BAND_STOP_CFE_FILTER), "BAND_STOP_CFE_FILTER (" + BAND_STOP_CFE_FILTER + ")");
+
+		// Feature extraction modules
+		MODULE_NAMES_MAPPING.put(new Integer(LPC), "LPC (" + LPC + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(FFT), "FFT (" + FFT + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(F0), "F0 (" + F0 + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(SEGMENTATION), "SEGMENTATION (" + SEGMENTATION + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(CEPSTRAL), "CEPSTRAL (" + CEPSTRAL + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(RANDOM_FEATURE_EXTRACTION), "RANDOM_FEATURE_EXTRACTION (" + RANDOM_FEATURE_EXTRACTION + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(MIN_MAX_AMPLITUDES), "MIN_MAX_AMPLITUDES (" + MIN_MAX_AMPLITUDES + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(FEATURE_EXTRACTION_PLUGIN), "MIN_MAX_AMPLITUDES (" + MIN_MAX_AMPLITUDES + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(FEATURE_EXTRACTION_AGGREGATOR), "FEATURE_EXTRACTION_AGGREGATOR (" + FEATURE_EXTRACTION_AGGREGATOR + ")");
+
+		// Classification modules
+		MODULE_NAMES_MAPPING.put(new Integer(NEURAL_NETWORK), "NEURAL_NETWORK (" + NEURAL_NETWORK + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(STOCHASTIC), "STOCHASTIC (" + STOCHASTIC + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(MARKOV), "MARKOV (" + MARKOV + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(EUCLIDEAN_DISTANCE), "EUCLIDEAN_DISTANCE (" + EUCLIDEAN_DISTANCE + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(CHEBYSHEV_DISTANCE), "CHEBYSHEV_DISTANCE (" + CHEBYSHEV_DISTANCE + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(MANHATTAN_DISTANCE), "MANHATTAN_DISTANCE (" + MANHATTAN_DISTANCE + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(CITYBLOCK_DISTANCE), "CITYBLOCK_DISTANCE (" + CITYBLOCK_DISTANCE + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(MINKOWSKI_DISTANCE), "MINKOWSKI_DISTANCE (" + MINKOWSKI_DISTANCE + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(MAHALANOBIS_DISTANCE), "MAHALANOBIS_DISTANCE (" + MAHALANOBIS_DISTANCE + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(RANDOM_CLASSIFICATION), "RANDOM_CLASSIFICATION (" + RANDOM_CLASSIFICATION + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(DIFF_DISTANCE), "DIFF_DISTANCE (" + DIFF_DISTANCE + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(CLASSIFICATION_PLUGIN), "CLASSIFICATION_PLUGIN (" + CLASSIFICATION_PLUGIN + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(ZIPFS_LAW), "ZIPFS_LAW (" + ZIPFS_LAW + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(HAMMING_DISTANCE), "HAMMING_DISTANCE (" + HAMMING_DISTANCE + ")");
+		MODULE_NAMES_MAPPING.put(new Integer(COSINE_SIMILARITY_MEASURE), "COSINE_SIMILARITY_MEASURE (" + COSINE_SIMILARITY_MEASURE + ")");
+
+		// Audio sample formats
+		MODULE_NAMES_MAPPING.put(new Integer(WAV), MARFAudioFileFormat.Type.WAVE.toString());
+		MODULE_NAMES_MAPPING.put(new Integer(ULAW), MARFAudioFileFormat.Type.ULAW.toString());
+		MODULE_NAMES_MAPPING.put(new Integer(MP3), MARFAudioFileFormat.Type.MP3.toString());
+		MODULE_NAMES_MAPPING.put(new Integer(SINE), MARFAudioFileFormat.Type.SINE.toString());
+		MODULE_NAMES_MAPPING.put(new Integer(AIFF), MARFAudioFileFormat.Type.AIFF.toString());
+		MODULE_NAMES_MAPPING.put(new Integer(AIFFC), MARFAudioFileFormat.Type.AIFC.toString());
+		MODULE_NAMES_MAPPING.put(new Integer(AU), MARFAudioFileFormat.Type.AU.toString());
+		MODULE_NAMES_MAPPING.put(new Integer(SND), MARFAudioFileFormat.Type.SND.toString());
+		MODULE_NAMES_MAPPING.put(new Integer(MIDI), MARFAudioFileFormat.Type.MIDI.toString());
+		MODULE_NAMES_MAPPING.put(new Integer(CUSTOM), MARFAudioFileFormat.Type.CUSTOM.toString());
+	}
+
+
 	/*
 	 * --------------------------------------------------------
 	 * Module Instance References
@@ -443,76 +616,89 @@ public class MARF
 	/**
 	 * Indicates what preprocessing method to use in the pipeline.
 	 */
-	private static int          siPreprocessingMethod     = UNSET;
+	private static int          siPreprocessingMethod         = UNSET;
 
 	/**
 	 * Indicates what feature extraction method to use in the pipeline.
 	 */
-	private static int          siFeatureExtractionMethod = UNSET;
+	private static int          siFeatureExtractionMethod     = UNSET;
 
 	/**
 	 * Indicates what classification method to use in the pipeline.
 	 */
-	private static int          siClassificationMethod    = UNSET;
+	private static int          siClassificationMethod        = UNSET;
 
 	/**
 	 * Indicates what sample format is in use.
 	 */
-	private static int          siSampleFormat            = UNSET;
+	private static int          siSampleFormat                = UNSET;
+
+	/**
+	 * Indicates what clustering format is in use.
+	 * @since March 2015
+	 */
+	private static int          siClusterFormat               = CLUSTER_MEAN;
 
 	/**
 	 * ID of the currently trained speaker.
 	 */
-	private static int          siCurrentSubject          = UNSET;
+	private static int          siCurrentSubject              = UNSET;
 
 	/**
 	 * Indicates current incoming sample filename.
 	 */
-	private static String       sstrFileName              = "";
+	private static String       sstrFileName                  = "";
 
 	/**
 	 * Indicates directory name with training samples.
 	 */
-	private static String       sstrSamplesDir            = "";
+	private static String       sstrSamplesDir                = "";
+
+	/**
+	 * Indicates to prefix the value contain to the training set's filename.
+	 * @since 0.3.0.6
+	 * @see TrainingSet
+	 */
+	private static String       sstrTrainingSetFilenamePrefix = "";
 
 	/**
 	 * Stores module-specific parameters in an independent way.
 	 */
-	private static ModuleParams soModuleParams            = null;
+	private static ModuleParams soModuleParams                = null;
 
 	/**
 	 * Indicates whether or not to dump a spectrogram at the end of feature extraction.
 	 */
-	private static boolean      sbDumpSpectrogram         = false;
+	private static boolean      sbDumpSpectrogram             = false;
 
 	/**
 	 * Indicates whether or not to dump a wave graph.
 	 */
-	private static boolean      sbDumpWaveGraph           = false;
+	private static boolean      sbDumpWaveGraph               = false;
 
 	/**
-	 * Class of a sample loader plugin.
+	 * Class of a sample loader plug-in.
 	 * @since 0.3.0.5
 	 */
-	private static Class       soSampleLoaderPluginClass      = null;
+	private static Class<?>       soSampleLoaderPluginClass      = null;
 
 	/**
-	 * Class of a preprocessing plugin.
+	 * Class of a preprocessing plug-in.
 	 * @since 0.3.0.4
 	 */
-	private static Class       soPreprocessingPluginClass     = null;
+	private static Class<?>       soPreprocessingPluginClass     = null;
 
 	/**
-	 * Class of a feature extraction plugin.
+	 * Class of a feature extraction plug-in.
 	 * @since 0.3.0.4
 	 */
-	private static Class       soFeatureExtractionPluginClass = null;
+	private static Class<?>       soFeatureExtractionPluginClass = null;
 
 	/**
-	 * Class of a classification plugin.
+	 * Class of a classification plug-in.
 	 * @since 0.3.0.4
 	 */
-	private static Class       soClassificationPluginClass    = null;
+	private static Class<?>       soClassificationPluginClass    = null;
 
 
 	/*
@@ -524,7 +710,6 @@ public class MARF
 	/**
 	 * Must never be instantiated or inherited from...
 	 * Or should it be allowed?
-	 * <p><b>TODO:</b> The server part</p>.
 	 */
 	private MARF()
 	{
@@ -536,6 +721,99 @@ public class MARF
 	 * Setting/Getting MARF Configuration Parameters
 	 * --------------------------------------------------------
 	 */
+
+	/**
+	 * Allows setting a complete MARF configuration parameters.
+	 * @param poConfiguration the configuration parameters
+	 * @return previous configuration
+	 * @throws MARFException in case of any exception
+	 * @since 0.3.0.6
+	 */
+	public static synchronized final Configuration setConfiguration(Configuration poConfiguration)
+	throws MARFException
+	{
+		Configuration oOldConfig = getConfiguration();
+
+		siPreprocessingMethod = poConfiguration.iPreprocessingMethod;
+		siFeatureExtractionMethod = poConfiguration.iFeatureExtractionMethod;
+		siClassificationMethod = poConfiguration.iClassificationMethod;
+		siSampleFormat = poConfiguration.iSampleFormat;
+		siClusterFormat = poConfiguration.iClusterFormat;
+		siCurrentSubject = poConfiguration.iCurrentSubject;
+		sstrFileName = poConfiguration.strFileName;
+		sstrSamplesDir = poConfiguration.strSamplesDir;
+		soModuleParams = poConfiguration.oModuleParams;
+		sbDumpSpectrogram = poConfiguration.bDumpSpectrogram;
+		sbDumpWaveGraph = poConfiguration.bDumpWaveGraph;
+
+		if
+		(
+			poConfiguration.strSampleLoaderPluginClass != null
+			&& poConfiguration.strSampleLoaderPluginClass.equals("") == false
+		)
+		{
+			setSampleLoaderPluginClass(poConfiguration.strSampleLoaderPluginClass);
+		}
+
+		if
+		(
+			poConfiguration.strPreprocessingPluginClass != null
+			&& poConfiguration.strPreprocessingPluginClass.equals("") == false
+		)
+		{
+			setPreprocessingPluginClass(poConfiguration.strPreprocessingPluginClass);
+		}
+
+		if
+		(
+			poConfiguration.strFeatureExtractionPluginClass != null
+			&& poConfiguration.strFeatureExtractionPluginClass.equals("") == false
+		)
+		{
+			setFeatureExtractionPluginClass(poConfiguration.strFeatureExtractionPluginClass);
+		}
+
+		if
+		(
+			poConfiguration.strClassificationPluginClass != null
+			&& poConfiguration.strClassificationPluginClass.equals("") == false
+		)
+		{
+			setClassificationPluginClass(poConfiguration.strClassificationPluginClass);
+		}
+
+		Debug.enableDebug(poConfiguration.bDebug);
+
+		return oOldConfig;
+	}
+
+	/**
+	 * Allows querying for the current MARF configuration.
+	 * @return encapsulated configuration parameters object
+	 * @since 0.3.0.6
+	 */
+	public static synchronized final Configuration getConfiguration()
+	{
+		return new Configuration
+		(
+			siPreprocessingMethod,
+			siFeatureExtractionMethod,
+			siClassificationMethod,
+			siSampleFormat,
+			siClusterFormat,
+			siCurrentSubject,
+			sstrFileName,
+			sstrSamplesDir,
+			soModuleParams,
+			sbDumpSpectrogram,
+			sbDumpWaveGraph,
+			soSampleLoaderPluginClass == null ? "" : soSampleLoaderPluginClass.getName(),
+			soPreprocessingPluginClass == null ? "" : soPreprocessingPluginClass.getName(),
+			soFeatureExtractionPluginClass == null ? "" : soFeatureExtractionPluginClass.getName(),
+			soClassificationPluginClass == null ? "" : soClassificationPluginClass.getName(),
+			Debug.isDebugOn()
+		);
+	}
 
 	/**
 	 * Sets preprocessing method to be used.
@@ -643,6 +921,26 @@ public class MARF
 	}
 
 	/**
+	 * Sets feature vectors clustering format.
+	 * @param piSampleFormat one of the allowed sample formats
+	 * @since March 2015
+	 */
+	public static synchronized final void setClusterFormat(final int piClusterFormat)
+	{
+		siClusterFormat = piClusterFormat;
+	}
+
+	/**
+	 * Gets feature vectors clustering format.
+	 * @return current sample format
+	 * @since March 2015
+	 */
+	public static synchronized final int getClusterFormat()
+	{
+		return siClusterFormat;
+	}
+
+	/**
 	 * Sets input sample file name.
 	 * @param pstrFileName string representing sample file to be read
 	 */
@@ -676,6 +974,27 @@ public class MARF
 	public static synchronized final void setModuleParams(final ModuleParams poModuleParams)
 	{
 		soModuleParams = poModuleParams;
+	}
+
+	/**
+	 * Sets the prefix to the training sets's filenames for concurrent training
+	 * and testing on multiple categories and models.
+	 * @param pstrPrefix string representing sample file to be read
+	 * @since 0.3.0.6
+	 */
+	public static synchronized final void setTrainingSetFilenamePrefix(final String pstrPrefix)
+	{
+		sstrTrainingSetFilenamePrefix = pstrPrefix;
+	}
+
+	/**
+	 * Obtains the current prefix used by the training set file names.
+	 * @return file name of a string representing sample file
+	 * @since 0.3.0.6
+	 */
+	public static synchronized final String getTrainingSetFilenamePrefix()
+	{
+		return sstrTrainingSetFilenamePrefix;
 	}
 
 	/**
@@ -743,8 +1062,8 @@ public class MARF
 	}
 
 	/**
-	 * Allows loading a sample loader plugin by its name.
-	 * @param pstrClassName class name of the plugin sample loader module
+	 * Allows loading a sample loader plug-in by its name.
+	 * @param pstrClassName class name of the plug-in sample loader module
 	 * @throws MARFException if class cannot be loaded for any reason
 	 * @since 0.3.0.5
 	 */
@@ -762,35 +1081,35 @@ public class MARF
 	}
 
 	/**
-	 * Allows setting a loaded sample loader plugin class.
-	 * @param poClass class represting a sample loader plugin object
+	 * Allows setting a loaded sample loader plug-in class.
+	 * @param poClass class representing a sample loader plug-in object
 	 * @throws MARFException if the parameter is <code>null</code>
 	 * @since 0.3.0.5
 	 */
-	public static synchronized final void setSampleLoaderPluginClass(Class poClass)
+	public static synchronized final void setSampleLoaderPluginClass(Class<?> poClass)
 	throws MARFException
 	{
 		if(poClass == null)
 		{
 			throw new MARFException("Plugin class cannot be null.");
 		}
-		
+
 		soSampleLoaderPluginClass = poClass;
 	}
 
 	/**
-	 * Allows querying for the current preprocessing plugin class.
-	 * @return the internal plugin class
+	 * Allows querying for the current preprocessing plug-in class.
+	 * @return the internal plug-in class
 	 * @since 0.3.0.5
 	 */
-	public static synchronized final Class getSampleLoaderPluginClass()
+	public static synchronized final Class<?> getSampleLoaderPluginClass()
 	{
-		return soSampleLoaderPluginClass; 
+		return soSampleLoaderPluginClass;
 	}
 
 	/**
-	 * Allows loading a preprocessing plugin by its name.
-	 * @param pstrClassName class name of the plugin preprocessing module
+	 * Allows loading a preprocessing plug-in by its name.
+	 * @param pstrClassName class name of the plug-in preprocessing module
 	 * @throws MARFException if class cannot be loaded for any reason
 	 * @since 0.3.0.4
 	 */
@@ -808,35 +1127,35 @@ public class MARF
 	}
 
 	/**
-	 * Allows setting a loaded preprocessing plugin class.
-	 * @param poClass class represting a preprocessing plugin object
+	 * Allows setting a loaded preprocessing plug-in class.
+	 * @param poClass class representing a preprocessing plug-in object
 	 * @throws MARFException if the parameter is <code>null</code>
 	 * @since 0.3.0.4
 	 */
-	public static synchronized final void setPreprocessingPluginClass(Class poClass)
+	public static synchronized final void setPreprocessingPluginClass(Class<?> poClass)
 	throws MARFException
 	{
 		if(poClass == null)
 		{
 			throw new MARFException("Plugin class cannot be null.");
 		}
-		
+
 		soPreprocessingPluginClass = poClass;
 	}
 
 	/**
-	 * Allows querying for the current preprocessing plugin class.
-	 * @return the internal plugin class
+	 * Allows querying for the current preprocessing plug-in class.
+	 * @return the internal plug-in class
 	 * @since 0.3.0.4
 	 */
-	public static synchronized final Class getPreprocessingPluginClass()
+	public static synchronized final Class<?> getPreprocessingPluginClass()
 	{
-		return soPreprocessingPluginClass; 
+		return soPreprocessingPluginClass;
 	}
 
 	/**
-	 * Allows loading a feature extraction plugin by its name.
-	 * @param pstrClassName class name of the plugin feature extraction module
+	 * Allows loading a feature extraction plug-in by its name.
+	 * @param pstrClassName class name of the plug-in feature extraction module
 	 * @throws MARFException if class cannot be loaded for any reason
 	 * @since 0.3.0.4
 	 */
@@ -854,35 +1173,35 @@ public class MARF
 	}
 
 	/**
-	 * Allows setting a loaded feature extraction class plugin class.
-	 * @param poClass class represting a feature extraction plugin object
+	 * Allows setting a loaded feature extraction class plug-in class.
+	 * @param poClass class representing a feature extraction plug-in object
 	 * @throws MARFException if the parameter is <code>null</code>
 	 * @since 0.3.0.4
 	 */
-	public static synchronized final void setFeatureExtractionPluginClass(Class poClass)
+	public static synchronized final void setFeatureExtractionPluginClass(Class<?> poClass)
 	throws MARFException
 	{
 		if(poClass == null)
 		{
 			throw new MARFException("Plugin class cannot be null.");
 		}
-		
+
 		soFeatureExtractionPluginClass = poClass;
 	}
 
 	/**
-	 * Allows querying for the current feature extraction plugin class.
-	 * @return the internal plugin class
+	 * Allows querying for the current feature extraction plug-in class.
+	 * @return the internal plug-in class
 	 * @since 0.3.0.4
 	 */
-	public static synchronized final Class getFeatureExtractionPluginClass()
+	public static synchronized final Class<?> getFeatureExtractionPluginClass()
 	{
-		return soFeatureExtractionPluginClass; 
+		return soFeatureExtractionPluginClass;
 	}
 
 	/**
-	 * Allows loading a classification plugin by its name.
-	 * @param pstrClassName class name of the plugin classification module
+	 * Allows loading a classification plug-in by its name.
+	 * @param pstrClassName class name of the plug-in classification module
 	 * @throws MARFException if class cannot be loaded for any reason
 	 * @since 0.3.0.4
 	 */
@@ -900,36 +1219,36 @@ public class MARF
 	}
 
 	/**
-	 * Allows setting a loaded classification plugin class.
-	 * @param poClass class represting a classification plugin object
+	 * Allows setting a loaded classification plug-in class.
+	 * @param poClass class representing a classification plug-in object
 	 * @throws MARFException if the parameter is <code>null</code>
 	 * @since 0.3.0.4
 	 */
-	public static synchronized final void setClassificationPluginClass(Class poClass)
+	public static synchronized final void setClassificationPluginClass(Class<?> poClass)
 	throws MARFException
 	{
 		if(poClass == null)
 		{
 			throw new MARFException("Plugin class cannot be null.");
 		}
-		
+
 		soClassificationPluginClass = poClass;
 	}
 
 	/**
-	 * Allows querying for the current classification plugin class.
-	 * @return the internal plugin class
+	 * Allows querying for the current classification plug-in class.
+	 * @return the internal plug-in class
 	 * @since 0.3.0.4
 	 */
-	public static synchronized final Class getClassificationPluginClass()
+	public static synchronized final Class<?> getClassificationPluginClass()
 	{
-		return soClassificationPluginClass; 
+		return soClassificationPluginClass;
 	}
 
 	/**
 	 * Returns a string representation of the MARF version.
 	 * As of 0.3.0.3 MINOR_REVISION is also returned.
-	 * 
+	 *
 	 * @return version String
 	 * @see #MINOR_REVISION
 	 */
@@ -981,12 +1300,12 @@ public class MARF
 	 */
 	public static synchronized final String getConfig()
 	{
-		// TODO: more human-readable output
 		return new StringBuffer()
 			.append("[")
-			.append("PR: ").append(siPreprocessingMethod).append(", ")
-			.append("FE: ").append(siFeatureExtractionMethod).append(", ")
-			.append("CL: ").append(siClassificationMethod).append(", ")
+			.append("SL: ").append(MODULE_NAMES_MAPPING.get(new Integer(siSampleFormat))).append(", ")
+			.append("PR: ").append(MODULE_NAMES_MAPPING.get(new Integer(siPreprocessingMethod))).append(", ")
+			.append("FE: ").append(MODULE_NAMES_MAPPING.get(new Integer(siFeatureExtractionMethod))).append(", ")
+			.append("CL: ").append(MODULE_NAMES_MAPPING.get(new Integer(siClassificationMethod))).append(", ")
 			.append("ID: ").append(siCurrentSubject)
 			.append("]")
 			.toString();
@@ -1043,8 +1362,19 @@ public class MARF
 	}
 
 	/**
+	 * Retrieves current <code>Classification</code> reference.
+	 * @return Classification object
+	 * @since 0.3.0.6; June 17, 2012
+	 */
+	public static synchronized final Class<?> getClassificationClass()
+	throws ClassificationException
+	{
+		return ClassificationFactory.getClassificationClassByID(siClassificationMethod);
+	}
+
+	/**
 	 * Queries for the final classification result.
-	 * @return integer ID of the indentified subject
+	 * @return integer ID of the identified subject
 	 */
 	public static synchronized final int queryResultID()
 	{
@@ -1053,7 +1383,7 @@ public class MARF
 
 	/**
 	 * Gets the entire Result object of the likely outcome.
-	 * @return Result ID and all the stats of the classification
+	 * @return Result ID and all the statistics of the classification
 	 */
 	public static synchronized final Result getResult()
 	{
@@ -1092,6 +1422,27 @@ public class MARF
 				throw new ClassificationException("Classification returned false.");
 			}
 		}
+		
+		soSampleLoader.close();
+	}
+
+	public static final void recognize(Sample poSample)
+	throws MARFException
+	{
+		checkSettings();
+		startRecognitionPipeline(poSample);
+
+		Debug.debug("MARF: Classifying...");
+
+		synchronized(soClassification)
+		{
+			if(soClassification.classify() == false)
+			{
+				throw new ClassificationException("Classification returned false.");
+			}
+		}
+
+		soSampleLoader.close();
 	}
 
 	/**
@@ -1121,9 +1472,35 @@ public class MARF
 			{
 				throw new ClassificationException("Training returned false.");
 			}
-	
+
 			//XXX batch: soClassification.dump();
 		}
+
+		soSampleLoader.close();
+	}
+
+	public static final void train(Sample poSample)
+	throws MARFException
+	{
+		if(getCurrentSubject() == UNSET)
+		{
+			throw new MARFException("Unset subject ID for training.");
+		}
+
+		checkSettings();
+		startRecognitionPipeline(poSample);
+
+		Debug.debug("MARF: Training...");
+
+		synchronized(soClassification)
+		{
+			if(soClassification.train() == false)
+			{
+				throw new ClassificationException("Training returned false.");
+			}
+		}
+		
+		soSampleLoader.close();
 	}
 
 	/**
@@ -1134,7 +1511,7 @@ public class MARF
 	 * on this module via MARF's train() or recognize() methods.
 	 * The pipeline is granularly synchronized on each object
 	 * that gets instantiated, so no indirect blocking occurs
-	 * on MARF itself (e.g. betwen the main thread and the inner
+	 * on MARF itself (e.g. between the main thread and the inner
 	 * threads of the framework that maybe accessing the MARF
 	 * class concurrently).
 	 *
@@ -1155,83 +1532,94 @@ public class MARF
 		 */
 		synchronized(sstrFileName)
 		{
-			Debug.debug("Loading sample \"" + getSampleFile() + "\"");
+			Debug.debug("MARF: Loading sample \"" + getSampleFile() + "\"");
 			soSampleLoader = SampleLoaderFactory.create(siSampleFormat);
 
 			synchronized(soSampleLoader)
 			{
-				soSample = soSampleLoader.loadSample(sstrFileName);
-
-				/*
-				 * Preprocessing Stage
-				 */
-				synchronized(soSample)
-				{
-					Debug.debug("Preprocessing...");
-					soPreprocessing = PreprocessingFactory.create(siPreprocessingMethod, soSample);
-	
-					synchronized(soPreprocessing)
-					{
-						// TODO: [SM]: Should this be in the preprocessing itself somewhere?
-				
-						if(sbDumpWaveGraph)
-						{
-							Debug.debug("Duming initial wave graph...");
-				
-							new WaveGrapher
-							(
-								soSample.getSampleArray(),
-								0,
-								soSample.getSampleArray().length,
-								getSampleFile(),
-								"initial"
-							).dump();
-						}
-
-						Debug.debug("Invoking preprocess() of " + soPreprocessing.getClass().getName());
-						soPreprocessing.preprocess();
-						Debug.debug("Done preprocess() of " + soPreprocessing.getClass().getName());
-
-						if(sbDumpWaveGraph)
-						{
-							Debug.debug("Duming preprocessed wave graph...");
-				
-							new WaveGrapher
-							(
-								soSample.getSampleArray(),
-								0,
-								soSample.getSampleArray().length,
-								getSampleFile(),
-								"preprocessed"
-							).dump();
-						}
-
-						/*
-						 * Feature Extraction Stage
-						 */
-						Debug.debug("Feature extraction...");
-						soFeatureExtraction = FeatureExtractionFactory.create(siFeatureExtractionMethod, soPreprocessing);
-
-						synchronized(soFeatureExtraction)
-						{
-							soFeatureExtraction.extractFeatures();
-
-							/*
-							 * Classification Stage
-							 */
-							Debug.debug("Classification...");
-							soClassification = ClassificationFactory.create(siClassificationMethod, soFeatureExtraction);
-						
-							/*
-							 * Classification ends in here, as it is continue in one
-							 * way or the other in train() or recognize() depending on
-							 * the curren run-time mode.
-							 */
-						}// feat
-					}// prep
-				}//sample itself
+				//soSample = soSampleLoader.loadSample(sstrFileName);
+				startRecognitionPipeline(soSampleLoader.loadSample(sstrFileName));
 			}//sampleloader
 		}//samplefilename
+	}
+
+	/**
+	 * @param poSample
+	 * @throws MARFException
+	 */
+	private static final void startRecognitionPipeline(Sample poSample)
+	throws MARFException
+	{
+		soSample = poSample;
+		
+		/*
+		 * Preprocessing Stage
+		 */
+		synchronized(soSample)
+		{
+			Debug.debug("MARF: Preprocessing...");
+			soPreprocessing = PreprocessingFactory.create(siPreprocessingMethod, soSample);
+
+			synchronized(soPreprocessing)
+			{
+				// TODO: [SM]: Should this be in the preprocessing itself somewhere?
+
+				if(sbDumpWaveGraph)
+				{
+					Debug.debug("MARF: Dumping initial wave graph...");
+
+					new WaveGrapher
+					(
+						soSample.getSampleArray(),
+						0,
+						soSample.getSampleArray().length,
+						getSampleFile(),
+						"initial"
+					).dump();
+				}
+
+				Debug.debug("MARF: Invoking preprocess() of " + soPreprocessing.getClass().getName());
+				soPreprocessing.preprocess();
+				Debug.debug("MARF: Done preprocess() of " + soPreprocessing.getClass().getName());
+
+				if(sbDumpWaveGraph)
+				{
+					Debug.debug("MARF: Dumping preprocessed wave graph...");
+
+					new WaveGrapher
+					(
+						soSample.getSampleArray(),
+						0,
+						soSample.getSampleArray().length,
+						getSampleFile(),
+						"preprocessed"
+					).dump();
+				}
+
+				/*
+				 * Feature Extraction Stage
+				 */
+				Debug.debug("MARF: Feature extraction...");
+				soFeatureExtraction = FeatureExtractionFactory.create(siFeatureExtractionMethod, soPreprocessing);
+
+				synchronized(soFeatureExtraction)
+				{
+					soFeatureExtraction.extractFeatures();
+
+					/*
+					 * Classification Stage
+					 */
+					Debug.debug("MARF: Classification...");
+					soClassification = ClassificationFactory.create(siClassificationMethod, soFeatureExtraction);
+
+					/*
+					 * Classification ends in here, as it is continue in one
+					 * way or the other in train() or recognize() depending on
+					 * the current run-time mode.
+					 */
+				}// feat
+			}// prep
+		}//sample itself
 	}
 
 	/**
@@ -1244,7 +1632,8 @@ public class MARF
 	 * @throws MARFException if any of the settings are unset
 	 * @since 0.3.0.5
 	 */
-	private static synchronized void checkSettings()
+//	private static synchronized void checkSettings()
+	public static synchronized void checkSettings()
 	throws MARFException
 	{
 		if
@@ -1266,7 +1655,7 @@ public class MARF
 			throw new MARFException(strSetupErrMsg);
 		}
 	}
-	
+
 	/**
 	 * Meant to provide implementation of the buffered sample processing for large samples.
 	 * Not implemented.
@@ -1289,7 +1678,7 @@ public class MARF
 	public interface EStatisticalEstimators
 	{
 		/**
-		 * Indicates to use Maximum Likelyhood Estimate estimator/smoothing.
+		 * Indicates to use Maximum Likelihood Estimate estimator/smoothing.
 		 */
 		public static final int MLE                    = 800;
 
@@ -1422,7 +1811,7 @@ public class MARF
 		public static final int STEMMING               = 1000;
 
 		/**
-		 * Indicates to use case-sesitive processing of text.
+		 * Indicates to use case-sensitive processing of text.
 		 */
 		public static final int CASE_SENSITIVE         = 1001;
 
@@ -1474,7 +1863,7 @@ public class MARF
 		/**
 		 * Similarly to <code>CHARACTER_MODE</code> work in word mode
 		 * for n-grams.
-		 * @sicne 0.3.0.5
+		 * @since 0.3.0.5
 		 * @see #CHARACTER_MODE
 		 */
 		public static final int WORD_MODE              = 1011;
@@ -1492,7 +1881,7 @@ public class MARF
 		 * @see ENgramModels#BIGRAM
 		 */
 		private static int siNgramModel = ENgramModels.BIGRAM;
-		
+
 		/**
 		 * Current natural language.
 		 * Default is "en".
@@ -1536,7 +1925,7 @@ public class MARF
 		}
 
 		/**
-		 * Retrieves current n-gram modeld.
+		 * Retrieves current n-gram model.
 		 * @return inner n-gram model
 		 */
 		public static synchronized final int getNgramModel()
@@ -1590,7 +1979,7 @@ public class MARF
 
 			sstrLanguage = pstrLanguages;
 		}
-	} // clas NLP
+	} // class NLP
 
 	/**
 	 * Retrieves class' revision.
@@ -1599,7 +1988,7 @@ public class MARF
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.98 $";
+		return "$Revision: 1.122 $";
 	}
 }
 

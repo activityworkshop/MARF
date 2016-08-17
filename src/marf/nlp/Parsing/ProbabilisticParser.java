@@ -56,10 +56,10 @@ import marf.util.Debug;
  *     return build_tree(back[1, num_words, 1]), [1, num_words, 1])
  * </pre>
  *
- * $Id: ProbabilisticParser.java,v 1.30 2006/01/30 03:43:17 mokhov Exp $
+ * $Id: ProbabilisticParser.java,v 1.31 2007/12/18 21:37:54 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  * @since 0.3.0.2
  */
 public class ProbabilisticParser
@@ -356,7 +356,7 @@ extends StorageManager
 	}
 
 	/**
-	 * Dumpts parse matrix to the STDOUT.
+	 * Dumps parse matrix to the STDOUT.
 	 */
 	public void dumpParseMatrix()
 	{
@@ -380,7 +380,7 @@ extends StorageManager
 
 	/**
 	 * Performs training of the parser by compiling the source
-	 * probabilistic grammar and then duming it onto disk as
+	 * probabilistic grammar and then dumping it onto disk as
 	 * a precompiled binary file for future re-load.
 	 * @return <code>true</code> if the training went successful
 	 * @throws StorageException in case of any GrammarCompiler error
@@ -486,7 +486,7 @@ extends StorageManager
 	 * Gets a sentence span given indices.
 	 * @param i leftmost word index
 	 * @param j rightmost word index
-	 * @return the setence span string
+	 * @return the sentence span string
 	 */
 	protected String getSentencePart(int i, int j)
 	{
@@ -525,7 +525,7 @@ extends StorageManager
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.30 $";
+		return "$Revision: 1.31 $";
 	}
 }
 

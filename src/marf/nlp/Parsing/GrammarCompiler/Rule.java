@@ -7,10 +7,10 @@ import java.util.Vector;
 /**
  * <p>Language Grammar Rule.</p>
  *
- * $Id: Rule.java,v 1.11 2006/01/01 01:28:17 mokhov Exp $
+ * $Id: Rule.java,v 1.12 2010/06/27 22:18:12 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  * @since 0.3.0.2
  */
 public class Rule
@@ -31,7 +31,7 @@ implements Serializable
 	 * A vector of grammar elements
 	 * on the right-hand-side of a production.
 	 */
-	protected Vector oRHS = new Vector();
+	protected Vector<GrammarElement> oRHS = new Vector<GrammarElement>();
 
 	/**
 	 * For serialization versioning.
@@ -67,9 +67,9 @@ implements Serializable
 	 * @param poEpsilon what to consider a termination element
 	 * @return a collection of the elements in the first set
 	 */
-	public Vector getRHSFirstSet(final GrammarElement poEpsilon)
+	public Vector<GrammarElement> getRHSFirstSet(final GrammarElement poEpsilon)
 	{
-		Vector oFirstSet = new Vector();
+		Vector<GrammarElement> oFirstSet = new Vector<GrammarElement>();
 
 		boolean bAllEpsilon = true;
 
@@ -87,7 +87,7 @@ implements Serializable
 				continue;
 			}
 
-			Vector oNextFirstSet = (Vector)oProdElement.getFirstSet().clone();
+			Vector<GrammarElement> oNextFirstSet = (Vector<GrammarElement>)oProdElement.getFirstSet().clone();
 
 			for(int f = 0; f < oNextFirstSet.size(); f++)
 			{
@@ -189,7 +189,7 @@ implements Serializable
 	 * Allows setting a new RHS from the outside.
 	 * @param poNewRHS new collection of the RHS elements
 	 */
-	public void setRHS(Vector poNewRHS)
+	public void setRHS(Vector<GrammarElement> poNewRHS)
 	{
 		this.oRHS = poNewRHS;
 	}
@@ -207,7 +207,7 @@ implements Serializable
 	 * Allows getting the RHS part of this rule.
 	 * @return current collection of the RHS elements
 	 */
-	public Vector getRHS()
+	public Vector<GrammarElement> getRHS()
 	{
 		return this.oRHS;
 	}
@@ -236,7 +236,7 @@ implements Serializable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.11 $";
+		return "$Revision: 1.12 $";
 	}
 }
 

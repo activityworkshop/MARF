@@ -4,9 +4,12 @@ import marf.util.MARFException;
 
 
 /**
- * <p>Responsible for providing and validating version information of MARF.<p>
+ * <p>Responsible for providing and validating version information of MARF.
+ * A version should be bumped here at the beginning of every release cycle
+ * according to the versioning guidelines outlined in the manual.
+ * <p>
  *
- * $Id: Version.java,v 1.1 2006/01/14 19:06:19 mokhov Exp $
+ * $Id: Version.java,v 1.6 2007/12/31 00:17:05 mokhov Exp $
  *
  * @author Serguei Mokhov
  * @since 0.3.0.5
@@ -34,7 +37,7 @@ public class Version
 	 * the counting stops and is reset to 0 every minor version.
 	 * @see #MINOR_VERSION
 	 */
-	public static final int MINOR_REVISION = 5;
+	public static final int MINOR_REVISION = 6;
 
 	/**
 	 * Should be automatically replaced through scripting
@@ -42,7 +45,7 @@ public class Version
 	 * marf-util, marf-math, or marf-nlp, etc. packages,
 	 * the corresponding suffix (i.e. "util", "nlp", ...)
 	 * should end up being in this constant and then compiled.
-	 * This suffix is appended all string varians of the version.
+	 * This suffix is appended all string variants of the version.
 	 * The default fat MARF should not contain anything.
 	 */
 	private static final String PACKAGE = "";
@@ -60,10 +63,7 @@ public class Version
 			MINOR_VERSION + "." +
 			REVISION + "." +
 			MINOR_REVISION +
-
-			// Will only be activated through scripting PACKAGE
-			// at the distro time.
-			(PACKAGE.equals("") ? "" : "-" + PACKAGE);
+			getPackageInfo();
 	}
 
 	/**
@@ -74,20 +74,30 @@ public class Version
 	 */
 	public static final String getStringVersion(double pdDoubleVersion)
 	{
-		int iMinorRevision = (int)(Math.abs((int)pdDoubleVersion - pdDoubleVersion) * 10);
-		int iMajorVersion = (int)((pdDoubleVersion - iMinorRevision * 0.1) / 100);
-		int iMinorVersion = (int)((pdDoubleVersion - iMajorVersion * 100 - iMinorRevision * 0.1) / 10);
-		int iRevision = (int)((pdDoubleVersion - iMajorVersion * 100 - iMinorVersion * 10 - iMinorRevision * 0.1));
+		int iIntVersion = (int)Math.ceil(pdDoubleVersion * 10);
+		return getStringVersion(iIntVersion);
+	}
+
+	/**
+	 * Returns a string representation of the MARF version
+	 * given its integer equivalent. E.g. 1306 becomes "0.3.0.6".
+	 * @param piIntVersion the integer equivalent of the version 
+	 * @return version String
+	 * @since 0.3.0.6
+	 */
+	public static final String getStringVersion(int piIntVersion)
+	{
+		int iMajorVersion = (int)Math.ceil(piIntVersion / 1000);
+		int iMinorVersion = (int)Math.ceil((piIntVersion - iMajorVersion * 1000) / 100);
+		int iRevision = (int)Math.ceil((piIntVersion - iMajorVersion * 1000 - iMinorVersion * 100) / 10);
+		int iMinorRevision = piIntVersion - iMajorVersion * 1000 - iMinorVersion * 100 - iRevision;
 
 		return
 			iMajorVersion + "." +
 			iMinorVersion + "." +
 			iRevision + "." +
 			iMinorRevision +
-
-			// Will only be activated through scripting PACKAGE
-			// at the distro time.
-			(PACKAGE.equals("") ? "" : "-" + PACKAGE);
+			getPackageInfo();
 	}
 
 	/**
@@ -134,26 +144,72 @@ public class Version
 	}
 
 	/**
-	 * Makes sure the applications isn't run against older MARF version.
+	 * Makes sure the applications aren't run against older MARF version.
 	 * @param pdDoubleVersion floating point version representation to validate
 	 * @throws MARFException if the MARF's version is too old
 	 */
 	public static final void validateVersions(double pdDoubleVersion)
 	throws MARFException
 	{
-		if(getDoubleVersion() < pdDoubleVersion)
+		validateVersions(pdDoubleVersion, false);
+	}
+
+	/**
+	 * Makes sure the applications aren't run against an older MARF or
+	 * exact matching library version.
+	 * @param pdDoubleVersion floating point version representation to validate
+	 * @param pbExactMatch if set to true the exact version match will be required
+	 * @throws MARFException if the MARF's version is too old or isn't matching
+	 * @since 0.3.0.6
+	 */
+	public static final void validateVersions(double pdDoubleVersion, boolean pbExactMatch)
+	throws MARFException
+	{
+		boolean bVersionMismatch = pbExactMatch
+			? getDoubleVersion() != pdDoubleVersion
+			: getDoubleVersion() < pdDoubleVersion;
+
+		if(bVersionMismatch)
 		{
-			throw new MARFException
-			(
-				"Your MARF version (" + getStringVersion()
-				+ ") is too old. This application requires "
-				+ getStringVersion(pdDoubleVersion) + " or above."
-			);
+			errorOut(getStringVersion(pdDoubleVersion), pbExactMatch);
 		}
 	}
 
 	/**
-	 * Makes sure the applications isn't run against older MARF version.
+	 * Makes sure the applications aren't run against older MARF version.
+	 * @param piIntVersion integer version representation to validate
+	 * @throws MARFException if the MARF library's version is too old
+	 * @since 0.3.0.6
+	 */
+	public static final void validateVersions(int piIntVersion)
+	throws MARFException
+	{
+		validateVersions(piIntVersion, false);
+	}
+	
+	/**
+	 * Makes sure the applications aren't run against an older MARF or
+	 * exact matching library version.
+	 * @param piIntVersion integer version representation to validate
+	 * @param pbExactMatch if set to true the exact version match will be required
+	 * @throws MARFException if the MARF library's version is too old or isn't matching
+	 * @since 0.3.0.6
+	 */
+	public static final void validateVersions(int piIntVersion, boolean pbExactMatch)
+	throws MARFException
+	{
+		boolean bVersionMismatch = pbExactMatch
+			? getIntVersion() != piIntVersion
+			: getIntVersion() < piIntVersion;
+
+		if(bVersionMismatch)
+		{
+			errorOut(getStringVersion(piIntVersion), pbExactMatch);
+		}
+	}
+	
+	/**
+	 * Makes sure the applications aren't run against older MARF version.
 	 * @param pstrStringVersion String representation of the required version
 	 * @throws MARFException if the MARF's version is too old
 	 * @throws NullPointerException if the parameter is null
@@ -161,15 +217,61 @@ public class Version
 	public static final void validateVersions(final String pstrStringVersion)
 	throws MARFException
 	{
-		if(getStringVersion().compareTo(pstrStringVersion) < 0)
+		validateVersions(pstrStringVersion, false);
+	}
+
+	/**
+	 * Makes sure the applications aren't run against an older MARF or
+	 * exact matching library version.
+	 * @param pstrStringVersion String version representation to validate
+	 * @param pbExactMatch if set to true the exact version match will be required
+	 * @throws MARFException if the MARF's version is too old or isn't matching
+	 * @since 0.3.0.6
+	 */
+	public static final void validateVersions(final String pstrStringVersion, boolean pbExactMatch)
+	throws MARFException
+	{
+		boolean bVersionMismatch = pbExactMatch
+			? getStringVersion().compareTo(pstrStringVersion) != 0
+			: getStringVersion().compareTo(pstrStringVersion) < 0;
+
+		if(bVersionMismatch)
 		{
-			throw new MARFException
-			(
-				"Your MARF version (" + getStringVersion()
-				+ ") is too old. This application requires "
-				+ pstrStringVersion + " or above."
-			);
+			errorOut(pstrStringVersion, pbExactMatch);
 		}
+	}
+
+	/**
+	 * Just a helper method for code reuse to throw an exception
+	 * with the version validation error message given parameters. 
+	 * @param pstrStringVersion expected version
+	 * @param pbExactMatch if true modifies the error message to require exactly the mentioned version
+	 * and if false, simply says this version or above.
+	 * @throws MARFException with the error message of the version mismatch
+	 * @since 0.3.0.6
+	 */
+	private static void errorOut(final String pstrStringVersion, boolean pbExactMatch)
+	throws MARFException
+	{
+		throw new MARFException
+		(
+			"Your MARF version (" + getStringVersion()
+			+ ") is " + (pbExactMatch ? "not matching the required one." : "too old.")
+			+ " This application requires "
+			+ pstrStringVersion + (pbExactMatch ? " precisely." : " or above.")
+		);
+	}
+
+	/**
+	 * Helper method to append package information.
+	 * @return package string if it is not empty preceded with a dash.
+	 * @since 0.3.0.6
+	 */
+	private static String getPackageInfo()
+	{
+		// Will only be activated through scripting of the PACKAGE member
+		// at the distro time.
+		return (PACKAGE.equals("") ? "" : "-" + PACKAGE);
 	}
 
 	/**
@@ -178,7 +280,7 @@ public class Version
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.1 $";
+		return "$Revision: 1.6 $";
 	}
 }
 

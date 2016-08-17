@@ -3,9 +3,9 @@
 #
 # Serguei Mokhov
 #
-# Copyright (c) 2002 - 2006 The MARF Research and Development Group
+# Copyright (c) 2002 - 2007 The MARF Research and Development Group
 #
-# $Header: /cvsroot/marf/marf/doc/src/tex/Makefile,v 1.25 2006/02/26 21:36:34 mokhov Exp $
+# $Header: /cvsroot/marf/marf/doc/src/tex/Makefile,v 1.27 2007/01/01 23:09:16 mokhov Exp $
 
 #
 # Settings
@@ -254,7 +254,7 @@ clean:
 
 maintainer-clean: clean
 	rm -f *.diff \
-	$(APPFILES) $(LANGTEXFILES) $(GRAMMARTEXFILES) \
+	$(APPFILES) $(LANGTEXFILES) $(GRAMMARTEXFILES) $(SENTENCETEXFILES) \
 	TODO.tex date.tex \
 	*.dvi *.aux *.toc *.lot *.lof *.idx *.ind *.ilg *.bbl *.blg
 

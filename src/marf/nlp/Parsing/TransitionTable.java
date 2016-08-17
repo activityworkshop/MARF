@@ -20,10 +20,10 @@ import marf.util.Debug;
  * Can be serialized and deserialized as a binary
  * gzipped object.</p>
  *
- * $Id: TransitionTable.java,v 1.14 2006/01/19 04:51:41 mokhov Exp $
+ * $Id: TransitionTable.java,v 1.15 2007/12/18 21:37:56 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  * @since 0.3.0.2
  */
 public class TransitionTable
@@ -77,7 +77,7 @@ implements Serializable
 	private static final long serialVersionUID = 7463126736067849797L;
 
 	/**
-	 * Default Cosntructor.
+	 * Default Constructor.
 	 */
 	public TransitionTable()
 	{
@@ -96,7 +96,7 @@ implements Serializable
 	}
 
 	/**
-	 * This is a standard attempt to initilaize.
+	 * This is a standard attempt to initialize.
 	 * Must be called only by <code>GrammarCompiler</code> or when
 	 * dimensions of the table are well known.
 	 *
@@ -480,7 +480,7 @@ implements Serializable
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.14 $";
+		return "$Revision: 1.15 $";
 	}
 }
 

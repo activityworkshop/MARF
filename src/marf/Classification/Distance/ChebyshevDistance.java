@@ -7,10 +7,10 @@ import marf.FeatureExtraction.IFeatureExtraction;
  * <p>Chebyshev Distance Classifier.</p>
  * <p>Also known as Manhattan or City Block distance.</>
  *
- * <p>$Id: ChebyshevDistance.java,v 1.17 2005/08/11 00:44:50 mokhov Exp $</p>
+ * $Id: ChebyshevDistance.java,v 1.19 2007/12/31 00:17:04 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.19 $
  * @since 0.0.1
  */
 public class ChebyshevDistance
@@ -45,7 +45,9 @@ extends Distance
 		double dDistance = 0;
 
 		for(int f = 0; f < padVector1.length; f++)
+		{
 			dDistance += Math.abs(padVector1[f] - padVector2[f]);
+		}
 
 		return dDistance;
 	}
@@ -57,7 +59,7 @@ extends Distance
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.17 $";
+		return "$Revision: 1.19 $";
 	}
 }
 

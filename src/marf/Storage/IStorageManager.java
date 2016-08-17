@@ -10,10 +10,10 @@ import java.io.Serializable;
  * it also extends <code>Cloneable</code>.
  * </p>
  *
- * $Id: IStorageManager.java,v 1.11 2005/12/27 23:55:30 mokhov Exp $
+ * $Id: IStorageManager.java,v 1.12 2007/12/23 06:29:46 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  * @since 0.3.0.2
  *
  * @see Serializable
@@ -55,7 +55,7 @@ extends Serializable, Cloneable
 	/**
 	 * Interface source code revision.
 	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.11 $";
+	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.12 $";
 
 	/**
 	 * Maps <code>DUMP_</code> constants to default filename extensions.
@@ -90,7 +90,7 @@ extends Serializable, Cloneable
 	throws StorageException;
 
 	/**
-	 * An object must know how retore its non-transient data structures from a file.
+	 * An object must know how restore its non-transient data structures from a file.
 	 * Options are: object serialization (possibly compressed), XML, CSV, HTML, and SQL.
 	 * @throws StorageException if there was a problem (re)loading the object
 	 */

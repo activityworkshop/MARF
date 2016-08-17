@@ -11,12 +11,10 @@ import java.util.Vector;
  * <p>Generic Lexical Analyzer.</p>
  *
  * <p>(C) 2001 Serguei A. Mokhov</p>
- * <p>(C) 2002 - 2006 The MARF Research and Development Group</p>
- *
- * $Id: GenericLexicalAnalyzer.java,v 1.16 2006/01/19 04:13:16 mokhov Exp $
+ * <p>(C) 2002 - 2012 The MARF Research and Development Group</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
+ * @version $Id: GenericLexicalAnalyzer.java,v 1.23 2012/07/18 02:45:45 mokhov Exp $
  * @since 0.3.0.2
  */
 public abstract class GenericLexicalAnalyzer
@@ -71,7 +69,7 @@ public abstract class GenericLexicalAnalyzer
 	/**
 	 * A list of tokens extracted so far.
 	 */
-	protected Vector oTokenList = null;
+	protected Vector<Token> oTokenList = null;
 	
 	/**
 	 * A reference to local symbol table.
@@ -81,7 +79,7 @@ public abstract class GenericLexicalAnalyzer
 	/**
 	 * A collection of lexical errors (if any).
 	 */
-	protected Vector oLexicalErrors = null;
+	protected Vector<LexicalError> oLexicalErrors = null;
 
 	/**
 	 * Current token being processed.
@@ -95,8 +93,8 @@ public abstract class GenericLexicalAnalyzer
 	public GenericLexicalAnalyzer(SymbolTable poSymTab)
 	{
 		this.oSymTab = poSymTab;
-		this.oTokenList = new Vector();
-		this.oLexicalErrors = new Vector();
+		this.oTokenList = new Vector<Token>();
+		this.oLexicalErrors = new Vector<LexicalError>();
 	}
 
 	/**
@@ -300,7 +298,7 @@ public abstract class GenericLexicalAnalyzer
 	 *
 	 * @return the current value of the TonkenList property
 	 */
-	public Vector getTokenList()
+	public Vector<Token> getTokenList()
 	{
 		return this.oTokenList;
 	}
@@ -321,7 +319,7 @@ public abstract class GenericLexicalAnalyzer
 	 * @return a collection of caught lexical errors
 	 * @since 0.3.0.5
 	 */
-	public Vector getLexicalErrors()
+	public Vector<LexicalError> getLexicalErrors()
 	{
 		return this.oLexicalErrors;
 	}
@@ -332,7 +330,7 @@ public abstract class GenericLexicalAnalyzer
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.16 $";
+		return "$Revision: 1.23 $";
 	}
 }
 

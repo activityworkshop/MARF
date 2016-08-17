@@ -22,12 +22,12 @@ import java.util.Vector;
  * existing methods, plus adds the <code>copy()</code> wrappers of <code>System.arraycopy()</code>,
  * and <code>arrayToVector()</code> methods.</p>
  *
- * <p>$Id: Arrays.java,v 1.35 2005/12/05 03:13:02 mokhov Exp $</p>
+ * <p>$Id: Arrays.java,v 1.43 2011/03/08 02:55:50 mokhov Exp $</p>
  *
  * @author Serguei Mokhov
  * @author Shuxin Fan
  *
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.43 $
  * @since 0.3.0.1
  *
  * @see java.util.Arrays
@@ -1207,6 +1207,21 @@ public class Arrays
 		java.util.Arrays.fill(pasArray, psValue);
 	}
 
+	/**
+	 * Sets all elements of the parameter at pseudo-random order.
+	 * The range of the values is [- Double.MAX_VALUE / 2, Double.MAX_VALUE / 2].
+	 * @param padArray the array to fill
+	 * @since 0.3.0.6
+	 */
+	public static void fillRandom(double[] padArray)
+	{
+		for(int i = 0; i < padArray.length; i++)
+		{
+			padArray[i] = (Math.random() - 0.5) * Double.MAX_VALUE;
+		}
+	}
+
+
 	/*
 	 * -------
 	 * Sorting
@@ -1219,7 +1234,7 @@ public class Arrays
 	 * @param paoArrayToSort array of objects to sort
 	 * @param poComparator comparator object to use while sorting
 	 */
-	public static void sort(Object[] paoArrayToSort, Comparator poComparator)
+	public static void sort(Object[] paoArrayToSort, Comparator<Object> poComparator)
 	{
 		java.util.Arrays.sort(paoArrayToSort, poComparator);
 	}
@@ -1317,12 +1332,14 @@ public class Arrays
 	 * @return equivalent collection of Double objects
 	 * @since 0.3.0.3
 	 */
-	public static Vector arrayToVector(final double[] padData)
+	public static Vector<Double> arrayToVector(final double[] padData)
 	{
-		Vector oVector = new Vector(padData.length);
+		Vector<Double> oVector = new Vector<Double>(padData.length);
 
 		for(int i = 0; i < padData.length; i++)
+		{
 			oVector.add(new Double(padData[i]));
+		}
 
 		return oVector;
 	}
@@ -1334,12 +1351,14 @@ public class Arrays
 	 * @return equivalent collection of Integer objects
 	 * @since 0.3.0.3
 	 */
-	public static Vector arrayToVector(final int[] paiData)
+	public static Vector<Integer> arrayToVector(final int[] paiData)
 	{
-		Vector oVector = new Vector(paiData.length);
+		Vector<Integer> oVector = new Vector<Integer>(paiData.length);
 
 		for(int i = 0; i < paiData.length; i++)
+		{
 			oVector.add(new Integer(paiData[i]));
+		}
 
 		return oVector;
 	}
@@ -1351,12 +1370,14 @@ public class Arrays
 	 * @return equivalent collection of Float objects
 	 * @since 0.3.0.3
 	 */
-	public static Vector arrayToVector(final float[] pafData)
+	public static Vector<Float> arrayToVector(final float[] pafData)
 	{
-		Vector oVector = new Vector(pafData.length);
+		Vector<Float> oVector = new Vector<Float>(pafData.length);
 
 		for(int i = 0; i < pafData.length; i++)
+		{
 			oVector.add(new Float(pafData[i]));
+		}
 
 		return oVector;
 	}
@@ -1368,12 +1389,14 @@ public class Arrays
 	 * @return equivalent collection of Short objects
 	 * @since 0.3.0.3
 	 */
-	public static Vector arrayToVector(final short[] pasData)
+	public static Vector<Short> arrayToVector(final short[] pasData)
 	{
-		Vector oVector = new Vector(pasData.length);
+		Vector<Short> oVector = new Vector<Short>(pasData.length);
 
 		for(int i = 0; i < pasData.length; i++)
+		{
 			oVector.add(new Short(pasData[i]));
+		}
 
 		return oVector;
 	}
@@ -1385,12 +1408,14 @@ public class Arrays
 	 * @return equivalent collection of Long objects
 	 * @since 0.3.0.3
 	 */
-	public static Vector arrayToVector(final long[] palData)
+	public static Vector<Long> arrayToVector(final long[] palData)
 	{
-		Vector oVector = new Vector(palData.length);
+		Vector<Long> oVector = new Vector<Long>(palData.length);
 
 		for(int i = 0; i < palData.length; i++)
+		{
 			oVector.add(new Long(palData[i]));
+		}
 
 		return oVector;
 	}
@@ -1402,12 +1427,14 @@ public class Arrays
 	 * @return equivalent collection of Character objects
 	 * @since 0.3.0.3
 	 */
-	public static Vector arrayToVector(final char[] pacData)
+	public static Vector<Character> arrayToVector(final char[] pacData)
 	{
-		Vector oVector = new Vector(pacData.length);
+		Vector<Character> oVector = new Vector<Character>(pacData.length);
 
 		for(int i = 0; i < pacData.length; i++)
+		{
 			oVector.add(new Character(pacData[i]));
+		}
 
 		return oVector;
 	}
@@ -1419,12 +1446,14 @@ public class Arrays
 	 * @return equivalent collection of Byte objects
 	 * @since 0.3.0.3
 	 */
-	public static Vector arrayToVector(final byte[] patData)
+	public static Vector<Byte> arrayToVector(final byte[] patData)
 	{
-		Vector oVector = new Vector(patData.length);
+		Vector<Byte> oVector = new Vector<Byte>(patData.length);
 
 		for(int i = 0; i < patData.length; i++)
+		{
 			oVector.add(new Byte(patData[i]));
+		}
 
 		return oVector;
 	}
@@ -1436,19 +1465,40 @@ public class Arrays
 	 * @return equivalent collection of String objects
 	 * @since 0.3.0.3
 	 */
-	public static Vector arrayToVector(final String[] pastrData)
+	public static Vector<String> arrayToVector(final String[] pastrData)
 	{
-		Vector oVector = new Vector(pastrData.length);
+		Vector<String> oVector = new Vector<String>(pastrData.length);
 
 		for(int i = 0; i < pastrData.length; i++)
+		{
 			oVector.add(new String(pastrData[i]));
+		}
+
+		return oVector;
+	}
+
+	/**
+	 * Converts array of Objects to Vector.
+	 *
+	 * @param paoData array of Object data
+	 * @return equivalent collection of objects
+	 * @since 0.3.0.6
+	 */
+	public static Vector<Object> arrayToVector(final Object[] paoData)
+	{
+		Vector<Object> oVector = new Vector<Object>(paoData.length);
+
+		for(int i = 0; i < paoData.length; i++)
+		{
+			oVector.add(paoData[i]);
+		}
 
 		return oVector;
 	}
 
 	/**
 	 * Converts array of Strings to a single string separated by
-	 * the specified delimeter.
+	 * the specified delimiter.
 	 *
 	 * @param pastrData string data to concatenate
 	 * @param pstrDelimeter data elements separator
@@ -1458,19 +1508,24 @@ public class Arrays
 	 */
 	public static String arrayToDelimitedString(final String[] pastrData, final String pstrDelimeter)
 	{
-		String strRetVal = pastrData[0];
+		StringBuffer oRetVal = new StringBuffer();
 
-		for(int i = 1; i < pastrData.length; i++)
+		if(pastrData.length > 0)
 		{
-			strRetVal += pstrDelimeter + pastrData[i];
+			oRetVal.append(pastrData[0]);
+
+			for(int i = 1; i < pastrData.length; i++)
+			{
+				oRetVal.append(pstrDelimeter).append(pastrData[i]);
+			}
 		}
 
-		return strRetVal;
+		return oRetVal.toString();
 	}
 
 	/**
 	 * Converts array of integers to a single string separated by
-	 * the specified delimeter.
+	 * the specified delimiter.
 	 *
 	 * @param paiData int data to append
 	 * @param pstrDelimeter data elements separator
@@ -1482,11 +1537,14 @@ public class Arrays
 	{
 		StringBuffer oRetVal = new StringBuffer();
 
-		oRetVal.append(paiData[0]);
-
-		for(int i = 1; i < paiData.length; i++)
+		if(paiData.length > 0)
 		{
-			oRetVal.append(pstrDelimeter).append(paiData[i]);
+			oRetVal.append(paiData[0]);
+
+			for(int i = 1; i < paiData.length; i++)
+			{
+				oRetVal.append(pstrDelimeter).append(paiData[i]);
+			}
 		}
 
 		return oRetVal.toString();
@@ -1494,7 +1552,7 @@ public class Arrays
 
 	/**
 	 * Converts array of Objects to a single string separated by
-	 * the specified delimeter.
+	 * the specified delimiter.
 	 *
 	 * @param paoData Object data to append
 	 * @param pstrDelimeter data elements separator
@@ -1506,11 +1564,14 @@ public class Arrays
 	{
 		StringBuffer oRetVal = new StringBuffer();
 
-		oRetVal.append(paoData[0]);
-
-		for(int i = 1; i < paoData.length; i++)
+		if(paoData.length > 0)
 		{
-			oRetVal.append(pstrDelimeter).append(paoData[i]);
+			oRetVal.append(paoData[0]);
+
+			for(int i = 1; i < paoData.length; i++)
+			{
+				oRetVal.append(pstrDelimeter).append(paoData[i]);
+			}
 		}
 
 		return oRetVal.toString();
@@ -1518,7 +1579,7 @@ public class Arrays
 
 	/**
 	 * Converts array of longs to a single string separated by
-	 * the specified delimeter.
+	 * the specified delimiter.
 	 *
 	 * @param palData long data to append
 	 * @param pstrDelimeter data elements separator
@@ -1530,11 +1591,14 @@ public class Arrays
 	{
 		StringBuffer oRetVal = new StringBuffer();
 
-		oRetVal.append(palData[0]);
-
-		for(int i = 1; i < palData.length; i++)
+		if(palData.length > 0)
 		{
-			oRetVal.append(pstrDelimeter).append(palData[i]);
+			oRetVal.append(palData[0]);
+
+			for(int i = 1; i < palData.length; i++)
+			{
+				oRetVal.append(pstrDelimeter).append(palData[i]);
+			}
 		}
 
 		return oRetVal.toString();
@@ -1542,7 +1606,7 @@ public class Arrays
 
 	/**
 	 * Converts array of floats to a single string separated by
-	 * the specified delimeter.
+	 * the specified delimiter.
 	 *
 	 * @param pafData float data to append
 	 * @param pstrDelimeter data elements separator
@@ -1554,11 +1618,14 @@ public class Arrays
 	{
 		StringBuffer oRetVal = new StringBuffer();
 
-		oRetVal.append(pafData[0]);
-
-		for(int i = 1; i < pafData.length; i++)
+		if(pafData.length > 0)
 		{
-			oRetVal.append(pstrDelimeter).append(pafData[i]);
+			oRetVal.append(pafData[0]);
+
+			for(int i = 1; i < pafData.length; i++)
+			{
+				oRetVal.append(pstrDelimeter).append(pafData[i]);
+			}
 		}
 
 		return oRetVal.toString();
@@ -1566,7 +1633,7 @@ public class Arrays
 
 	/**
 	 * Converts array of doubles to a single string separated by
-	 * the specified delimeter.
+	 * the specified delimiter.
 	 *
 	 * @param padData double data to append
 	 * @param pstrDelimeter data elements separator
@@ -1578,11 +1645,14 @@ public class Arrays
 	{
 		StringBuffer oRetVal = new StringBuffer();
 
-		oRetVal.append(padData[0]);
-
-		for(int i = 1; i < padData.length; i++)
+		if(padData.length > 0)
 		{
-			oRetVal.append(pstrDelimeter).append(padData[i]);
+			oRetVal.append(padData[0]);
+
+			for(int i = 1; i < padData.length; i++)
+			{
+				oRetVal.append(pstrDelimeter).append(padData[i]);
+			}
 		}
 
 		return oRetVal.toString();
@@ -1590,7 +1660,7 @@ public class Arrays
 
 	/**
 	 * Converts array of bytes to a single string separated by
-	 * the specified delimeter.
+	 * the specified delimiter.
 	 *
 	 * @param patData byte data to append
 	 * @param pstrDelimeter data elements separator
@@ -1602,11 +1672,14 @@ public class Arrays
 	{
 		StringBuffer oRetVal = new StringBuffer();
 
-		oRetVal.append(patData[0]);
-
-		for(int i = 1; i < patData.length; i++)
+		if(patData.length > 0)
 		{
-			oRetVal.append(pstrDelimeter).append(patData[i]);
+			oRetVal.append(patData[0]);
+
+			for(int i = 1; i < patData.length; i++)
+			{
+				oRetVal.append(pstrDelimeter).append(patData[i]);
+			}
 		}
 
 		return oRetVal.toString();
@@ -1614,7 +1687,7 @@ public class Arrays
 
 	/**
 	 * Converts array of booleans to a single string separated by
-	 * the specified delimeter.
+	 * the specified delimiter.
 	 *
 	 * @param pabData boolean data to append
 	 * @param pstrDelimeter data elements separator
@@ -1626,11 +1699,14 @@ public class Arrays
 	{
 		StringBuffer oRetVal = new StringBuffer();
 
-		oRetVal.append(pabData[0]);
-
-		for(int i = 1; i < pabData.length; i++)
+		if(pabData.length > 0)
 		{
-			oRetVal.append(pstrDelimeter).append(pabData[i]);
+			oRetVal.append(pabData[0]);
+
+			for(int i = 1; i < pabData.length; i++)
+			{
+				oRetVal.append(pstrDelimeter).append(pabData[i]);
+			}
 		}
 
 		return oRetVal.toString();
@@ -1638,23 +1714,26 @@ public class Arrays
 
 	/**
 	 * Converts array of characters to a single string separated by
-	 * the specified delimeter.
+	 * the specified delimiter.
 	 *
-	 * @param pacData charater data to append
-	 * @param pstrDelimeter data elements separator
+	 * @param pacData character data to append
+	 * @param pstrDelimiter data elements separator
 	 * @return the resulting combined string
 	 *
 	 * @since 0.3.0.5
 	 */
-	public static String arrayToDelimitedString(final char[] pacData, final String pstrDelimeter)
+	public static String arrayToDelimitedString(final char[] pacData, final String pstrDelimiter)
 	{
 		StringBuffer oRetVal = new StringBuffer();
 
-		oRetVal.append(pacData[0]);
-
-		for(int i = 1; i < pacData.length; i++)
+		if(pacData.length > 0)
 		{
-			oRetVal.append(pstrDelimeter).append(pacData[i]);
+			oRetVal.append(pacData[0]);
+
+			for(int i = 1; i < pacData.length; i++)
+			{
+				oRetVal.append(pstrDelimiter).append(pacData[i]);
+			}
 		}
 
 		return oRetVal.toString();
@@ -1767,7 +1846,7 @@ public class Arrays
 	/**
 	 * Converts array of characters to a single space-separated String.
 	 *
-	 * @param pacData array of charater data
+	 * @param pacData array of character data
 	 * @return equivalent combined string
 	 *
 	 * @since 0.3.0.5
@@ -1882,9 +1961,9 @@ public class Arrays
 	}
 
 	/**
-	 * Converts array of charaters to a single comma-separated String.
+	 * Converts array of characters to a single comma-separated String.
 	 *
-	 * @param pacData array of charater data
+	 * @param pacData array of character data
 	 * @return equivalent combined string
 	 *
 	 * @since 0.3.0.5
@@ -1902,7 +1981,7 @@ public class Arrays
 	 * @return corresponding List collection
 	 * @since 0.3.0.3
 	 */
-	public static java.util.List asList(Object[] paoObjects)
+	public static java.util.List<?> asList(Object[] paoObjects)
 	{
 		return java.util.Arrays.asList(paoObjects);
 	}
@@ -1913,7 +1992,7 @@ public class Arrays
 	 *
 	 * @param padDestination destination array of doubles
 	 * @param piDestinationFrom index in the destination to start place elements at
-	 * @param paiSource sourc earray of ints
+	 * @param paiSource source array of ints
 	 * @param piSourceFrom index in the source to start take elements from
 	 * @param piHowMany N; how many elements to copy
 	 * @since 0.3.0.3
@@ -1929,7 +2008,7 @@ public class Arrays
 	 * from an array of ints into array of doubles.
 	 *
 	 * @param padDestination destination array of doubles
-	 * @param paiSource sourc earray of ints
+	 * @param paiSource source array of ints
 	 * @param piHowMany N; how many elements to copy
 	 * @since 0.3.0.3
 	 */
@@ -2119,7 +2198,7 @@ public class Arrays
 	 * from an array of ints into array of bytes.
 	 *
 	 * @param patDestination destination array of bytes
-	 * @param paiSource sourc earray of ints
+	 * @param paiSource source array of ints
 	 * @since 0.3.0.3
 	 */
 	public static void copy(byte[] patDestination, int[] paiSource)
@@ -2149,7 +2228,7 @@ public class Arrays
 	 * from an array of ints into array of characters.
 	 *
 	 * @param pacDestination destination array of characters
-	 * @param paiSource sourc earray of ints
+	 * @param paiSource source array of ints
 	 * @param piHowMany N; how many elements to copy
 	 * @since 0.3.0.3
 	 */
@@ -2163,7 +2242,7 @@ public class Arrays
 	 * from an array of ints into array of characters.
 	 *
 	 * @param pacDestination destination array of characters
-	 * @param paiSource sourc earray of ints
+	 * @param paiSource source array of ints
 	 * @since 0.3.0.3
 	 */
 	public static void copy(char[] pacDestination, int[] paiSource)
@@ -3022,7 +3101,9 @@ public class Arrays
 	public static void copy(double[] padDestination, int piDestinationFrom, byte[] patSource, int piSourceFrom, int piHowMany)
 	{
 		for(int i = 0; i < piHowMany; i++)
+		{
 			padDestination[piDestinationFrom + i] = patSource[piSourceFrom + i];
+		}
 	}
 
 	/**
@@ -3066,7 +3147,9 @@ public class Arrays
 	public static void copy(short[] pasDestination, int piDestinationFrom, byte[] patSource, int piSourceFrom, int piHowMany)
 	{
 		for(int i = 0; i < piHowMany; i++)
+		{
 			pasDestination[piDestinationFrom + i] = patSource[piSourceFrom + i];
+		}
 	}
 
 	/**
@@ -4183,7 +4266,7 @@ public class Arrays
 	 * @throws ClassCastException if the type of the searched value is not match the type of the array
 	 * @since 0.3.0.3
 	 */
-	public static int binarySearch(Object[] paoArray, Object poValue, Comparator poComparator)
+	public static int binarySearch(Object[] paoArray, Object poValue, Comparator<Object> poComparator)
 	{
 		return java.util.Arrays.binarySearch(paoArray, poValue, poComparator);
 	}
@@ -4202,7 +4285,7 @@ public class Arrays
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.35 $";
+		return "$Revision: 1.43 $";
 	}
 }
 

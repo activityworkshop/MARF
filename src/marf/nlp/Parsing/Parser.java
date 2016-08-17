@@ -1,6 +1,6 @@
 /*
  * Generic Parser
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
+ * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
  */
 package marf.nlp.Parsing;
 
@@ -22,16 +22,14 @@ import marf.util.Debug;
 /**
  * <p>Generic Language Parser.</p>
  * 
- * $Id: Parser.java,v 1.22 2006/01/19 04:13:16 mokhov Exp $
- * 
  * @author Serguei Mokhov, mokhov@cs.concordia.ca
- * @version $Revision: 1.22 $
+ * @version $Id: Parser.java,v 1.30 2012/01/09 04:03:23 mokhov Exp $
  * @since 0.3.0.2
  */
 public class Parser
 {
 	/**
-	 * Transitinal Table
+	 * Transitional Table
 	 * for Transition State Parsing Algorithm.
 	 */
 	private TransitionTable oTT = null;
@@ -54,15 +52,14 @@ public class Parser
 	private GrammarCompiler oGrammarCompiler = null;
 
 	/**
-	 * Stack needed for
-	 * Transition State Parsing Algorithm.
+	 * Stack needed for the Transition State Parsing Algorithm.
 	 */
-	private Stack oStack = new Stack();
+	private Stack<GrammarElement> oStack = new Stack<GrammarElement>();
 
 	/**
 	 * A list of Syntax Errors so far.
 	 */
-	protected Vector oSyntaxErrors = new Vector();
+	protected Vector<String> oSyntaxErrors = new Vector<String>();
 
 	/**
 	 * Fact, indicating that there are syntax errors.
@@ -72,7 +69,7 @@ public class Parser
 	/**
 	 * Stack for checking mismatched brackets.
 	 */
-	protected Stack oBracketStack = new Stack();
+	protected Stack<Token> oBracketStack = new Stack<Token>();
 
 	/**
 	 * Pushes bracket-type token onto the bracket stack.
@@ -96,7 +93,7 @@ public class Parser
 	}
 
 	/**
-	 * Consrtuctor with command-line arguments.
+	 * Constructor with command-line arguments.
 	 * @param argv the command-line arguments
 	 * @throws CompilerError if there are problems initializing a lexer or a transition table
 	 */
@@ -205,7 +202,7 @@ public class Parser
 			{
 				GrammarElement oTopElement = (GrammarElement)this.oStack.peek();
 	
-				// Sematic Token
+				// Semantic Token
 				if(!oTopElement.isNonTerminal() && !oTopElement.isTerminal())
 			    {
 					// Take it out from the stack
@@ -537,7 +534,7 @@ public class Parser
 	 * @return the current stack data structure
 	 * @since 0.3.0.5 
 	 */
-	public Stack getStack()
+	public Stack<GrammarElement> getStack()
 	{
 		return this.oStack;
 	}
@@ -567,7 +564,7 @@ public class Parser
 	 * @return the collection of syntax errors
 	 * @since 0.3.0.5 
 	 */
-	public Vector getSyntaxErrors()
+	public Vector<String> getSyntaxErrors()
 	{
 		return this.oSyntaxErrors;
 	}
@@ -578,7 +575,7 @@ public class Parser
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.22 $";
+		return "$Revision: 1.30 $";
 	}
 }
 

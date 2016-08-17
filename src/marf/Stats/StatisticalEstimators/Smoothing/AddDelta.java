@@ -8,11 +8,9 @@ import marf.MARF;
  * 1.0 for Add-One are the special cases. 
  * </p>
  *
- * $Id: AddDelta.java,v 1.33 2006/01/29 22:28:22 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.33 $
- * @since 0.3.0.2
+ * @version $Revision: 1.35 $
+ * @since $Id: AddDelta.java,v 1.35 2010/08/21 21:56:55 mokhov Exp $
  */
 public class AddDelta
 extends Smoothing
@@ -67,27 +65,29 @@ extends Smoothing
 			{
 				case MARF.ENgramModels.UNIGRAM:
 				{
-					long lN = 0;
+					//long lN = 0;
+					double lN = 0;
 
 					for(int i = 0; i < iV; i++)
 					{
-						lN += (long)this.oProbabilityTable.getOccurence(i);
+						//lN += (long)this.oProbabilityTable.getOccurrence(i);
+						lN += this.oProbabilityTable.getOccurrence(i);
 
 						//Debug.debug("N["+i+"]=" + N[i]);
 					}
 
 					for(int i = 0; i < iV; i++)
 					{
-						double dNewOccurence =
-							(this.oProbabilityTable.getOccurence(i) + this.dDelta) / (lN + this.dDelta * iV);
+						double dNewOccurrence =
+							(this.oProbabilityTable.getOccurrence(i) + this.dDelta) / (lN + this.dDelta * iV);
 /*
 						Debug.debug
 						(
-							"Old Occurence: " + this.oProbabilityTable.getOccurence(j, i) + "\n" +
-							"New Occurence: " + dNewOccurence
+							"Old Occurrence: " + this.oProbabilityTable.getOccurence(j, i) + "\n" +
+							"New Occurrence: " + dNewOccurence
 						);
 */
-						this.oProbabilityTable.setOccurence(i, dNewOccurence);
+						this.oProbabilityTable.setOccurrence(i, dNewOccurrence);
 					}
 
 					break;
@@ -103,7 +103,7 @@ extends Smoothing
 					{
 						for(int j = 0; j < iV; j++)
 						{
-							alN[i] += (long)this.oProbabilityTable.getOccurence(j, i);
+							alN[i] += (long)this.oProbabilityTable.getOccurrence(j, i);
 						}
 
 						//Debug.debug("N["+i+"]=" + N[i]);
@@ -113,10 +113,10 @@ extends Smoothing
 					{
 						for(int j = 0; j < iV; j++)
 						{
-							double dNewOccurence =
-								(this.oProbabilityTable.getOccurence(j, i) + this.dDelta) / (alN[i] + this.dDelta * iV);
+							double dNewOccurrence =
+								(this.oProbabilityTable.getOccurrence(j, i) + this.dDelta) / (alN[i] + this.dDelta * iV);
 
-							this.oProbabilityTable.setOccurence(j, i, dNewOccurence);
+							this.oProbabilityTable.setOccurrence(j, i, dNewOccurrence);
 						}
 					}
 
@@ -133,7 +133,7 @@ extends Smoothing
 						{
 							for(int j = 0; j < iV; j++)
 							{
-								alN[k][i] += (long)this.oProbabilityTable.getOccurence(j, i, k);
+								alN[k][i] += (long)this.oProbabilityTable.getOccurrence(j, i, k);
 
 								if(alN[k][i] == 0)
 								{
@@ -153,9 +153,9 @@ extends Smoothing
 							for(int j = 0; j < iV; j++)
 							{
 								double dNewOccurence =
-									(this.oProbabilityTable.getOccurence(j, i, k) + this.dDelta) / (alN[k][i] + this.dDelta * iV);
+									(this.oProbabilityTable.getOccurrence(j, i, k) + this.dDelta) / (alN[k][i] + this.dDelta * iV);
 
-								this.oProbabilityTable.setOccurence(j, i, k, dNewOccurence);
+								this.oProbabilityTable.setOccurrence(j, i, k, dNewOccurence);
 							}
 						}
 					}
@@ -188,7 +188,7 @@ extends Smoothing
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.33 $";
+		return "$Revision: 1.35 $";
 	}
 }
 

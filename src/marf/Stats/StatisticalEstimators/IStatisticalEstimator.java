@@ -12,10 +12,10 @@ import marf.nlp.util.NLPStreamTokenizer;
  * implement this interface then.
  * </p>
  *
- * $Id: IStatisticalEstimator.java,v 1.2 2006/01/15 01:50:57 mokhov Exp $
+ * $Id: IStatisticalEstimator.java,v 1.3 2007/12/18 21:57:15 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @since 0.3.0.3
  */
 public interface IStatisticalEstimator
@@ -23,7 +23,7 @@ public interface IStatisticalEstimator
 	/**
 	 * Interface source code revision.
 	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.2 $";
+	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.3 $";
 
 	/**
 	 * Classification via calculation of a probability <i>p</i>.
@@ -46,13 +46,13 @@ public interface IStatisticalEstimator
 
 	/**
 	 * Retrieves current stream tokenizer.
-	 * @return the stream tokenizer beeing used
+	 * @return the stream tokenizer being used
 	 */
 	NLPStreamTokenizer getStreamTokenizer();
 
 	/**
 	 * Retrieves current probabilities table.
-	 * @return probabilities table beeing used
+	 * @return probabilities table being used
 	 * @see ProbabilityTable
 	 */
 	ProbabilityTable getProbabilityTable();

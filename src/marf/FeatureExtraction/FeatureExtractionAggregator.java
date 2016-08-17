@@ -1,10 +1,13 @@
 package marf.FeatureExtraction;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 import marf.MARF;
 import marf.Preprocessing.IPreprocessing;
+import marf.Preprocessing.Dummy.Raw;
 import marf.Storage.ModuleParams;
+import marf.Storage.Sample;
 import marf.util.Arrays;
 import marf.util.BaseThread;
 import marf.util.Debug;
@@ -15,7 +18,7 @@ import marf.util.ExpandedThreadGroup;
  * <p>This class by itself does not do any feature extraction, but
  * instead allows concatenation of the results of several actual feature
  * extractors to be combined in a single result. This should give the
- * classification modules more descriminatory power (e.g. when combining
+ * classification modules more discriminatory power (e.g. when combining
  * the results of FFT and F0 together).</p>
  *
  * <p><code>FeatureExtractionAggregator</code> itself still implements
@@ -31,16 +34,16 @@ import marf.util.ExpandedThreadGroup;
  * the pipeline is re-designed a bit to include this capability.</p>
  *
  * <p>The aggregator clones the incoming preprocessed sample for each
- * feature extractor and runs each module in a seaparate thread. A the
- * end, the results of each tread are collected in the same order as
+ * feature extractor and runs each module in a separate thread. A the
+ * end, the results of each thread are collected in the same order as
  * specified by the initial <code>ModuleParams</code> and returned
  * as a concatenated feature vector. Some meta-information is available
  * if needed.</p>
  *
- * $Id: FeatureExtractionAggregator.java,v 1.5 2005/12/31 01:23:54 mokhov Exp $
+ * $Id: FeatureExtractionAggregator.java,v 1.10 2010/06/07 22:00:37 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.10 $
  * @since 0.3.0.5
  * 
  * @see marf.FeatureExtraction.FFT.FFT
@@ -119,6 +122,40 @@ extends FeatureExtraction
 	public boolean extractFeatures()
 	throws FeatureExtractionException
 	{
+		return extractFeaturesImplementation(null);
+	}
+
+	/**
+	 * Implementation of the feature extraction interface.
+	 * The main business logic described in the preamble of
+	 * the class is implemented here. The sample data is
+	 * taken from the provided parameter.
+	 *
+	 * @throws FeatureExtractionException if ModuleParams isn't there or
+	 * is in incorrect format, there were errors while cloning, and extracting
+	 * features, and other errors.
+	 *
+	 * @see marf.FeatureExtraction.IFeatureExtraction#extractFeatures()
+	 * @since 0.3.0.6
+	 */
+	public boolean extractFeatures(double[] padSampleData)
+	throws FeatureExtractionException
+	{
+		return extractFeaturesImplementation(padSampleData);
+	}
+
+	/**
+	 * Performs the actual business logic of the aggregator per described algorithm.
+	 * 
+	 * @param padSampleData the sample data to extract features from; if null IPreprocessing's sample is used
+	 * @return true if the extraction was successful and there are changes
+	 * @throws FeatureExtractionException in case of any exception while in the process
+	 * @since 0.3.0.6
+	 */
+	@SuppressWarnings("unchecked")
+	protected boolean extractFeaturesImplementation(double[] padSampleData)
+	throws FeatureExtractionException
+	{
 		ModuleParams oModuleParams = MARF.getModuleParams();
 		
 		if
@@ -131,7 +168,7 @@ extends FeatureExtraction
 			throw new FeatureExtractionException(ERR_NO_MODULES);
 		}
 
-		Vector oParams = oModuleParams.getFeatureExtractionParams();
+		Vector<Serializable> oParams = oModuleParams.getFeatureExtractionParams();
 
 		/* 
 		 * So that aggregated modules by mistake do not query
@@ -140,7 +177,7 @@ extends FeatureExtraction
 		 * other than default as they always query MARF as a
 		 * parameters provider.
 		 */
-		MARF.getModuleParams().setFeatureExtractionParams(new Vector());
+		MARF.getModuleParams().setFeatureExtractionParams(new Vector<Serializable>());
 		
 		// At the very least, must be even (type, params pairs)
 		if(oParams.size() % 2 == 1)
@@ -169,10 +206,10 @@ extends FeatureExtraction
 					{
 						oAggrModuleParams = (ModuleParams)oAggrParams; 
 					}
-					else if (oAggrParams instanceof Vector)
+					else if (oAggrParams instanceof Vector<?>)
 					{
 						oAggrModuleParams = new ModuleParams();
-						oAggrModuleParams.setFeatureExtractionParams((Vector)oAggrParams);
+						oAggrModuleParams.setFeatureExtractionParams((Vector<Serializable>)oAggrParams);
 					}
 					else
 					{
@@ -183,12 +220,20 @@ extends FeatureExtraction
 					}
 				}
 
-				Debug.debug("Specific module params got: " + oAggrModuleParams);
+				Debug.debug(new StringBuffer("Specific module params got: ").append(oAggrModuleParams));
 				
 				IFeatureExtraction oModule = FeatureExtractionFactory.create
 				(
 					oFeatureExtractionMethod,
-					(IPreprocessing)this.oPreprocessing.clone()
+					
+					/*
+					 * If the padSampleData is not there, we query existing preprocessing module,
+					 * or we simulate one from the data we got in parameter w/o extra processing.
+					 * This is a bit kludgy, and may need to be fixed later.
+					 */
+					padSampleData == null
+						? (IPreprocessing)this.oPreprocessing.clone()
+						: new Raw(new Sample(padSampleData))
 				);
 				
 				new FeatureExtractionThread(oModule, this.oFeatureExtractors); 
@@ -204,14 +249,15 @@ extends FeatureExtraction
 			// Collect all the data and/or errors.
 			int iTotalFEVectorSize = 0;
 			
-			Vector oData = new Vector();
-			Vector oErrors = new Vector();
+			Vector<double[]> oData = new Vector<double[]>();
+			Vector<Exception> oErrors = new Vector<Exception>();
 			
 			for(int i = 0; i < aoFeatureExtractors.length; i++)
 			{
 				FeatureExtractionThread oFEThread = (FeatureExtractionThread)aoFeatureExtractors[i];
+				Exception oError = oFEThread.getLastException();
 
-				if(oFEThread.getLastException() == null)
+				if(oError == null)
 				{
 					double[] adFeatureVector = oFEThread.getFeatureExtraction().getFeaturesArray();
 					assert adFeatureVector != null;
@@ -220,7 +266,9 @@ extends FeatureExtraction
 				}
 				else
 				{
-					oErrors.add(oFEThread.getLastException());
+					oErrors.add(oError);
+					System.err.println(oError.getMessage());
+					oError.printStackTrace(System.err);
 				}
 			}
 			
@@ -257,6 +305,7 @@ extends FeatureExtraction
 		}
 		catch(FeatureExtractionException e)
 		{
+			e.printStackTrace(System.err);
 			throw e;
 		}
 		catch(Exception e)
@@ -295,6 +344,13 @@ extends FeatureExtraction
 		protected Exception oLastException = null;
 
 		/**
+		 * Sample data container reference if the data is coming not from
+		 * preprocessing.
+		 * @since 0.3.0.6
+		 */
+		protected double[] adSampleData = null;
+		
+		/**
 		 * Constructs a feature extraction thread with a given
 		 * module.
 		 * @param poFeatureExtraction the module; must not be null
@@ -302,9 +358,23 @@ extends FeatureExtraction
 		 */
 		public FeatureExtractionThread(IFeatureExtraction poFeatureExtraction, ExpandedThreadGroup poGroup)
 		{
+			this(poFeatureExtraction, poGroup, null);
+		}
+
+		/**
+		 * Constructs a feature extraction thread with a given
+		 * module and sample data from external source.
+		 * @param poFeatureExtraction the module; must not be null
+		 * @param poGroup the thread group to attach this thread to
+		 * @param padSampleData
+		 * @since 0.3.0.6
+		 */
+		public FeatureExtractionThread(IFeatureExtraction poFeatureExtraction, ExpandedThreadGroup poGroup, double[] padSampleData)
+		{
 			super(poGroup, poFeatureExtraction.getClass().getName());
 			assert poFeatureExtraction != null;
 			this.oFeatureExtraction = poFeatureExtraction;
+			this.adSampleData = padSampleData;
 		}
 
 		/**
@@ -318,7 +388,17 @@ extends FeatureExtraction
 		{
 			try
 			{
-				this.bRetVal = this.oFeatureExtraction.extractFeatures();
+				// Distinguish the source of incoming (presumably preprocessed) data
+				if(this.adSampleData == null)
+				{
+					// From IPreprocessing
+					this.bRetVal = this.oFeatureExtraction.extractFeatures();
+				}
+				else
+				{
+					// From a parameter array
+					this.bRetVal = this.oFeatureExtraction.extractFeatures(this.adSampleData);
+				}
 			}
 			catch(Exception e)
 			{
@@ -347,7 +427,7 @@ extends FeatureExtraction
 		}
 
 		/**
-		 * Allows to query for the last error happend while
+		 * Allows to query for the last error happened while
 		 * extracting features.
 		 * @return the last exception; null if there were none (yet or postmortem)
 		 */
@@ -363,7 +443,7 @@ extends FeatureExtraction
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.5 $";
+		return "$Revision: 1.10 $";
 	}
 }
 

@@ -14,14 +14,12 @@ import marf.util.Debug;
  * If incoming sample array's length is less than N + X, it is adjusted
  * to be N + X long with the length/2 value repeated N + X - length times.</p>
  *
- * <p>$Id: MinMaxAmplitudes.java,v 1.13 2006/01/01 01:28:14 mokhov Exp $</p>
- *
- * TODO: needs improvement to select different amplitudes as we don't want
- * 20 the same maximums or minimus if others are avaible.
+ * <p>TODO: needs improvement to select different amplitudes as we don't want
+ * 20 the same maximums or minimums if others are available.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.13 $
- * @since 0.3.0
+ * @version $Id: MinMaxAmplitudes.java,v 1.16 2015/03/12 15:30:14 mokhov Exp $
+ * @since 0.3.0.2
  */
 public class MinMaxAmplitudes
 extends FeatureExtraction
@@ -56,10 +54,15 @@ extends FeatureExtraction
 
 	/**
 	 * MinMaxAmplitudes implementation of <code>extractFeatures()</code>.
+	 * As of 0.3.0.6 the generic pipelined <code>extractFeatures()</code>
+	 * refactored out to <code>FeatureExtraction</code>.
+	 * 
 	 * @return <code>true</code> if features were extracted, <code>false</code> otherwise
 	 * @throws FeatureExtractionException
+	 * @see marf.FeatureExtraction.IFeatureExtraction#extractFeatures(double[])
+	 * @since 0.3.0.6
 	 */
-	public final boolean extractFeatures()
+	public final boolean extractFeatures(double[] padSampleData)
 	throws FeatureExtractionException
 	{
 		try
@@ -67,7 +70,7 @@ extends FeatureExtraction
 			Debug.debug("MinMaxAmplitudes.extractFeatures() has begun...");
 
 			// Make a copy so we can sort.
-			double[] adSample = (double[])this.oPreprocessing.getSample().getSampleArray().clone();
+			double[] adSample = (double[])padSampleData.clone();
 			Arrays.sort(adSample);
 
 			// Defaults
@@ -103,6 +106,8 @@ extends FeatureExtraction
 		}
 		catch(Exception e)
 		{
+			System.err.println(e.getMessage());
+			e.printStackTrace(System.err);
 			throw new FeatureExtractionException(e);
 		}
 	}
@@ -125,7 +130,7 @@ extends FeatureExtraction
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.13 $";
+		return "$Revision: 1.16 $";
 	}
 }
 

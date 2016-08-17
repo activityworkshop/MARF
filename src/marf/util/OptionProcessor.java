@@ -1,5 +1,6 @@
 package marf.util;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -10,13 +11,14 @@ import java.util.Vector;
  * Helps to maintain and validate command-line options and their arguments.
  * The class is properly synchronized as of 0.3.0.4.</p>
  *
- * <p>$Id: OptionProcessor.java,v 1.36 2006/01/27 19:15:54 mokhov Exp $</p>
+ * <p>$Id: OptionProcessor.java,v 1.40 2010/06/23 09:40:19 mokhov Exp $</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.40 $
  * @since 0.3.0.2
  */
 public class OptionProcessor
+implements IOptionProvider
 {
 	/**
 	 * Indicates undefined option (-1).
@@ -26,32 +28,32 @@ public class OptionProcessor
 	/**
 	 * A hash-table that contains valid string options map.
 	 */
-	protected Hashtable oValidOptionsStrings = new OptionsHashtable();
+	protected Hashtable<Serializable, Option> oValidOptionsStrings = new OptionsHashtable();
 
 	/**
 	 * A hash-table that contains valid numerical options map.
 	 * @since 0.3.0.3
 	 */
-	protected Hashtable oValidOptionsNumbers = new OptionsHashtable();
+	protected Hashtable<Serializable, Option> oValidOptionsNumbers = new OptionsHashtable();
 
 	/**
 	 * A hash-table that contains active string options map.
-	 * A proper subset of valid options.
+	 * A proper subset of the valid options.
 	 */
-	protected Hashtable oActiveOptionsStrings = new OptionsHashtable();
+	protected Hashtable<Serializable, Option> oActiveOptionsStrings = new OptionsHashtable();
 
 	/**
-	 * A hash-table that contains active numerical options amp.
-	 * A proper subset of valid options.
+	 * A hash-table that contains active numerical options map.
+	 * A proper subset of the valid options.
 	 * @since 0.3.0.3
 	 */
-	protected Hashtable oActiveOptionsNumbers = new OptionsHashtable();
+	protected Hashtable<Serializable, Option> oActiveOptionsNumbers = new OptionsHashtable();
 
 	/**
 	 * A vector that contains invalid options for
 	 * error reporting.
 	 */
-	protected Vector oInvalidOptions = new Vector();
+	protected Vector<String> oInvalidOptions = new Vector<String>();
 
 
 	/**
@@ -72,12 +74,12 @@ public class OptionProcessor
 	 * @param poValidOptions a collection of valid options; if null then
 	 * the internal hashtable remains empty and is <b>not</b> set to null.
 	 */
-	public OptionProcessor(final Hashtable poValidOptions)
+	public OptionProcessor(final Hashtable<Object, Object> poValidOptions)
 	{
 		// Avoid setting null options
 		if(poValidOptions != null)
 		{
-			Enumeration oKeys = poValidOptions.keys();
+			Enumeration<Object> oKeys = poValidOptions.keys();
 
 			while(oKeys.hasMoreElements())
 			{
@@ -104,12 +106,38 @@ public class OptionProcessor
 	 * Allows adding a valid option to the set of valid options.
 	 * If the entry with that name was already in the set, it
 	 * gets replaced.
+	 *
+	 * @param pstrOptionString option's name
+	 * @param pstrOptionValue option's value
+	 * @since 0.3.0.6
+	 */
+	public void addActiveOption(final String pstrOptionString, final String pstrOptionValue)
+	{
+		addActiveOption(new Option(pstrOptionString.hashCode(), pstrOptionString, pstrOptionValue));
+	}
+	
+	/**
+	 * Allows adding a valid option to the set of valid options.
+	 * If the entry with that name was already in the set, it
+	 * gets replaced.
 	 * @param piOptionCode option's numerical code to use, a value
 	 * @param pstrOptionString option's lexical representation, a key
 	 */
 	public synchronized final void addValidOption(final int piOptionCode, final String pstrOptionString)
 	{
 		addValidOption(new Option(piOptionCode, pstrOptionString));
+	}
+
+	/**
+	 * Allows adding a value option. The code is computed from
+	 * the option string using hash code.
+	 * @param pstrOptionString option's lexical representation, a key
+	 * @see marf.util.IOptionProvider#addValidOption(java.lang.String)
+	 * @since 0.3.0.6
+	 */
+	public synchronized final void addValidOption(final String pstrOptionString)
+	{
+		addValidOption(pstrOptionString.hashCode(), pstrOptionString);
 	}
 
 	/**
@@ -170,6 +198,18 @@ public class OptionProcessor
 	}
 
 	/**
+	 * Allows adding a value option. The code is computed from
+	 * the option string using hash code.
+	 * @param pstrOptionString option's lexical representation, a key
+	 * @see marf.util.IOptionProvider#addValidOption(java.lang.String)
+	 * @since 0.3.0.6
+	 */
+	public synchronized final void addActiveOption(final String pstrOptionString)
+	{
+		addActiveOption(pstrOptionString.hashCode(), pstrOptionString);
+	}
+
+	/**
 	 * Clears out all the option lists of this option processor.
 	 * @since 0.3.0.3
 	 */
@@ -186,7 +226,7 @@ public class OptionProcessor
 	 * Retrieves the option count currently known to the option
 	 * processor as a sum of active and invalid options. Valid
 	 * options are omitted from the count because they are more
-	 * of a static state comparted to the currently active
+	 * of a static state compared to the currently active
 	 * subset of them as well as possibly invalid options, which
 	 * represent more of a dynamic state.
 	 *
@@ -213,9 +253,25 @@ public class OptionProcessor
 	 */
 	public synchronized String[] getArgumentVector()
 	{
+		// Collect valid active options, possibly with arguments first
 		String[] astrActiveOptions = new String[this.oActiveOptionsStrings.size()];
-		Arrays.copy(astrActiveOptions, 0, this.oActiveOptionsStrings.keySet().toArray());
+		
+		Enumeration<Serializable> oKeys = this.oActiveOptionsStrings.keys();
+		
+		int i = 0;
+		
+		while(oKeys.hasMoreElements())
+		{
+			Option oOption = this.oActiveOptionsStrings.get(oKeys.nextElement()); 
+			astrActiveOptions[i++] = oOption.getOptionName();
 
+			if(oOption.hasArgument())
+			{
+				astrActiveOptions[i++] += "=" + oOption.getOptionArgument();
+			}
+		}
+
+		// Followed by the invalid options
 		String[] astrInvalidOptions = new String[this.oInvalidOptions.size()];
 		Arrays.copy(astrInvalidOptions, 0, this.oInvalidOptions.toArray());
 
@@ -242,7 +298,7 @@ public class OptionProcessor
 	 * more than once, the last occurrence only takes effect.</p>
 	 *
 	 * <p><b>NOTICE</b>, since 0.3.0.3 '=' has a special meaning
-	 * as a separator bewteen options and values, and, therefore,
+	 * as a separator between options and values, and, therefore,
 	 * cannot appear inside option strings or by itself on the
 	 * command line.</p>
 	 *
@@ -261,7 +317,7 @@ public class OptionProcessor
 
 			Option oOption = (Option)oValidOptionsStrings.get(argv[i]);
 
-			// Possinbly an invalid option
+			// Possibly an invalid option
 			if(oOption == null)
 			{
 				// Check for "=" on its own
@@ -283,7 +339,7 @@ public class OptionProcessor
 					Debug.debug(astrOptValue[0] + " -> " + astrOptValue[1]);
 
 					// Check if the "option" part is valid
-					oOption = (Option)oValidOptionsStrings.get(astrOptValue[0]);
+					oOption = (Option)this.oValidOptionsStrings.get(astrOptValue[0]);
 
 					// If so, set its argument
 					if(oOption != null)
@@ -546,7 +602,7 @@ public class OptionProcessor
 	 * Allows querying for the set of invalid options.
 	 * @return Vector, the list of rejected options
 	 */
-	public synchronized final Vector getInvalidOptions()
+	public synchronized final Vector<String> getInvalidOptions()
 	{
 		return this.oInvalidOptions;
 	}
@@ -555,7 +611,7 @@ public class OptionProcessor
 	 * Allows querying for the set of active options.
 	 * @return Hashtable, containing the mapping of active options
 	 */
-	public synchronized final Hashtable getActiveOptions()
+	public synchronized final Hashtable<Serializable, Option> getActiveOptions()
 	{
 		return this.oActiveOptionsStrings;
 	}
@@ -564,7 +620,7 @@ public class OptionProcessor
 	 * Allows querying for the set of active options.
 	 * @return Hashtable, containing the mapping of active options
 	 */
-	public synchronized final Hashtable getValidOptions()
+	public synchronized final Hashtable<Serializable, Option> getValidOptions()
 	{
 		return this.oValidOptionsStrings;
 	}
@@ -680,6 +736,13 @@ public class OptionProcessor
 		protected boolean bRequiresArgument = false;
 
 		/**
+		 * A flag is set to <code>true</code> if the option
+		 * has its argument set.
+		 * @since 0.3.0.6
+		 */
+		protected boolean bHasArgument = false;
+		
+		/**
 		 * Vanilla integer/string option constructor.
 		 * Equivalent to <code>Option(piOption, pstrOption, false)</code>.
 		 * @param piOption integer option equivalent
@@ -724,7 +787,7 @@ public class OptionProcessor
 		public Option(int piOption, String pstrOption, String pstrRequiredArgument)
 		{
 			this(piOption, pstrOption, true);
-			this.strOptionArgument = pstrRequiredArgument;
+			setOptionArgument(pstrRequiredArgument);
 		}
 
 		/**
@@ -745,6 +808,16 @@ public class OptionProcessor
 			this.bRequiresArgument = pbRequiresArgument;
 		}
 
+		/**
+		 * Tells if this option has an argument set.
+		 * @return <code>true</code> if the argument is set
+		 * @since 0.3.0.6
+		 */
+		public synchronized boolean hasArgument()
+		{
+			return this.bHasArgument;
+		}
+		
 		/**
 		 * Retrieves the option number.
 		 * @return the enumeration option value
@@ -779,10 +852,19 @@ public class OptionProcessor
 		public synchronized void setOptionArgument(String pstrOptionArgument)
 		{
 			this.strOptionArgument = pstrOptionArgument;
+			
+			if(pstrOptionArgument == null || pstrOptionArgument.equals(""))
+			{
+				this.bHasArgument = false;
+			}
+			else
+			{
+				this.bHasArgument = true;
+			}
 		}
 
 		/**
-		 * Rerieves the option name.
+		 * Retrieves the option name.
 		 * @return the name
 		 */
 		public synchronized String getOptionName()
@@ -815,9 +897,6 @@ public class OptionProcessor
 
 	/**
 	 * <p>A hashtable designed for to hold options.
-	 *
-	 * TODO: when we drop support for JDK1.4, this should be typechecked
-	 * for Option type only.
 	 * </p>
 	 *
 	 * @author Serguei Mokhov
@@ -825,7 +904,7 @@ public class OptionProcessor
 	 * @see OptionProcessor.Option
 	 */
 	protected class OptionsHashtable
-	extends Hashtable
+	extends Hashtable<Serializable, Option>
 	{
 		/**
 		 * For serialization versioning.
@@ -852,7 +931,7 @@ public class OptionProcessor
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.36 $";
+		return "$Revision: 1.40 $";
 	}
 }
 

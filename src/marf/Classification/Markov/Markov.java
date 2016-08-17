@@ -8,14 +8,14 @@ import marf.util.NotImplementedException;
 
 
 /**
- * Hidden Markov Models-based Classification Module.
+ * <p>Hidden Markov Models-based Classification Module.</p>
  *
  * <p>Not Implemented.</p>
  *
- * <p>$Id: Markov.java,v 1.23 2005/08/14 01:15:55 mokhov Exp $</p>
+ * $Id: Markov.java,v 1.24 2006/07/31 02:19:13 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  * @since 0.0.1
  */
 public class Markov
@@ -90,11 +90,11 @@ extends Stochastic
 	/**
 	 * Retrieves class' revision.
 	 * @return revision string
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.23 $";
+		return "$Revision: 1.24 $";
 	}
 }
 

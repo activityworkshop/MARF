@@ -1,6 +1,6 @@
 /*
  * LexicalError Class
- * (C) 2001 - 2006 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
+ * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
  */
 
 package marf.nlp.Parsing;
@@ -12,10 +12,10 @@ import java.io.IOException;
 /**
  * <p>This class denotes a lexical error type.</p>
  *
- * $Id: LexicalError.java,v 1.17 2006/01/15 20:51:55 mokhov Exp $
+ * $Id: LexicalError.java,v 1.24 2012/01/09 04:03:23 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.24 $
  * @since 0.3.0.2 (in MARF)
  */
 public class LexicalError
@@ -58,7 +58,7 @@ extends CompilerError
 	public static final int ERR_INVALID_NUMBER_FORMAT = 5;
 
 	/**
-	 * Unxepected EOF and no ending comment.
+	 * Unexpected EOF and no ending comment.
 	 *
 	 * @since December 20, 2001
 	 */
@@ -72,7 +72,7 @@ extends CompilerError
 	public static final int ERR_EXTRA_CLOSING_COMMENT = 7;
 
 	/**
-	 * Custom error message as alterbntive to 'unknown'.
+	 * Custom error message as alternative to 'unknown'.
 	 *
 	 * @since October 2, 2001
 	 */
@@ -149,7 +149,7 @@ extends CompilerError
 	}
 
 	/**
-	 * Contructs a lexical error with wrapped exception.
+	 * Constructs a lexical error with wrapped exception.
 	 * @param poException the wrapped exception
 	 * @since 0.3.0.5 
 	 */
@@ -169,7 +169,7 @@ extends CompilerError
 	}
 
 	/**
-	 * Contructs a lexical error with wrapped exception and
+	 * Constructs a lexical error with wrapped exception and
 	 * a custom error message string.
 	 * @param pstrMessage the custom error message
 	 * @param poException the wrapped exception
@@ -222,7 +222,7 @@ extends CompilerError
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.17 $";
+		return "$Revision: 1.24 $";
 	}
 }
 

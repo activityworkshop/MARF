@@ -1,19 +1,20 @@
 package marf.util.comparators;
 
-import marf.Stats.WordStats;
+import marf.Stats.StatisticalObject;
 import marf.util.SortComparator;
 
 
 /**
- * <p>Compare WordStats objects by their frequency when sorting.</p>
+ * <p>Compares StatisticalObjects by their frequency when sorting.</p>
  *
- * $Id: FrequencyComparator.java,v 1.14 2005/08/14 01:15:57 mokhov Exp $
+ * $Id: FrequencyComparator.java,v 1.15 2007/12/01 00:26:51 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.14 $
- * @since 0.3.0
+ * @version $Revision: 1.15 $
+ * @since 0.3.0.2
  *
- * @see WordStats
+ * @see StatisticalObject
+ * @see marf.Stats.WordStats
  */
 public class FrequencyComparator
 extends SortComparator
@@ -37,31 +38,31 @@ extends SortComparator
 	}
 
 	/**
-	 * Implementation of the Comparator interface for the WordStats objects.
-	 * To decide on inequality of the <code>WordStats</code> objects we
+	 * Implementation of the Comparator interface for the StatisticalObjects.
+	 * To decide on inequality of the <code>StatisticalObject</code> objects we
 	 * compare their frequencies only.
 	 *
-	 * @param poWordStats1 first WordStats object to compare
-	 * @param poWordStats2 second WordStats object to compare
+	 * @param poStatsObject1 first stats object to compare
+	 * @param poStatsObject2 second stats object to compare
 	 * @return 0 of the frequencies are equal. Depending on the sort mode; a negative
-	 * value may mean poWordStats1 &lt; poWordStats2 if ASCENDING; or otherwise if DESCENDING
+	 * value may mean poStatsObject1 &lt; poStatsObject2 if ASCENDING; or otherwise if DESCENDING
 	 *
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 * @see WordStats
+	 * @see StatisticalObject
 	 */
-	public int compare(Object poWordStats1, Object poWordStats2)
+	public int compare(Object poStatsObject1, Object poStatsObject2)
 	{
-		WordStats oWordStats1 = (WordStats)poWordStats1;
-		WordStats oWordStats2 = (WordStats)poWordStats2;
+		StatisticalObject oStats1 = (StatisticalObject)poStatsObject1;
+		StatisticalObject oStats2 = (StatisticalObject)poStatsObject2;
 
 		switch(this.iSortMode)
 		{
 			case DESCENDING:
-				return (oWordStats2.getFrequency() - oWordStats1.getFrequency());
+				return (oStats2.getFrequency() - oStats1.getFrequency());
 
 			case ASCENDING:
 			default:
-				return (oWordStats1.getFrequency() - oWordStats2.getFrequency());
+				return (oStats1.getFrequency() - oStats2.getFrequency());
 		}
 	}
 
@@ -71,7 +72,7 @@ extends SortComparator
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.14 $";
+		return "$Revision: 1.15 $";
 	}
 }
 

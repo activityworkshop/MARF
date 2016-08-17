@@ -2,29 +2,21 @@ package marf.Storage;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Vector;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
+import marf.MARF;
 import marf.util.Debug;
-import marf.util.NotImplementedException;
 
 
 /**
- * <p>TrainingSet -- Encapsulates Subject ID and subject's clusters or a feature set.</p>
- *
- * <p>$Id: TrainingSet.java,v 1.44 2006/01/02 22:24:00 mokhov Exp $</p>
+ * <p>TrainingSet -- Encapsulates Subject ID and subject's clusters or a feature set.
+ * </p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.44 $
+ * @version $Id: TrainingSet.java,v 1.53 2015/03/08 19:47:22 mokhov Exp $
  * @since 0.0.1, December 5, 2002
  */
 public class TrainingSet
@@ -34,24 +26,43 @@ extends StorageManager
 	 * NOTE: Be careful when you mess with this file. Any new fields
 	 *       or structural changes will change the on-disk layout of
 	 *       whole TrainingSet. Until an upgrade utility is available,
-	 *       you will have to retrain ALL your models that use TrainingSet.
+	 *       you will have to retrain ALL your models that use TrainingSet
+	 *       in DUMP_BINARY and DUMP_GZIP_BINARY models.
 	 */
 
 	/**
 	 * Default TrainingSet file name of <code>marf.training.set</code>.
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
 	public static final String DEFAULT_TRAINING_SET_FILENAME = "marf.training.set";
 
 	/**
-	 * A Vector of Clusters.
+	 * Individual training set sample represents a subject.
 	 */
-	protected Vector oClusters = new Vector();
+	public static final int TRAINING_SET_SAMPLES = 0; // TrainingSample
+	
+	/**
+	 * A mean cluster of feature vectors represents a subject. 
+	 */
+	public static final int TRAINING_SET_CLUSTERS = 1; // Cluster
+	
+	/**
+	 * A collection of feature vectors, or their median, or mean
+	 * represent a subject. 
+	 */
+	public static final int TRAINING_SET_FEATURE_SETS = 2; // FeatureSet
 
 	/**
-	 * Feature Set as opposed to the cluster.
+	 * The current format for storing trained-on data.
+	 * Default is mean clustering
+	 * @see #TRAINING_SET_CLUSTERS
 	 */
-	protected FeatureSet oFeatureSet = null;
+	protected int iTrainingSetFormat = TRAINING_SET_CLUSTERS;
+
+	/**
+	 * A collection of training samples.
+	 */
+	protected Vector<ITrainingSample> oTrainingSamples = new Vector<ITrainingSample>();
 
 	/**
 	 * Which preprocessing method was applied to the sample before this feature vector was extracted.
@@ -70,7 +81,7 @@ extends StorageManager
 	 * <code>serialver</code> tool that comes with JDK.
 	 * @since 0.3.0.4
 	 */
-	private static final long serialVersionUID = 2733362635058973185L;
+	private static final long serialVersionUID = 2733362635058973186L;
 
 	/**
 	 * Construct a training set object.
@@ -79,15 +90,42 @@ extends StorageManager
 	{
 		this.iCurrentDumpMode = DUMP_GZIP_BINARY;
 		this.strFilename = DEFAULT_TRAINING_SET_FILENAME;
+		
+		switch(MARF.getConfiguration().getClusterFormat())
+		{
+			case MARF.CLUSTER_SINGLE:
+			{
+				this.iTrainingSetFormat = TRAINING_SET_SAMPLES;
+				break;
+			}
+
+			// Median clusters require presence of all feature vectors
+			case MARF.CLUSTER_MEDIAN:
+			case MARF.CLUSTER_FEATURE_VECTORS:
+			{
+				this.iTrainingSetFormat = TRAINING_SET_FEATURE_SETS;
+				break;
+			}
+			
+			case MARF.CLUSTER_MEAN:
+			default:
+			{
+				this.iTrainingSetFormat = TRAINING_SET_CLUSTERS;
+				break;
+			}
+		}
+		
+		this.oObjectToSerialize = this;
 	}
 
 	/**
 	 * Retrieves clusters of training samples.
 	 * @return vector of training samples.
 	 */
-	public final Vector getClusters()
+	public final Vector<ITrainingSample> getClusters()
+//	public final Hashtable getClusters()
 	{
-		return this.oClusters;
+		return this.oTrainingSamples;
 	}
 
 	/**
@@ -145,68 +183,79 @@ extends StorageManager
 	)
 	{
 		/*
-		 * check if this sample is already in the training set
-		 * for these feature extraction & preprocessing methods
+		 * Check if this sample is already in the training set
+		 * for these feature extraction & preprocessing methods.
 		 */
-		Cluster oCluster   = null;
-		boolean bNewSample = true;
+//		Cluster oTrainingSetData = null;
+		ITrainingSample oTrainingSetData = null;
+		boolean bNewSubject = true;
 
-		double[] adMeanVector = null;
-
-		for(int i = 0; (i < oClusters.size()) && (bNewSample); i++)
+		// Loop trough all the clusters and find the one that
+		// pertains to the current subject ID.
+		for(int i = 0; (i < this.oTrainingSamples.size()) && (bNewSubject == true); i++)
 		{
-			oCluster = (Cluster)oClusters.get(i);
+			oTrainingSetData = this.oTrainingSamples.get(i);
+//			oTrainingSetData = (Cluster)this.oTrainingSamples.get(new Integer(piSubjectID));
 
-			if(piSubjectID == oCluster.getSubjectID())
+			// When found ...
+			if(piSubjectID == oTrainingSetData.getSubjectID())
+			//if(oTrainingSetData != null)
 			{
 				// Disallow training on the same file twice
-				if(oCluster.existsFilename(pstrFilename))
+				if(oTrainingSetData.existsFilename(pstrFilename))
 				{
 					Debug.debug
 					(
 						"TrainingSet.addFeatureVector() --- Attempt to train on the same file: " +
-						pstrFilename
+						pstrFilename + ", ignoring..."
 					);
 
 					return false;
 				}
 
-				bNewSample = false;
-				adMeanVector = oCluster.getMeanVector();
+				// Assert that this is indeed a new training data
+				bNewSubject = false;
 			}
 		}
 
-		if(bNewSample)
+		if(bNewSubject == true)
 		{
-			oCluster = new Cluster();
-			adMeanVector = (double[])padFeatureVector.clone();
-		}
-		else
-		{
-			int iMeanCount = oCluster.getMeanCount();
+			//oTrainingSetData = new Cluster();
 
-			// Recompute the mean
-			for(int f = 0; f < adMeanVector.length; f++)
+			switch(this.iTrainingSetFormat)
 			{
-				adMeanVector[f] = (adMeanVector[f] * iMeanCount + padFeatureVector[f]) / (iMeanCount + 1);
+				case TRAINING_SET_SAMPLES:
+					oTrainingSetData = new TrainingSample();
+					break;
+
+				case TRAINING_SET_CLUSTERS:
+					oTrainingSetData = new Cluster();
+					break;
+
+				case TRAINING_SET_FEATURE_SETS:
+					oTrainingSetData = new FeatureSet();
+					break;
+
+				default:
+					assert false : "Unsupported format: " + this.iTrainingSetFormat;
 			}
 		}
 
-		oCluster.setMeanVector(adMeanVector);
-		oCluster.setSubjectID(piSubjectID);
-		oCluster.addFilename(pstrFilename);
-		oCluster.incMeanCount();
+		oTrainingSetData.addFeatureVector(padFeatureVector, pstrFilename, piSubjectID);
 
 		setFeatureExtractionMethod(piFeatureExtractionMethod);
 		setPreprocessingMethod(piPreprocessingMethod);
 
-		if(bNewSample)
+		// New ID/sample pair added
+		if(bNewSubject == true)
 		{
-			this.oClusters.add(oCluster);
+			//this.oClusters.add(oTrainingSetData);
+			this.oTrainingSamples.add(oTrainingSetData);
+			//this.oTrainingSamples.put(new Integer(piSubjectID), oTrainingSetData);
 
 			Debug.debug
 			(
-				"Added feature vector for subject " + piSubjectID +
+				"TrainingSet.addFeatureVector() -- Added feature vector for subject " + piSubjectID +
 				", preprocessing method " + piPreprocessingMethod +
 				", feature extraction method " + piFeatureExtractionMethod
 			);
@@ -215,7 +264,7 @@ extends StorageManager
 		{
 			Debug.debug
 			(
-				"Updated mean vector for subject " + piSubjectID +
+				"TrainingSet.addFeatureVector() -- Updated mean vector for subject " + piSubjectID +
 				", preprocessing method " + piPreprocessingMethod +
 				", feature extraction method " + piFeatureExtractionMethod
 			);
@@ -230,211 +279,193 @@ extends StorageManager
 	 */
 	public final int size()
 	{
-		return this.oClusters.size();
+		return this.oTrainingSamples.size();
 	}
 
 	/**
-	 * Retrieve the current training set from disk.
-	 * @throws StorageException in a case of I/O or otherwise error
+	 * @see marf.Storage.IStorageManager#restoreCSV()
+	 * @since 0.3.0.6
 	 */
-	public void restore()
+	public void restoreCSV()
 	throws StorageException
 	{
+		/*
+		 * TODO: check whether this code is still valid
+		 */
+
 		try
 		{
-			switch(this.iCurrentDumpMode)
+			BufferedReader oReader = new BufferedReader(new FileReader(this.strFilename));
+
+			int iLength = Integer.parseInt(oReader.readLine());
+
+			for(int i = 0; i < iLength; i++)
 			{
-				/*
-				 * TODO: check whether this code is still valid
-				 */
-				case DUMP_CSV_TEXT:
-				{
-					BufferedReader oReader = new BufferedReader(new FileReader(this.strFilename));
+				Cluster oCluster = new Cluster();
 
-					int iLength = Integer.parseInt(oReader.readLine());
-
-					for(int i = 0; i < iLength; i++)
-					{
-						Cluster oCluster = new Cluster();
-
-						oCluster.restoreCSV(oReader);
-						this.oClusters.add(oCluster);
-					}
-
-					oReader.close();
-
-					break;
-				}
-
-				case DUMP_GZIP_BINARY:
-				{
-					FileInputStream oFIS = new FileInputStream(this.strFilename);
-					GZIPInputStream oGZIS = new GZIPInputStream(oFIS);
-					ObjectInputStream oOIS = new ObjectInputStream(oGZIS);
-
-					TrainingSet oTrainingSet = (TrainingSet)oOIS.readObject();
-
-					oOIS.close();
-
-					this.oClusters = oTrainingSet.getClusters();
-
-					break;
-				}
-
-				/*
-				 * TODO: implement these
-				 */
-				case DUMP_BINARY:
-				case DUMP_XML:
-				case DUMP_HTML:
-				case DUMP_SQL:
-				{
-					throw new NotImplementedException
-					(
-						"TrainingSet.restore() -- DUMP_BINARY, _XML, _HTML, and _SQL are not supported yet."
-					);
-				}
-
-				default:
-				{
-					throw new StorageException
-					(
-						"TrainingSet.restore() --- Invalid file format: " +
-						this.iCurrentDumpMode
-					);
-				}
+				oCluster.restoreCSV(oReader);
+//				this.oClusters.add(oCluster);
 			}
 
-			Debug.debug("Training set loaded successfully: " + this.oClusters.size() + " mean vectors.");
+			oReader.close();
 		}
 		catch(FileNotFoundException e)
 		{
 			Debug.debug
 			(
-				"TrainingSet.restore() --- FileNotFoundException for file: \"" +
+				"TrainingSet.restoreCSV() --- FileNotFoundException for file: \"" +
 				this.strFilename + "\", " +
 				e.getMessage() + "\n" +
 				"Creating one now..."
 			);
 
-			dump();
-		}
-		catch(NumberFormatException e)
-		{
-			throw new StorageException
-			(
-				"TrainingSet.restore() --- NumberFormatException: " +
-				e.getMessage()
-			);
-		}
-		catch(ClassNotFoundException e)
-		{
-			throw new StorageException
-			(
-				"TrainingSet.restore() --- ClassNotFoundException: " +
-				e.getMessage()
-			);
+			dumpCSV();
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
 			throw new StorageException(e);
 		}
 	}
 
 	/**
-	 * Dump the current training set to disk.
+	 * Retrieves the current training set from disk.
 	 * @throws StorageException in a case of I/O or otherwise error
+	 * @see marf.Storage.IStorageManager#restore()
 	 */
-	public void dump()
+	public void restore()
 	throws StorageException
 	{
+		super.restore();
+		Debug.debug
+		(
+			"TrainingSet.restore() -- Training set loaded successfully. Size: "
+			+ this.oTrainingSamples.size()
+			+ " vector(s)."
+		);
+	}
+
+	/**
+	 * @see marf.Storage.IStorageManager#dumpCSV()
+	 * @since 0.3.0.6
+	 */
+	public void dumpCSV()
+	throws StorageException
+	{
+		// TODO: review and test for it's broken
 		try
 		{
-			switch(this.iCurrentDumpMode)
+			BufferedWriter oWriter = new BufferedWriter(new FileWriter(this.strFilename));
+
+			oWriter.write(Integer.toString(this.oTrainingSamples.size()));
+			oWriter.newLine();
+
+			Debug.debug
+			(
+				"Wrote " + this.oTrainingSamples.size() + " clusters " +
+				"to file " + this.strFilename
+			);
+
+			for(int i = 0; i < this.oTrainingSamples.size(); i++)
 			{
-				// TODO: review and test for it's broken
-				case DUMP_CSV_TEXT:
-				{
-					BufferedWriter oWriter = new BufferedWriter(new FileWriter(this.strFilename));
-
-					oWriter.write(Integer.toString(this.oClusters.size()));
-					oWriter.newLine();
-
-					Debug.debug
-					(
-						"Wrote " + this.oClusters.size() + " clusters " +
-						"to file " + this.strFilename
-					);
-
-					for(int i = 0; i < this.oClusters.size(); i++)
-					{
-						((Cluster)this.oClusters.get(i)).dumpCSV(oWriter);
-					}
-
-					oWriter.close();
-
-					break;
-				}
-
-				case DUMP_GZIP_BINARY:
-				{
-					FileOutputStream oFOS = new FileOutputStream(this.strFilename);
-					GZIPOutputStream oGZOS = new GZIPOutputStream(oFOS);
-					ObjectOutputStream oOOS = new ObjectOutputStream(oGZOS);
-
-					oOOS.writeObject(this);
-					oOOS.flush();
-					oOOS.close();
-					break;
-				}
-
-				case DUMP_BINARY:
-				case DUMP_XML:
-				case DUMP_HTML:
-				case DUMP_SQL:
-				{
-					throw new NotImplementedException
-					(
-						"TrainingSet.dump() -- DUMP_BINARY, _XML, _HTML, and _SQL are not supported yet."
-					);
-				}
-
-				default:
-				{
-					throw new StorageException
-					(
-						"TrainingSet.dump() --- Invalid file format: "
-						+ this.iCurrentDumpMode
-					);
-				}
+//				((Cluster)this.oClusters.get(i)).dumpCSV(oWriter);
 			}
+
+			oWriter.close();
 		}
-		catch(IOException e)
+		catch(Exception e)
 		{
+			e.printStackTrace(System.err);
 			throw new StorageException(e);
 		}
 	}
 
+
 	/**
-	 * Implementes Cloneable interface for the TrainingSet object.
+	 * @return Returns the iTrainingSetFormat.
+	 * @since 0.3.0.6
+	 */
+	public int getTrainingSetFormat()
+	{
+		return this.iTrainingSetFormat;
+	}
+
+	/**
+	 * @param piTrainingSetFormat The iTrainingSetFormat to set.
+	 * @since 0.3.0.6
+	 */
+	public void setTrainingSetFormat(int piTrainingSetFormat)
+	{
+		this.iTrainingSetFormat = piTrainingSetFormat;
+	}
+
+	/**
+	 * @see marf.Storage.StorageManager#backSynchronizeObject()
+	 * @since 0.3.0.6
+	 */
+	public synchronized void backSynchronizeObject()
+	{
+		TrainingSet oNewThis = (TrainingSet)this.oObjectToSerialize;
+
+		this.iFeatureExtractionMethod = oNewThis.iFeatureExtractionMethod;
+		this.iPreprocessingMethod = oNewThis.iPreprocessingMethod;
+
+		this.oTrainingSamples = oNewThis.oTrainingSamples;
+		//this.oFeatureSet = oNewThis.oFeatureSet;
+
+		this.oObjectToSerialize = this;
+	}
+
+	/**
+	 * Implements Cloneable interface for the TrainingSet object.
 	 * Performs a "deep" copy of this object including all clusters
 	 * and the feature set.
 	 * @see java.lang.Object#clone()
 	 * @since 0.3.0.5
 	 */
+	@SuppressWarnings("unchecked")
 	public Object clone()
 	{
 		TrainingSet oClone = (TrainingSet)super.clone();
 
-		oClone.oClusters =
-			this.oClusters == null ?
-			null : (Vector)this.oClusters.clone();
+//		oClone.oClusters =
+//			this.oClusters == null ?
+//			null : (Vector)this.oClusters.clone();
 
+		oClone.oTrainingSamples =
+			this.oTrainingSamples == null ?
+			null : (Vector<ITrainingSample>)this.oTrainingSamples.clone();
+
+//		oClone.oTrainingSamples =
+//			this.oTrainingSamples == null ?
+//			null : (Hashtable)this.oTrainingSamples.clone();
+/*
 		oClone.oFeatureSet =
 			this.oFeatureSet == null ?
 			null : (FeatureSet)this.oFeatureSet.clone();
-
+*/
 		return oClone;
+	}
+
+	/**
+	 * Provides string representation of the training set data in addition
+	 * to that of the parent StorageManager.
+	 * @see marf.Storage.StorageManager#toString()
+	 * @since 0.3.0.6
+	 */
+	public synchronized String toString()
+	{
+		StringBuffer oBuffer = new StringBuffer(super.toString());
+
+		oBuffer
+			.append("Training Set Format: ").append(this.iTrainingSetFormat).append("\n")
+			.append("Preprocessing Method: ").append(this.iPreprocessingMethod).append("\n")
+			.append("Feature Extraction Method: ").append(this.iFeatureExtractionMethod).append("\n")
+			.append("TrainingSet Size: ").append(size()).append("\n")
+			.append("Training Set Samples: ").append(this.oTrainingSamples).append("\n")
+			.append("TrainingSet Source code revision: ").append(getMARFSourceCodeRevision()).append("\n");
+
+		return oBuffer.toString();
 	}
 
 	/**
@@ -444,7 +475,7 @@ extends StorageManager
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.44 $";
+		return "$Revision: 1.53 $";
 	}
 }
 

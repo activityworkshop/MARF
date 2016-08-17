@@ -1,13 +1,8 @@
 package marf.Preprocessing.FFTFilter;
 
-import java.util.Vector;
-
-import marf.MARF;
-import marf.Preprocessing.IFilter;
+import marf.Preprocessing.Filter;
 import marf.Preprocessing.IPreprocessing;
-import marf.Preprocessing.Preprocessing;
 import marf.Preprocessing.PreprocessingException;
-import marf.Storage.ModuleParams;
 import marf.Storage.Sample;
 import marf.math.Algorithms;
 import marf.math.MathException;
@@ -19,16 +14,13 @@ import marf.util.Debug;
  * <p>FFTFilter class implements filtering using the FFT algorithm.</p>
  * <p>Derivatives must set frequency response based on the type of filter they are.</p>
  *
- * $Id: FFTFilter.java,v 1.30 2006/01/22 23:59:01 mokhov Exp $
- *
  * @author Stephen Sinclair
  * @author Serguei Mokhov
- * @version $Revision: 1.30 $
+ * @version $Id: FFTFilter.java,v 1.38 2011/11/21 20:47:05 mokhov Exp $
  * @since 0.0.1
  */
 public abstract class FFTFilter
-extends Preprocessing
-implements IFilter 
+extends Filter
 {
 	/**
 	 * Default size of the frequency response vector, 128.
@@ -36,7 +28,7 @@ implements IFilter
 	public static transient final int DEFAULT_FREQUENCY_RESPONSE_SIZE = 128;
 
 	/**
-	 * Frequency repsonse to be multiplied by the incoming value.
+	 * Frequency response to be multiplied by the incoming value.
 	 */
 	protected transient double[] adFreqResponse = null;
 
@@ -62,7 +54,7 @@ implements IFilter
 
 	/**
 	 * Pipelined constructor.
-	 * @param poPreprocessing followup preprocessing module
+	 * @param poPreprocessing the follow-up preprocessing module
 	 * @throws PreprocessingException
 	 * @since 0.3.0.3
 	 */
@@ -70,7 +62,7 @@ implements IFilter
 	throws PreprocessingException
 	{
 		super(poPreprocessing);
-		genereateResponseCoefficients();
+		generateResponseCoefficients();
 	}
 
 	/**
@@ -83,19 +75,19 @@ implements IFilter
 	{
 		super(poSample);
 		Debug.debug(FFTFilter.class, "about to generate coefficiencies");
-		genereateResponseCoefficients();
+		generateResponseCoefficients();
 	}
 
 	/**
 	 * FFTFilter implementation of <code>preprocess()</code>.
-	 * <p>It does call <code>removeNoise()</code> and <code>removeSilence()</code>
-	 * if they were explicitly requested by an app <em>before</em> applying filtering.</p>
+	 * It overrides the default of Filter to allow a check for the frequency
+	 * response array validation.
 	 *
 	 * <b>NOTE</b>: it alters inner Sample by resetting its data array to the new
 	 * filtered values.
 	 *
 	 * @return <code>true</code> if there was something filtered out
-	 * @throws PreprocessingException if the frequency response is null
+	 * @throws PreprocessingException primarily if the frequency response is null
 	 */
 	public boolean preprocess()
 	throws PreprocessingException
@@ -107,46 +99,8 @@ implements IFilter
 				"FFTFilter.preprocess() - frequency response is null"
 			);
 		}
-
-		boolean bChanges = normalize();
-
-		double[] adSampleData = this.oSample.getSampleArray();
-		double[] adFilteredData = new double[adSampleData.length];
-
-		// By default we do not remove noise or silence
-		boolean bRemoveNoise = false;
-		boolean bRemoveSilence = false;
-
-		// Extract any additional params if supplied
-
-		ModuleParams oModuleParams = MARF.getModuleParams();
-
-		if(oModuleParams != null)
-		{
-			Vector oParams = oModuleParams.getPreprocessingParams();
-
-			if(oParams.size() > 0)
-			{
-				bRemoveNoise = ((Boolean)oParams.elementAt(0)).booleanValue();
-				bRemoveSilence = ((Boolean)oParams.elementAt(1)).booleanValue();
-			}
-		}
-
-		if(bRemoveNoise == true)
-		{
-			bChanges |= removeNoise();
-		}
-
-		if(bRemoveSilence == true)
-		{
-			bChanges |= removeSilence();
-		}
-
-		bChanges |= filter(adSampleData, adFilteredData);
-
-		this.oSample.setSampleArray(adFilteredData);
-
-		return bChanges;
+		
+		return super.preprocess();
 	}
 
 	/**
@@ -218,8 +172,13 @@ implements IFilter
 
 			int iPosition = -iResponseSize / 2;
 
-			Debug.debug(getClass(), "position prior entry while(): " + iPosition + ", sample length: " + padSample.length);
-			
+			Debug.debug
+			(
+				getClass(),
+				new StringBuffer("position prior entry to while(): ").append(iPosition)
+					.append(", sample length: ").append(padSample.length)
+			);
+
 			while(iPosition < padSample.length)
 			{
 				for(i = 0; i < iResponseSize; i++)
@@ -267,11 +226,80 @@ implements IFilter
 		}
 		catch(NullPointerException e)
 		{
+			e.printStackTrace(System.err);
 			throw new PreprocessingException("FFTFilter: frequency response hasn't been set.");
 		}
 		catch(MathException e)
 		{
+			e.printStackTrace(System.err);
 			throw new PreprocessingException("FFTFilter: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Applies single-dimensional filtering to every row of the matrix.
+	 * @see marf.Preprocessing.IFilter#filter(double[][], double[][])
+	 * @see #filter(double[], double[])
+	 * @since 0.3.0.6
+	 */
+	public boolean filter(final double[][] padSample, double[][] padFiltered)
+	throws PreprocessingException
+	{
+		try
+		{
+			boolean bChanges = false;
+
+			// Treat every row as a single-dimensional array for filtering
+			for(int i = 0; i < padSample.length; i++)
+			{
+				bChanges |= filter(padSample[i], padFiltered[i]);
+			}
+
+			return bChanges;
+		}
+		catch(ArrayIndexOutOfBoundsException e)
+		{
+			e.printStackTrace(System.err);
+
+			throw new PreprocessingException
+			(
+				"Parameter array dimensions don't seem to agree.\n"
+				+ "HINT: Please make sure the source sample array and the filtered destination\n"
+				+ "agree on dimensionality on row-by-row basis."
+			);
+		}
+		catch(NullPointerException e)
+		{
+			e.printStackTrace(System.err);
+			throw new PreprocessingException("One of the source or destination arrays is null.");
+		}
+	}
+
+	/**
+	 * Applies two-dimensional filtering to every plane of the matrix.
+	 * @see marf.Preprocessing.IFilter#filter(double[][][], double[][][])
+	 * @see #filter(double[][], double[][])
+	 * @since 0.3.0.6
+	 */
+	public boolean filter(final double[][][] padSample, double[][][] padFiltered)
+	throws PreprocessingException
+	{
+		try
+		{
+			boolean bChanges = false;
+
+			// Treat every row as a two-dimensional array for filtering
+			for(int i = 0; i < padSample.length; i++)
+			{
+				bChanges |= filter(padSample[i], padFiltered[i]);
+			}
+
+			return bChanges;
+		}
+		catch(NullPointerException e)
+		{
+			e.printStackTrace(System.err);
+			throw new PreprocessingException("One of the source or destination arrays is null.");
 		}
 	}
 
@@ -280,9 +308,9 @@ implements IFilter
 	 * them to the frequency response vector. Must be overridden
 	 * by individual filters.
 	 *
-	 * @since 0.3.0
+	 * @since 0.3.0.2
 	 */
-	public abstract void genereateResponseCoefficients();
+	public abstract void generateResponseCoefficients();
 
 	/**
 	 * Returns source code revision information.
@@ -291,7 +319,7 @@ implements IFilter
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.30 $";
+		return "$Revision: 1.38 $";
 	}
 }
 

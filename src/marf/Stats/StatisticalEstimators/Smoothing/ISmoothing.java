@@ -7,10 +7,10 @@ package marf.Stats.StatisticalEstimators.Smoothing;
  * If they can't, they must implement this interface.
  * </p>
  *
- * $Id: ISmoothing.java,v 1.2 2006/01/15 06:58:08 mokhov Exp $
+ * $Id: ISmoothing.java,v 1.3 2007/12/18 21:57:15 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @since 0.3.0.3
  * @see Smoothing
  */
@@ -19,12 +19,12 @@ public interface ISmoothing
 	/**
 	 * Interface source code revision.
 	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.2 $";
+	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.3 $";
 
 	/**
 	 * General smoothing routine.
 	 * @return <code>true</code> if any smoothing took place
-	 * and undelying data was altered
+	 * and underlying data was altered
 	 */
 	boolean smooth();
 }

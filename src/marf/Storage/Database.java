@@ -8,10 +8,10 @@ import marf.util.NotImplementedException;
  * To be used by an application to contain information
  * about known subjects (speakers, instruments, languages, etc).</p>
  *
- * $Id: Database.java,v 1.10 2006/01/02 22:24:00 mokhov Exp $
+ * $Id: Database.java,v 1.11 2007/12/23 06:29:46 mokhov Exp $
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  * @since 0.3.0.2
  */
 public class Database
@@ -102,7 +102,7 @@ implements IDatabase
 	}
 
 	/**
-	 * Implementaion of back-synchronization of Database loaded object.
+	 * Implementation of back-synchronization of Database loaded object.
 	 * @since 0.3.0.5
 	 */
 	public void backSynchronizeObject()
@@ -116,7 +116,7 @@ implements IDatabase
 	}
 
 	/**
-	 * Default implementation of the toString() for all stoage
+	 * Default implementation of the toString() for all storage
 	 * manager derivatives.
 	 * @see java.lang.Object#toString()
 	 * @since 0.3.0.5
@@ -130,7 +130,7 @@ implements IDatabase
 	}
 	
 	/**
-	 * Implementes Cloneable interface for the Database object.
+	 * Implements Cloneable interface for the Database object.
 	 * @see java.lang.Object#clone()
 	 * @since 0.3.0.5
 	 */
@@ -146,7 +146,7 @@ implements IDatabase
 	 */
 	public static String getMARFSourceCodeRevision()
 	{
-		return "$Revision: 1.10 $";
+		return "$Revision: 1.11 $";
 	}
 }
 
