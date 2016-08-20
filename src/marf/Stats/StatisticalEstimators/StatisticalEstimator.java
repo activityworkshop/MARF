@@ -16,8 +16,6 @@ import marf.util.NotImplementedException;
  * Must be subclasses by concrete implementations of statistical estimators.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: StatisticalEstimator.java,v 1.32 2010/09/27 23:56:28 mokhov Exp $
- * @since 0.3.0.2
  */
 public abstract class StatisticalEstimator
 extends StorageManager
@@ -39,7 +37,6 @@ implements IStatisticalEstimator
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	private static final long serialVersionUID = -7023903602882315275L;
 
@@ -348,7 +345,6 @@ implements IStatisticalEstimator
 	 * for future serialization after restoration. A part
 	 * of the StorageManager interface.
 	 * @see marf.Storage.StorageManager#backSynchronizeObject()
-	 * @since 0.3.0.5
 	 */
 	public void backSynchronizeObject()
 	{
@@ -464,15 +460,6 @@ implements IStatisticalEstimator
 			"." + MARF.NLP.getNgramModel() +
 			"." + MARF.NLP.getLanguage() +
 			".gzbin";
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.32 $";
 	}
 }
 

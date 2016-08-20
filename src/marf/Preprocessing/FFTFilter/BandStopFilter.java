@@ -9,10 +9,7 @@ import marf.util.Debug;
 /**
  * <p>Band-stop Filter Implementation based on the FFTFilter.</p>
  *
- * $Id: BandStopFilter.java,v 1.1 2007/12/16 07:14:52 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.1 $
  * @since 0.3.0.6
  * @see FFTFilter
  */
@@ -74,7 +71,7 @@ extends FFTFilter
 	}
 
 	/**
-	 * Creates band-pass frequency response coefficients and sets applies
+	 * Creates band-pass frequency response coefficients and applies
 	 * them to the frequency response vector.
 	 */
 	public void generateResponseCoefficients()
@@ -88,15 +85,6 @@ extends FFTFilter
 		}
 
 		setFrequencyResponse(adResponse);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.1 $";
 	}
 }
 

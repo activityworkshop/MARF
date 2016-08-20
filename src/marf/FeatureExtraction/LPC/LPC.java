@@ -18,22 +18,17 @@ import marf.util.Debug;
  *
  * @author Ian Clement
  * @author Serguei Mokhov
- *
- * @version $Id: LPC.java,v 1.42 2012/07/09 03:53:33 mokhov Exp $
- * @since 0.0.1
  */
 public class LPC
 extends FeatureExtraction
 {
 	/**
 	 * Default window length of 128 elements.
-	 * @since 0.3.0
 	 */
 	public static final int DEFAULT_WINDOW_LENGTH = 128;
 
 	/**
 	 * Default number of poles, 20.
-	 * @since 0.3.0
 	 */
 	public static final int DEFAULT_POLES = 20;
 
@@ -54,7 +49,6 @@ extends FeatureExtraction
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 7960314467497310447L;
 
@@ -193,7 +187,6 @@ extends FeatureExtraction
 	/**
 	 * Retrieves the number of poles.
 	 * @return the number of poles
-	 * @since 0.3.0.4
 	 */
 	public int getPoles()
 	{
@@ -203,7 +196,6 @@ extends FeatureExtraction
 	/**
 	 * Allows setting the number of poles.
 	 * @param piPoles new number of poles
-	 * @since 0.3.0.4
 	 */
 	public void setPoles(int piPoles)
 	{
@@ -213,7 +205,6 @@ extends FeatureExtraction
 	/**
 	 * Retrieves the window length.
 	 * @return the window length
-	 * @since 0.3.0.4
 	 */
 	public int getWindowLength()
 	{
@@ -223,21 +214,10 @@ extends FeatureExtraction
 	/**
 	 * Allows setting the window length.
 	 * @param piWindowLen the window length to set
-	 * @since 0.3.0.4
 	 */
 	public void setWindowLength(int piWindowLen)
 	{
 		this.iWindowLen = piWindowLen;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.42 $";
 	}
 }
 

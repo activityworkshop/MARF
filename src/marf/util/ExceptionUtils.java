@@ -6,14 +6,10 @@ import java.io.PrintWriter;
 
 /**
  * <p>Common exception utility methods used by all the branches
- * of the MARF Exceptions hierarchy.
- * </p>
+ * of the MARF Exceptions hierarchy.</p>
  * 
- * $Id: ExceptionUtils.java,v 1.2 2007/12/15 17:46:07 mokhov Exp $
- *
  * @author Serguei Mokhov
  * @since 0.3.0.6
- * @version $Revision: 1.2 $
  */
 public class ExceptionUtils
 {
@@ -37,7 +33,7 @@ public class ExceptionUtils
 	{
 		String strMessage = "";
 
-	 	// Based on PostgreSQL JDBC driver's PGSQLException.
+		// Based on PostgreSQL JDBC driver's PGSQLException.
 		try
 		{
 			ByteArrayOutputStream oByteArrayOutputStream = new ByteArrayOutputStream();

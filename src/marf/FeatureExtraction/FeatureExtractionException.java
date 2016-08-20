@@ -6,11 +6,7 @@ import marf.util.MARFException;
 /**
  * <p>Class FeatureExtractionException.</p>
  *
- * $Id: FeatureExtractionException.java,v 1.9 2007/12/18 03:45:40 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.9 $
- * @since 0.0.1
  */
 public class FeatureExtractionException
 extends MARFException
@@ -20,14 +16,12 @@ extends MARFException
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -2325585432639761782L;
 
 	/**
 	 * Encapsulation of another Exception object.
 	 * @param poException Exception to wrap around
-	 * @since 0.3.0
 	 */
 	public FeatureExtractionException(Exception poException)
 	{
@@ -38,7 +32,6 @@ extends MARFException
 	 * Encapsulation of another Exception object and a new message.
 	 * @param pstrMessage additional information to add
 	 * @param poException Exception to wrap around
-	 * @since 0.3.0
 	 */
 	public FeatureExtractionException(String pstrMessage, Exception poException)
 	{
@@ -52,16 +45,6 @@ extends MARFException
 	public FeatureExtractionException(String pstrMessage)
 	{
 		super(pstrMessage);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.9 $";
 	}
 }
 

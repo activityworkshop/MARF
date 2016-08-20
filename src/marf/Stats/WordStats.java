@@ -3,11 +3,7 @@ package marf.Stats;
 /**
  * <p>A pure container for statistics of a word --- no business logic.</p>
  *
- * $Id: WordStats.java,v 1.21 2007/12/18 21:57:15 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.21 $
- * @since 0.3.0.2
  */
 public class WordStats
 extends StatisticalObject
@@ -22,7 +18,6 @@ extends StatisticalObject
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 1553592340644601516L;
 
@@ -57,7 +52,6 @@ extends StatisticalObject
 	/**
 	 * Copy-constructor.
 	 * @param poWordStats WordStats object to copy properties from
-	 * @since 0.3.0.5
 	 */
 	public WordStats(final WordStats poWordStats)
 	{
@@ -77,7 +71,6 @@ extends StatisticalObject
 	/**
 	 * Reports lexeme, frequency, and rank of an occurrence of a word.
 	 * @see java.lang.Object#toString()
-	 * @since 0.3.0.5
 	 */
 	public String toString()
 	{
@@ -90,20 +83,10 @@ extends StatisticalObject
 	/**
 	 * Implements Cloneable interface for the WordStats object.
 	 * @see java.lang.Object#clone()
-	 * @since 0.3.0.5
 	 */
 	public Object clone()
 	{
 		return new WordStats(this);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.21 $";
 	}
 }
 

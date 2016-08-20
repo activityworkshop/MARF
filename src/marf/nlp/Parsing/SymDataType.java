@@ -1,18 +1,9 @@
-/*
- * SymDataType Class
- * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
-
 package marf.nlp.Parsing;
 
 /**
  * <p>User-defined symbol's data type.</p>
  *
- * $Id: SymDataType.java,v 1.15 2012/01/09 04:03:23 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
- * @since 0.3.0.2
  */
 public class SymDataType
 {
@@ -92,15 +83,6 @@ public class SymDataType
 		}
 
 		this.iType = piType;
-	}
-	
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.15 $";
 	}
 }
 

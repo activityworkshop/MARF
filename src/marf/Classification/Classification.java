@@ -16,12 +16,9 @@ import marf.Storage.Loaders.AudioSampleLoader;
  * <p>Abstract Classification Module.
  * A generic implementation of the <code>IClassification</code> interface.
  * The derivatives must inherit from this class, and if they cannot,
- * they should implement <code>IClassification</code> themselves. 
- * </p>
+ * they should implement <code>IClassification</code> themselves.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: Classification.java,v 1.56 2015/03/22 19:32:08 mokhov Exp $
- * @since 0.0.1
  */
 public abstract class Classification
 extends StorageManager
@@ -53,8 +50,6 @@ implements IClassification
 	/**
 	 * Classification result set. May contain
 	 * one or more results (in case of similarity).
-	 *
-	 * @since 0.3.0.2
 	 */
 	protected ResultSet oResultSet = new ResultSet();
 
@@ -63,7 +58,6 @@ implements IClassification
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	private static final long serialVersionUID = 7933249658173204609L;
 
@@ -218,7 +212,6 @@ implements IClassification
 
 	/**
 	 * Generic implementation of dump() to dump the TrainingSet.
-	 * @since 0.2.0
 	 * @throws StorageException if there's a problem saving training set to disk
 	 */
 	public void dump()
@@ -238,7 +231,6 @@ implements IClassification
 
 	/**
 	 * Generic implementation of restore() for TrainingSet.
-	 * @since 0.2.0
 	 * @throws StorageException if there is a problem loading the training set from disk
 	 */
 	public void restore()
@@ -258,7 +250,6 @@ implements IClassification
 
 	/**
 	 * Saves TrainingSet to a file. Called by <code>dump()</code>.
-	 * @since 0.2.0
 	 * @throws StorageException if there's a problem saving training set to disk
 	 * @see #dump()
 	 * @see TrainingSet
@@ -297,7 +288,6 @@ implements IClassification
 
 	/**
 	 * Loads TrainingSet from a file. Called by <code>restore()</code>.
-	 * @since 0.2.0
 	 * @throws StorageException if there is a problem loading the training set from disk
 	 * @see #restore()
 	 */
@@ -392,7 +382,6 @@ implements IClassification
 	 * May be overridden by the derivatives when necessary.
 	 *
 	 * @return String, filename
-	 * @since 0.2.0
 	 */
 	protected String getTrainingSetFilename()
 	{
@@ -521,16 +510,6 @@ implements IClassification
 		oClone.oTrainingSet = (TrainingSet)this.oTrainingSet.clone();
 		oClone.oFeatureExtraction = this.oFeatureExtraction;
 		return oClone;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.56 $";
 	}
 }
 

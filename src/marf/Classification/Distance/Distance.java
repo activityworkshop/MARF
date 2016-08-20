@@ -14,8 +14,6 @@ import marf.util.Debug;
  * <p>Abstract Distance Classifier.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: Distance.java,v 1.39 2015/03/08 19:47:21 mokhov Exp $
- * @since 0.0.1
  */
 public abstract class Distance
 extends Classification
@@ -25,7 +23,6 @@ extends Classification
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	private static final long serialVersionUID = -6142163714569438592L;
 
@@ -160,21 +157,10 @@ extends Classification
 	 * Retrieves the minimum-distance classification result.
 	 *
 	 * @return Result object
-	 * @since 0.3.0
 	 */
 	public Result getResult()
 	{
 		return this.oResultSet.getMinimumResult();
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.39 $";
 	}
 }
 

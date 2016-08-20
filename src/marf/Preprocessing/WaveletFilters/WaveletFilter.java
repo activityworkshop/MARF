@@ -16,7 +16,6 @@ import marf.util.NotImplementedException;
  * Derivatives may implement more complex filters by overriding this one.
  * 
  * @author Serguei Mokhov
- * @version $Id: WaveletFilter.java,v 1.7 2012/06/04 02:26:21 mokhov Exp $
  */
 public class WaveletFilter
 extends Filter
@@ -89,8 +88,8 @@ extends Filter
 			// Loop through scales and apply soft thresholding
 			for(int j = 0; j < J; j++)
 			{
-		    	adDWTCoeffs[j] = Algorithms.Wavelet.soft(adDWTCoeffs[j], T); 
-			}		
+				adDWTCoeffs[j] = Algorithms.Wavelet.soft(adDWTCoeffs[j], T); 
+			}
 			
 			double[] adFiltered = Algorithms.Wavelet.idwt(adDWTCoeffs, J, Algorithms.Wavelet.sf);
 			// -- end
@@ -132,7 +131,6 @@ extends Filter
 	{
 		// TODO Auto-generated method stub
 		throw new NotImplementedException();
-		//return false;
 	}
 
 	/* (non-Javadoc)
@@ -143,7 +141,6 @@ extends Filter
 	{
 		// TODO Auto-generated method stub
 		throw new NotImplementedException();
-		//return false;
 	}
 }
 

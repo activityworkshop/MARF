@@ -8,7 +8,6 @@ import marf.util.NotImplementedException;
  * <p>Hamming Distance Classifier.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: HammingDistance.java,v 1.3 2012/07/09 03:53:32 mokhov Exp $
  * @since 0.3.0.6
  */
 public class HammingDistance
@@ -46,14 +45,6 @@ extends Distance
 	
 	protected int iDistanceType = LENIENT_DOUBLE;//STRICT_DOUBLE; 
 	protected double dAllowedError = DEFAULT_ALLOWED_ERROR; 
-
-	/**
-	 * For serialization versioning.
-	 * When adding new members or make other structural
-	 * changes regenerate this number with the
-	 * <code>serialver</code> tool that comes with JDK.
-	 */
-//	private static final long serialVersionUID = 4805074823902537333L;
 
 	
 	/**
@@ -115,15 +106,6 @@ extends Distance
 		}
 
 		return dDistance;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.3 $";
 	}
 }
 

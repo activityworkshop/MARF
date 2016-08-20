@@ -13,11 +13,7 @@ package marf.util;
  * and this class was created prior that. And the functionality we offer
  * seems to be superior anyway.</p>
  *
- * $Id: BaseThread.java,v 1.18 2007/12/23 06:29:46 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.18 $
- * @since 0.3.0.1
  * 
  * @see ExpandedThreadGroup
  * @see Runnable
@@ -46,8 +42,7 @@ extends Thread
 	protected int iTID;
 	
 	/**
-	 * Local references to the target, in case clients
-	 * need it.
+	 * Local references to the target, in case clients need it.
 	 */
 	protected Runnable oTarget = null;
 
@@ -172,7 +167,7 @@ extends Thread
 			poThreadGroup,
 			poTarget,
 			pstrName == null ?
-				BaseThread.class.getName() + ", " + getMARFSourceCodeRevision() + ", TID=" + getNextTID() :
+				BaseThread.class.getName() + ", TID=" + getNextTID() :
 				pstrName
 		);
 
@@ -211,7 +206,7 @@ extends Thread
 	}
 
 	/**
-	 * Sets internal TID and updates next TID on contruction time, so it's private.
+	 * Sets internal TID and updates next TID on construction time, so it's private.
 	 */
 	private synchronized final void setTID()
 	{
@@ -236,15 +231,6 @@ extends Thread
 	public Runnable getTarget()
 	{
 		return this.oTarget;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.18 $";
 	}
 }
 

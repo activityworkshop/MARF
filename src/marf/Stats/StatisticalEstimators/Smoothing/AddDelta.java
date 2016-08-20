@@ -5,12 +5,9 @@ import marf.MARF;
 /**
  * <p>Add-Delta Smoothing Estimator. The delta in fact determines
  * the type of an estimator, e.g. 0.5 is for ELE, 0.0 for MLE,
- * 1.0 for Add-One are the special cases. 
- * </p>
+ * 1.0 for Add-One are the special cases.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.35 $
- * @since $Id: AddDelta.java,v 1.35 2010/08/21 21:56:55 mokhov Exp $
  */
 public class AddDelta
 extends Smoothing
@@ -25,7 +22,6 @@ extends Smoothing
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -3936382438064284172L;
 
@@ -180,15 +176,6 @@ extends Smoothing
 		}
 
 		return true;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.35 $";
 	}
 }
 

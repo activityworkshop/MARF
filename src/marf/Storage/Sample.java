@@ -15,16 +15,10 @@ import marf.util.InvalidSampleFormatException;
  *
  * <p>The Sample Bean can contain data samples from audio, images, text, or
  * any other data as a collection of double values. While started with Audio
- * processing, it is not confined to audio data.
- * </p>
- *
- * $Id: Sample.java,v 1.51 2009/02/22 02:16:01 mokhov Exp $
+ * processing, it is not confined to audio data.</p>
  *
  * @author Serguei Mokhov
  * @author Jimmy Nicolacopoulos
- *
- * @version $Revision: 1.51 $
- * @since 0.0.1
  */
 public class Sample
 implements Serializable, Cloneable
@@ -37,25 +31,21 @@ implements Serializable, Cloneable
 
 	/**
 	 * Grouping of file format data.
-	 * @since 0.3.0.2
 	 */
 	protected transient MARFAudioFileFormat oAudioFileFormat = null;
 
 	/**
 	 * Local format code.
-	 * @since 0.3.0.6
 	 */
 	private int iFormat = MARFAudioFileFormat.WAV;
 
 	/**
 	 * Default sample array's size (1024).
-	 * @since 0.3.0.2
 	 */
 	public static final int DEFAULT_SAMPLE_SIZE = 1024;
 
 	/**
 	 * Default sample chunk's size (128).
-	 * @since 0.3.0.2
 	 */
 	public static final int DEFAULT_CHUNK_SIZE = 128;
 
@@ -80,7 +70,6 @@ implements Serializable, Cloneable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 505671131094530371L;
 
@@ -289,7 +278,6 @@ implements Serializable, Cloneable
 	 *
 	 * @param piDesiredSize new desired size of the array
 	 * @throws IllegalArgumentException if the parameter is <= 0
-	 * @since 0.3.0.2
 	 */
 	public synchronized void setSampleSize(int piDesiredSize)
 	{
@@ -360,7 +348,6 @@ implements Serializable, Cloneable
 	 *
 	 * @return the sample data string
 	 * @see java.lang.Object#toString()
-	 * @since 0.3.0.3
 	 */
 	public synchronized String toString()
 	{
@@ -444,16 +431,6 @@ implements Serializable, Cloneable
 		}
 
 		return false;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.51 $";
 	}
 }
 

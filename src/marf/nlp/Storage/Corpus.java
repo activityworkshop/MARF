@@ -12,12 +12,9 @@ import marf.util.NotImplementedException;
 
 
 /**
- * <p>Corpus container bean.
- * </p>
+ * <p>Corpus container bean.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.4 $
- * @since 0.3.0.6
  */
 public class Corpus
 implements Serializable, Cloneable, Comparable<Object>
@@ -50,7 +47,6 @@ implements Serializable, Cloneable, Comparable<Object>
 	/**
 	 * Tokenizer to use to convert a raw string to WordStat tokens.
 	 */
-//	protected transient StringTokenizer oTokenizer = null;
 	protected transient NLPStreamTokenizer oTokenizer = null;
 
 
@@ -67,7 +63,6 @@ implements Serializable, Cloneable, Comparable<Object>
 
 	public Corpus()
 	{
-
 	}
 
 

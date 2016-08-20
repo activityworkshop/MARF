@@ -13,12 +13,9 @@ import marf.nlp.Parsing.Token;
 
 /**
  * <p>NLP Stream Tokenizer. Allows pushing back multiple
- * tokens and has a reader reverence to be able to reset it.
- * </p>
+ * tokens and has a reader reference to be able to reset it.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: NLPStreamTokenizer.java,v 1.27 2010/10/17 19:46:53 mokhov Exp $
- * @since 0.3.0.2
  */
 public class NLPStreamTokenizer
 extends StreamTokenizer
@@ -296,15 +293,6 @@ extends StreamTokenizer
 	public void setPushBackupLevel(Integer piPushBackupLevel)
 	{
 		this.iPushBackupLevel = piPushBackupLevel;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.27 $";
 	}
 }
 

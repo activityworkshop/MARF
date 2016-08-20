@@ -4,13 +4,9 @@ import marf.nlp.Parsing.Token;
 
 
 /**
- * <p>Class SematicToken, for Semantic Analysis.</p>
- *
- * $Id: SemanticToken.java,v 1.10 2005/12/18 21:29:18 mokhov Exp $
+ * <p>Class SemanticToken, for Semantic Analysis.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.10 $
- * @since 0.3.0.2
  */
 public class SemanticToken
 extends GrammarElement
@@ -20,7 +16,6 @@ extends GrammarElement
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 2945717735922665260L;
 
@@ -69,15 +64,6 @@ extends GrammarElement
 	public boolean isTerminal()
 	{
 		return false;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.10 $";
 	}
 }
 

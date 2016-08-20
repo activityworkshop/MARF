@@ -15,8 +15,6 @@ import marf.Storage.Sample;
  * <p>Provides a factory to instantiate requested preprocessing module(s).</p>
  *
  * @author Serguei Mokhov
- * @version $Id: PreprocessingFactory.java,v 1.5 2011/11/21 20:59:33 mokhov Exp $
- * @since 0.3.0.5
  */
 public final class PreprocessingFactory
 {
@@ -223,15 +221,6 @@ public final class PreprocessingFactory
 		}
 	
 		return oPreprocessing;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.5 $";
 	}
 }
 

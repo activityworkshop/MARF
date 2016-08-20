@@ -1,6 +1,3 @@
-/**
- * The MARF System.
- */
 package marf;
 
 import java.util.HashMap;
@@ -29,14 +26,12 @@ import marf.util.NotImplementedException;
 
 
 /**
+ * The MARF System.
  * Provides basic recognition pipeline and its configuration.
  *
  * @author Serguei Mokhov
  * @author Stephen Sinclair
  * @author The MARF Research and Development Group
- *
- * @version $Id: MARF.java,v 1.122 2015/04/05 00:20:53 mokhov Exp $
- * @since 0.0.1
  */
 public class MARF
 {
@@ -208,13 +203,11 @@ public class MARF
 
 	/**
 	 * Indicates to use random feature extraction.
-	 * @since 0.2.0
 	 */
 	public static final int RANDOM_FEATURE_EXTRACTION     = 305;
 
 	/**
 	 * Indicates to use min/max amplitude extraction.
-	 * @since 0.3.0
 	 */
 	public static final int MIN_MAX_AMPLITUDES            = 306;
 
@@ -283,37 +276,31 @@ public class MARF
 
 	/**
 	 * A synonym to Chebyshev distance.
-	 * @since 0.2.0
 	 */
 	public static final int MANHATTAN_DISTANCE        = 504;
 
 	/**
 	 * A synonym to Chebyshev distance.
-	 * @since 0.3.0.1
 	 */
 	public static final int CITYBLOCK_DISTANCE        = 504;
 
 	/**
 	 * Indicates to use Minkowski distance for classification.
-	 * @since 0.2.0
 	 */
 	public static final int MINKOWSKI_DISTANCE        = 505;
 
 	/**
 	 * Indicates to use Mahalanobis distance for classification.
-	 * @since 0.2.0
 	 */
 	public static final int MAHALANOBIS_DISTANCE      = 506;
 
 	/**
 	 * Indicates to use random classification.
-	 * @since 0.2.0
 	 */
 	public static final int RANDOM_CLASSIFICATION     = 507;
 
 	/**
 	 * Indicates to use diff-distance classification.
-	 * @since 0.3.0.2
 	 */
 	public static final int DIFF_DISTANCE             = 508;
 
@@ -535,31 +522,26 @@ public class MARF
 
 	/**
 	 * Internal <code>Sample</code> reference.
-	 * @since 0.2.0
 	 */
 	private static Sample             soSample            = null;
 
 	/**
 	 * Internal <code>SampleLoader</code> reference.
-	 * @since 0.2.0
 	 */
 	private static ISampleLoader      soSampleLoader      = null;
 
 	/**
 	 * Internal <code>Preprocessing</code> reference.
-	 * @since 0.2.0
 	 */
 	private static IPreprocessing     soPreprocessing     = null;
 
 	/**
 	 * Internal <code>FeatureExtraction</code> reference.
-	 * @since 0.2.0
 	 */
 	private static IFeatureExtraction soFeatureExtraction = null;
 
 	/**
 	 * Internal <code>Classification</code> reference.
-	 * @since 0.2.0
 	 */
 	private static IClassification    soClassification    = null;
 
@@ -1054,7 +1036,6 @@ public class MARF
 	/**
 	 * Gets ID of a subject currently being trained on.
 	 * @return integer ID of the subject
-	 * @since 0.2.0
 	 */
 	public static synchronized final int getCurrentSubject()
 	{
@@ -1314,7 +1295,6 @@ public class MARF
 	/**
 	 * Retrieves current <code>Sample</code> reference.
 	 * @return Sample object
-	 * @since 0.2.0
 	 */
 	public static synchronized final Sample getSample()
 	{
@@ -1324,7 +1304,6 @@ public class MARF
 	/**
 	 * Retrieves current <code>SampleLoader</code> reference.
 	 * @return SampleLoader object
-	 * @since 0.2.0
 	 */
 	public static synchronized final ISampleLoader getSampleLoader()
 	{
@@ -1334,7 +1313,6 @@ public class MARF
 	/**
 	 * Retrieves current <code>Preprocessing</code> reference.
 	 * @return Preprocessing object
-	 * @since 0.2.0
 	 */
 	public static synchronized final IPreprocessing getPreprocessing()
 	{
@@ -1344,7 +1322,6 @@ public class MARF
 	/**
 	 * Retrieves current <code>FeatureExtraction</code> reference.
 	 * @return FeatureExtraction object
-	 * @since 0.2.0
 	 */
 	public static synchronized final IFeatureExtraction getFeatureExtraction()
 	{
@@ -1354,7 +1331,6 @@ public class MARF
 	/**
 	 * Retrieves current <code>Classification</code> reference.
 	 * @return Classification object
-	 * @since 0.2.0
 	 */
 	public static synchronized final IClassification getClassification()
 	{
@@ -1404,7 +1380,6 @@ public class MARF
 
 	/**
 	 * Recognition/Identification mode.
-	 * @since 0.2.0
 	 * @throws MARFException if there was an error in the pipeline
 	 * or classification
 	 */
@@ -1447,7 +1422,6 @@ public class MARF
 
 	/**
 	 * Training mode.
-	 * @since 0.2.0
 	 * @throws MARFException if the subject is unset or there was
 	 * an error in training in the underlying classification module
 	 */
@@ -1980,16 +1954,6 @@ public class MARF
 			sstrLanguage = pstrLanguages;
 		}
 	} // class NLP
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.122 $";
-	}
 }
 
 // EOF

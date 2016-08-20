@@ -5,12 +5,10 @@ import java.util.Vector;
 
 
 /**
- * <p>All training set beans should implement this interface.
- * </p>
+ * <p>All training set beans should implement this interface.</p>
  * 
  * @author Serguei Mokhov
  * @since 0.3.0.6
- * @version $Id: ITrainingSample.java,v 1.3 2015/03/08 19:47:22 mokhov Exp $
  */
 public interface ITrainingSample
 extends Serializable, Cloneable

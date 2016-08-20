@@ -7,11 +7,7 @@ import java.util.Vector;
 /**
  * <p>Language Grammar Rule.</p>
  *
- * $Id: Rule.java,v 1.12 2010/06/27 22:18:12 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.12 $
- * @since 0.3.0.2
  */
 public class Rule
 implements Serializable
@@ -38,7 +34,6 @@ implements Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 1346265103950170148L;
 
@@ -228,15 +223,6 @@ implements Serializable
 	public void setID(int piID)
 	{
 		this.iID = piID;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.12 $";
 	}
 }
 

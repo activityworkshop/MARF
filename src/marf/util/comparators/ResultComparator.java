@@ -5,14 +5,10 @@ import marf.util.SortComparator;
 
 
 /**
- * <p>Compares two Result objects for equality.</p>
- * Used in sorting.
- *
- * $Id: ResultComparator.java,v 1.16 2007/12/23 06:29:58 mokhov Exp $
+ * <p>Compares two Result objects for equality.
+ * Used in sorting.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
- * @since 0.3.0.2
  */
 public class ResultComparator
 extends SortComparator
@@ -22,7 +18,6 @@ extends SortComparator
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -5312907998392826142L;
 
@@ -86,15 +81,6 @@ extends SortComparator
 				return 0;
 			}
 		}
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.16 $";
 	}
 }
 

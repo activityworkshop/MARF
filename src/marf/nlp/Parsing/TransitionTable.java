@@ -20,11 +20,7 @@ import marf.util.Debug;
  * Can be serialized and deserialized as a binary
  * gzipped object.</p>
  *
- * $Id: TransitionTable.java,v 1.15 2007/12/18 21:37:56 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
- * @since 0.3.0.2
  */
 public class TransitionTable
 implements Serializable
@@ -39,14 +35,12 @@ implements Serializable
 	protected Vector oTT = null;
 
 	/**
-	 * Vector of NonTerminals as "row-pointers"
-	 * to TT.
+	 * Vector of NonTerminals as "row-pointers" to TT.
 	 */
 	protected Vector oNonTerminals = null;
 
 	/**
-	 * Vector of Terminals as "column-pointers"
-	 * to TT.
+	 * Vector of Terminals as "column-pointers" to TT.
 	 */
 	protected Vector oTerminals = null;
 
@@ -72,7 +66,6 @@ implements Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 7463126736067849797L;
 
@@ -472,15 +465,6 @@ implements Serializable
 		}
 
 		return (NonTerminal)this.oNonTerminals.elementAt(this.iStartNonTerminalID);
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.15 $";
 	}
 }
 

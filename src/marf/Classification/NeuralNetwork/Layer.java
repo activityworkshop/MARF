@@ -15,11 +15,7 @@ import marf.util.BaseThread;
  * class itself is properly synchronized.
  * </p>
  *
- * $Id: Layer.java,v 1.11 2009/02/08 04:31:45 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @since 0.3.0.2
- * @version $Revision: 1.11 $
  */
 public class Layer
 extends BaseThread
@@ -27,7 +23,6 @@ implements Serializable
 {
 	/**
 	 * Layer's data (a collection of neurons).
-	 * @since 0.3.0.5
 	 */
 	private ArrayList<Neuron> oLayerData = new ArrayList<Neuron>();
 
@@ -36,7 +31,6 @@ implements Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	private static final long serialVersionUID = 6204412694265536336L;
 
@@ -51,7 +45,6 @@ implements Serializable
 
 	/**
 	 * Evaluates the layer by evaluating each neuron in it.
-	 * @since 0.3.0.5
 	 */
 	public synchronized void eval()
 	{
@@ -65,7 +58,6 @@ implements Serializable
 	 * Performs training on each neuron in this layer given
 	 * the training constant between 0.0 and 1.0.
 	 * @param pdTrainConst training constant to use for neurons
-	 * @since 0.3.0.5
 	 */
 	public synchronized void train(final double pdTrainConst)
 	{
@@ -77,7 +69,6 @@ implements Serializable
 
 	/**
 	 * Applies changes made to neurons on this layer.
-	 * @since 0.3.0.5
 	 */
 	public synchronized final void commit()
 	{
@@ -90,7 +81,6 @@ implements Serializable
 	/**
 	 * For threading does evaluation.
 	 * TODO: complete.
-	 * @since 0.3.0.5
 	 */
 	public void run()
 	{
@@ -101,7 +91,6 @@ implements Serializable
 	 * Allows getting a neuron object given index.
 	 * @param piIndex the index to fetch the neuron from.
 	 * @return the neuron object corresponding to the index if found
-	 * @since 0.3.0.5
 	 */
 	public synchronized Neuron get(int piIndex)
 	{
@@ -112,7 +101,6 @@ implements Serializable
 	 * Allows adding a neuron to the layer.
 	 * @param poNeuron the neuron to add
 	 * @return <code>true</code> if the neuron was added 
-	 * @since 0.3.0.5
 	 */
 	public synchronized boolean add(Neuron poNeuron)
 	{
@@ -122,7 +110,6 @@ implements Serializable
 	/**
 	 * Allows querying for layer size in terms of number of neurons.
 	 * @return the layer size
-	 * @since 0.3.0.5
 	 */
 	public synchronized int size()
 	{
@@ -133,7 +120,6 @@ implements Serializable
 	 * Returns the Neuron called by its name string.
 	 * @param pstrName the neuron name to search for
 	 * @return the name Neuron object if found
-	 * @since 0.3.0.5
 	 */
 	public Neuron getNeuron(final String pstrName)
 	{
@@ -155,20 +141,10 @@ implements Serializable
 	/**
 	 * Allows querying raw layer data collection.
 	 * @return the collection of neurons
-	 * @since 0.3.0.5
 	 */
 	public synchronized ArrayList<Neuron> getLayerData()
 	{
 		return this.oLayerData;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.11 $";
 	}
 }
 

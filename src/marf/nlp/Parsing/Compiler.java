@@ -8,17 +8,13 @@ import marf.util.Debug;
  *
  * This class instantiates the parser with the given command-line
  * arguments and invokes it then. Afterwards, it collects the results
- * of lexical and syntax analysis and outputs them out.</p>
+ * of lexical and syntax analysis and outputs them.</p>
  *
  * TODO: complete review.
  *
  * <p>(C) 2001 - 2012 Serguei Mokhov, mokhov@cs.concordia.ca</p>
  * 
- * $Id: Compiler.java,v 1.21 2012/01/09 04:03:23 mokhov Exp $
- * 
  * @author Serguei Mokhov
- * @version $Revision: 1.21 $
- * @since 0.3.0.2
  */
 public class Compiler
 {
@@ -122,15 +118,6 @@ public class Compiler
 			System.err.println(e.getMessage());
 			e.printStackTrace(System.err);
 		}
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.21 $";
 	}
 }
 

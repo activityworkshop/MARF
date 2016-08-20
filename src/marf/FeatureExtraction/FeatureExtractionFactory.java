@@ -14,11 +14,7 @@ import marf.Preprocessing.IPreprocessing;
 /**
  * <p>Provides a factory to instantiate requested feature extraction module(s).</p>
  *
- * $Id: FeatureExtractionFactory.java,v 1.3 2007/12/18 03:45:41 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.3 $
- * @since 0.3.0.5
  */
 public final class FeatureExtractionFactory
 {
@@ -161,15 +157,6 @@ public final class FeatureExtractionFactory
 		}
 		
 		return oFeatureExtraction;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.3 $";
 	}
 }
 

@@ -8,8 +8,6 @@ import marf.util.Arrays;
  * used by different types of modules.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: Algorithms.java,v 1.19 2012/06/17 22:33:34 mokhov Exp $
- * @since 0.3.0.2
  */
 public final class Algorithms
 {
@@ -50,7 +48,6 @@ public final class Algorithms
 		/**
 		 * Applies hamming window to an array of doubles.
 		 * @param padWindow array of doubles to apply windowing to
-		 * @since 0.2.0
 		 */
 		public static final void hamming(double[] padWindow)
 		{
@@ -692,12 +689,12 @@ public final class Algorithms
 			
 			private double[] _transposedCoefs;
 			private double[] _state;
-			//private    double[]  _stateEnd;
+
 			private int _stateEnd;
-			    
+
 			private int _paddedCoefCount;  // ceil(len(coefs)/upRate)*upRate
 			private int _coefsPerPhase;    // _paddedCoefCount / upRate
-			    
+
 			private int _t;                // "time" (modulo upRate)
 			private int _xOffset;
 
@@ -717,8 +714,8 @@ public final class Algorithms
 				}
 
 				_coefsPerPhase = _paddedCoefCount / _upRate;
-			    _transposedCoefs = new double[_paddedCoefCount];
-			    
+				_transposedCoefs = new double[_paddedCoefCount];
+
 				//fill(_transposedCoefs, _transposedCoefs.length + _paddedCoefCount, 0.);
 				Arrays.fill(_transposedCoefs, 0);
 
@@ -758,7 +755,7 @@ public final class Algorithms
 				int x = _xOffset;
 				//outputType *y = out;
 				int y = 0;
-				   
+
 				// inputType *end = in + inCount;
 				int end = in.length;
 
@@ -884,7 +881,7 @@ public final class Algorithms
 //			int inLength,
 			double[] filter
 //			int filterLength
-	    )
+		)
 		throws MathException
 		{
 			// Create the Resampler
@@ -930,16 +927,16 @@ public final class Algorithms
 				System.err.println("upfirdn: numSamplesComputed != resultsCount: " + numSamplesComputed + " != " + resultsCount);
 			}
 			
-		    //delete[] inputPadded;
-		    inputPadded = null;
-		    
-		    return results;
+			//delete[] inputPadded;
+			inputPadded = null;
+
+			return results;
 		}
 
 //		public static double[] upfirdn(int upRate, int downRate, double[] input, double[] filter)
 //		throws MathException
 //		{
-//		    return upfirdn(upRate, downRate, input, filter);
+//			return upfirdn(upRate, downRate, input, filter);
 //		}
 	
 		public static double[] upfirdn(double[] input, double[] filter, int upRate, int downRate)
@@ -949,15 +946,6 @@ public final class Algorithms
 		}
 
 	} // Wavelet
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.19 $";
-	}
 }
 
 // EOF

@@ -1,8 +1,3 @@
-/*
- * GrammarAnalyzer Class
- * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
-
 package marf.nlp.Parsing.GrammarCompiler;
 
 import java.io.FileWriter;
@@ -25,11 +20,7 @@ import marf.util.NotImplementedException;
  * <p>GrammarAnalyzer class encapsulates functionality
  * required for lexical analysis of a the grammar definition file.</p>
  *
- * $Id: GrammarAnalyzer.java,v 1.28 2012/01/09 04:03:23 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.28 $
- * @since 0.3.0.2
  */
 public class GrammarAnalyzer
 extends GenericLexicalAnalyzer
@@ -507,15 +498,6 @@ extends GenericLexicalAnalyzer
 	public Vector getLexicalGrammarErrors()
 	{
 		return this.oLexicalErrors;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.28 $";
 	}
 }
 

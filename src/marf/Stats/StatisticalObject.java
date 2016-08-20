@@ -6,11 +6,7 @@ import java.io.Serializable;
 /**
  * <p>Generic Statistical Object.</p>
  *
- * $Id: StatisticalObject.java,v 1.17 2007/12/18 21:57:14 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.17 $
- * @since 0.3.0.2
  */
 public class StatisticalObject
 implements Serializable, Cloneable
@@ -34,7 +30,6 @@ implements Serializable, Cloneable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 3277836605237662721L;
 
@@ -113,7 +108,6 @@ implements Serializable, Cloneable
 	/**
 	 * Implements Cloneable interface for the StatisticalObject.
 	 * @see java.lang.Object#clone()
-	 * @since 0.3.0.5
 	 */
 	public Object clone()
 	{
@@ -125,7 +119,6 @@ implements Serializable, Cloneable
 	 * the parameter is not null and its <code>toString()</code>'s output
 	 * is equal to this one.
 	 * @see java.lang.Object#equals(java.lang.Object)
-	 * @since 0.3.0.5
 	 */
 	public synchronized boolean equals(Object poStatisticalObject)
 	{
@@ -142,7 +135,6 @@ implements Serializable, Cloneable
 	 * overridden by returning the hash code of the <code>toString()</code>.
 	 * @see java.lang.Object#hashCode()
 	 * @see #equals(Object)
-	 * @since 0.3.0.5
 	 */
 	public synchronized int hashCode()
 	{
@@ -152,7 +144,6 @@ implements Serializable, Cloneable
 	/**
 	 * Reports frequency and rank of an occurrence of a statistical object.
 	 * @see java.lang.Object#toString()
-	 * @since 0.3.0.5
 	 */
 	public String toString()
 	{
@@ -160,15 +151,6 @@ implements Serializable, Cloneable
 			.append("Frequency: ").append(this.iFrequency).append(", ")
 			.append("Rank: ").append(this.iRank)
 			.toString();
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.17 $";
 	}
 }
 

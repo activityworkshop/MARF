@@ -9,7 +9,6 @@ import marf.Storage.Sample;
  * they are and override <code>preprocess()</code> as needed.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: Filter.java,v 1.2 2011/11/21 20:47:05 mokhov Exp $
  * @since 0.3.0.6
  */
 public abstract class Filter
@@ -100,15 +99,6 @@ implements IFilter
 		}
 
 		return bChanges;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.2 $";
 	}
 }
 

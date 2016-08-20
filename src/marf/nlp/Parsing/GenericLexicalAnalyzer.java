@@ -14,8 +14,6 @@ import java.util.Vector;
  * <p>(C) 2002 - 2012 The MARF Research and Development Group</p>
  *
  * @author Serguei Mokhov
- * @version $Id: GenericLexicalAnalyzer.java,v 1.23 2012/07/18 02:45:45 mokhov Exp $
- * @since 0.3.0.2
  */
 public abstract class GenericLexicalAnalyzer
 {
@@ -56,13 +54,11 @@ public abstract class GenericLexicalAnalyzer
 	/**
 	 * File name of a file which serves as an
 	 * lexical errors log.
-	 * @since September 2001
 	 */
 	protected String strErrorLogFilename = DEFAULT_ERROR_FILE;
 
 	/**
 	 * An indicator of presence of lexical errors.
-	 * @since October 2, 2001
 	 */
 	protected boolean bErrorsPresent = false;
 
@@ -103,7 +99,7 @@ public abstract class GenericLexicalAnalyzer
 	 * because it is language-specific, and default
 	 * initialization will not always suffice.
 	 *
-	 * @return <code>true</code> of initialization is successful
+	 * @return <code>true</code> if initialization is successful
 	 */
 	public boolean init()
 	{
@@ -322,15 +318,6 @@ public abstract class GenericLexicalAnalyzer
 	public Vector<LexicalError> getLexicalErrors()
 	{
 		return this.oLexicalErrors;
-	}
-	
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.23 $";
 	}
 }
 

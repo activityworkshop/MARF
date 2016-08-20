@@ -9,12 +9,8 @@ import marf.util.Debug;
 /**
  * <p>LowPassFilter class implements low pass filtering the FFT Filter.</p>
  *
- * $Id: LowPassFilter.java,v 1.19 2007/12/18 03:45:56 mokhov Exp $
- *
  * @author Serguei Mokhov
  * @author Stephen Sinclair
- * @version $Revision: 1.19 $
- * @since 0.0.1
  */
 public class LowPassFilter
 extends FFTFilter
@@ -24,7 +20,6 @@ extends FFTFilter
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 3977132223367145970L;
 
@@ -32,7 +27,6 @@ extends FFTFilter
 	 * Default constructor for reflective creation of Preprocessing
 	 * clones. Typically should not be used unless really necessary
 	 * for the frameworked modules.
-	 * @since 0.3.0.5
 	 */
 	public LowPassFilter()
 	{
@@ -43,7 +37,6 @@ extends FFTFilter
 	 * Preprocessing pipeline constructor.
 	 * @param poPreprocessing follow up preprocessing module
 	 * @throws PreprocessingException
-	 * @since 0.3.0.3
 	 */
 	public LowPassFilter(IPreprocessing poPreprocessing)
 	throws PreprocessingException
@@ -77,10 +70,8 @@ extends FFTFilter
 	}
 
 	/**
-	 * Creates low-pass frequency response coefficients and sets applies
+	 * Creates low-pass frequency response coefficients and applies
 	 * them to the frequency response vector.
-	 *
-	 * @since 0.3.0.2
 	 */
 	public void generateResponseCoefficients()
 	{
@@ -103,16 +94,6 @@ extends FFTFilter
 		}
 
 		setFrequencyResponse(adResponse);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.19 $";
 	}
 }
 

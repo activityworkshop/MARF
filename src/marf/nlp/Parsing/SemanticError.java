@@ -9,59 +9,48 @@ import java.io.IOException;
  * Represents an instance of a semantic error
  * in the semantic analysis process.</p>
  *
- * $Id: SemanticError.java,v 1.16 2007/12/18 21:37:55 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
- * @since 0.3.0.2
  */
 public class SemanticError
 extends CompilerError
 {
 	/**
 	 * Undefined Symbol.
-	 * @since December 19, 2001
 	 */
 	public static final int ERR_UNDEF_SYM = 1;
 
 	/**
 	 * Symbol defined multiple times.
-	 * @since December 19, 2001
 	 */
 	public static final int ERR_MULT_DEF_SYM = 2;
 
 	/**
 	 * Type mismatch in an expression.
-	 * @since December 19, 2001
 	 */
 	public static final int ERR_EXPR_TYPE_MISMATCH = 3;
 
 	/**
 	 * Type mismatch in the assignment.
-	 * @since December 19, 2001
 	 */
 	public static final int ERR_ASSIGN_TYPE_MISMATCH = 4;
 
 	/**
 	 * Mismatch of types of parameters in a function call.
-	 * @since December 19, 2001
 	 */
 	public static final int ERR_PARAM_TYPE_MISMATCH = 5;
 
 	/**
 	 * Custom error message as alternative to 'unknown'.
-	 * @since December 19, 2001
 	 */
 	public static final int ERR_CUSTOM = 6;
 
 	/**
 	 * Custom error messages.
-	 * @since December 19, 2001
 	 */
 	private static final String SEMANTIC_ERROR_MESSAGES[] =
 	{
 		"OK",
-		"Unefined symbol",
+		"Undefined symbol",
 		"Redefined symbol",
 		"Type mismatch in expression",
 		"Type mismatch in assignment operation",
@@ -70,10 +59,7 @@ extends CompilerError
 	};
 
 	/**
-	 * Token information at which Lexer
-	 * encountered the error.
-	 *
-	 * @since October 2, 2001
+	 * Token information at which Lexer encountered the error.
 	 */
 	protected Token oFaultingToken = null;
 
@@ -82,7 +68,6 @@ extends CompilerError
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 2985322185168851077L;
 
@@ -187,15 +172,6 @@ extends CompilerError
 				return false;
 			}
 		}
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.16 $";
 	}
 }
 

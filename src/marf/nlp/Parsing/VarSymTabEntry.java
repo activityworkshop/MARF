@@ -4,11 +4,7 @@ package marf.nlp.Parsing;
 /**
  * <p>Represents Variable SymTab Entry.</p>
  *
- * $Id: VarSymTabEntry.java,v 1.9 2007/12/18 21:37:56 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.9 $
- * @since 0.3.0.2
  */
 public class VarSymTabEntry
 extends SymTabEntry
@@ -92,15 +88,6 @@ extends SymTabEntry
 	public void setDataType(int piType)
 	{
 		this.oDataType = new SymDataType(piType);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.9 $";
 	}
 }
 

@@ -11,11 +11,7 @@ import java.util.Vector;
  * Helps to maintain and validate command-line options and their arguments.
  * The class is properly synchronized as of 0.3.0.4.</p>
  *
- * <p>$Id: OptionProcessor.java,v 1.40 2010/06/23 09:40:19 mokhov Exp $</p>
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.40 $
- * @since 0.3.0.2
  */
 public class OptionProcessor
 implements IOptionProvider
@@ -32,7 +28,6 @@ implements IOptionProvider
 
 	/**
 	 * A hash-table that contains valid numerical options map.
-	 * @since 0.3.0.3
 	 */
 	protected Hashtable<Serializable, Option> oValidOptionsNumbers = new OptionsHashtable();
 
@@ -45,13 +40,11 @@ implements IOptionProvider
 	/**
 	 * A hash-table that contains active numerical options map.
 	 * A proper subset of the valid options.
-	 * @since 0.3.0.3
 	 */
 	protected Hashtable<Serializable, Option> oActiveOptionsNumbers = new OptionsHashtable();
 
 	/**
-	 * A vector that contains invalid options for
-	 * error reporting.
+	 * A vector that contains invalid options for error reporting.
 	 */
 	protected Vector<String> oInvalidOptions = new Vector<String>();
 
@@ -151,8 +144,6 @@ implements IOptionProvider
 	 * requires argument. An exception will be thrown during parsing
 	 * if an option that requires an argument doesn't get one.
 	 *
-	 * @since 0.3.0.3
-	 *
 	 * @see #parse(String[])
 	 */
 	public synchronized final void addValidOption(final int piOptionCode, final String pstrOptionString, boolean pbRequiresArgument)
@@ -163,7 +154,6 @@ implements IOptionProvider
 	/**
 	 * Adds valid option. This is an Option object helper method.
 	 * @param poOption option object to add to valid options
-	 * @since 0.3.0.3
 	 */
 	protected synchronized final void addValidOption(final Option poOption)
 	{
@@ -188,7 +178,6 @@ implements IOptionProvider
 	/**
 	 * Adds active option. This is an Option object helper method.
 	 * @param poOption option object to add to active options
-	 * @since 0.3.0.3
 	 */
 	protected synchronized final void addActiveOption(final Option poOption)
 	{
@@ -211,7 +200,6 @@ implements IOptionProvider
 
 	/**
 	 * Clears out all the option lists of this option processor.
-	 * @since 0.3.0.3
 	 */
 	public synchronized void clear()
 	{
@@ -231,7 +219,6 @@ implements IOptionProvider
 	 * represent more of a dynamic state.
 	 *
 	 * @return active plus invalid options count
-	 * @since 0.3.0.4
 	 */
 	public synchronized int size()
 	{
@@ -249,7 +236,6 @@ implements IOptionProvider
 	 * followed by all invalid options.
 	 *
 	 * @return array of strings of active and invalid options
-	 * @since 0.3.0.4
 	 */
 	public synchronized String[] getArgumentVector()
 	{
@@ -284,7 +270,6 @@ implements IOptionProvider
 	 * application.
 	 *
 	 * @return a space-delimited String of active and invalid options
-	 * @since 0.3.0.5
 	 */
 	public synchronized String getArgumentString()
 	{
@@ -532,7 +517,6 @@ implements IOptionProvider
 	 * Allows querying for option argument by option name.
 	 * @param pstrOption option name
 	 * @return option argument
-	 * @since 0.3.0.3
 	 */
 	public synchronized String getOptionArgument(final String pstrOption)
 	{
@@ -545,7 +529,6 @@ implements IOptionProvider
 	 * @param pbReturnOnError tells to return an empty string instead of throwing an
 	 * exception if set to <code>true</>
 	 * @return option argument
-	 * @since 0.3.0.3
 	 */
 	public synchronized String getOptionArgument(final String pstrOption, boolean pbReturnOnError)
 	{
@@ -567,7 +550,6 @@ implements IOptionProvider
 	 * Allows querying for option argument by option number.
 	 * @param piOption option number
 	 * @return option argument
-	 * @since 0.3.0.3
 	 */
 	public synchronized String getOptionArgument(final int piOption)
 	{
@@ -580,7 +562,6 @@ implements IOptionProvider
 	 * @param pbReturnOnError tells to return an empty string instead of throwing an
 	 * exception if set to <code>true</>
 	 * @return option argument
-	 * @since 0.3.0.3
 	 */
 	public synchronized String getOptionArgument(final int piOption, boolean pbReturnOnError)
 	{
@@ -709,7 +690,6 @@ implements IOptionProvider
 	 * Main Option placeholder.
 	 *
 	 * @author Serguei Mokhov
-	 * @since 0.3.0.3
 	 */
 	protected class Option
 	{
@@ -758,7 +738,6 @@ implements IOptionProvider
 		 * Equivalent to <code>Option(piOption, pstrOption, false)</code>.
 		 * @param poOption integer option equivalent
 		 * @param pstrOption String option equivalent
-		 * @since 0.3.0.5
 		 */
 		public Option(Integer poOption, String pstrOption)
 		{
@@ -896,42 +875,12 @@ implements IOptionProvider
 	}
 
 	/**
-	 * <p>A hashtable designed for to hold options.
-	 * </p>
-	 *
-	 * @author Serguei Mokhov
-	 * @since 0.3.0.3
-	 * @see OptionProcessor.Option
+	 * A hashtable to hold options.
 	 */
 	protected class OptionsHashtable
 	extends Hashtable<Serializable, Option>
 	{
-		/**
-		 * For serialization versioning.
-		 * When adding new members or make other structural
-		 * changes regenerate this number with the
-		 * <code>serialver</code> tool that comes with JDK.
-		 * @since 0.3.0.4
-		 */
-		private static final long serialVersionUID = 8686199546957797968L;
-
-		/**
-		 * Merely calls the parent's constructor.
-		 */
-		public OptionsHashtable()
-		{
-			super();
-		}
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.40 $";
+		private static final long serialVersionUID = -1350967973560276670L;
 	}
 }
 

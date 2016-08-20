@@ -13,11 +13,7 @@ import marf.util.InvalidSampleFormatException;
  * <p>Loads (by computing) a simple sine wave into the sample.
  * Used for simple and quick testing of fake waves.</p>
  *
- * $Id: SineLoader.java,v 1.13 2007/02/04 07:51:30 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.13 $
- * @since 0.3.0.2
  */
 public class SineLoader
 extends SampleLoader
@@ -150,15 +146,6 @@ extends SampleLoader
 	throws StorageException
 	{
 		return this.oSample.getSampleArray().length;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.13 $";
 	}
 }
 

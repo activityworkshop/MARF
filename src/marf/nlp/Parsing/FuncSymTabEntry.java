@@ -5,12 +5,9 @@ import java.util.Vector;
 
 /**
  * <p>FuncSymTabEntry represents a symbol table entry
- * for function definition.
- * </p>
+ * for function definition.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: FuncSymTabEntry.java,v 1.12 2012/07/18 02:45:45 mokhov Exp $
- * @since 0.3.0.2
  */
 public class FuncSymTabEntry
 extends SymTabEntry
@@ -79,15 +76,6 @@ extends SymTabEntry
 	public SymDataType getRetValDataType()
 	{
 		return this.oRetValType;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.12 $";
 	}
 }
 

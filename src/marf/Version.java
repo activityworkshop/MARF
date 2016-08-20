@@ -6,13 +6,9 @@ import marf.util.MARFException;
 /**
  * <p>Responsible for providing and validating version information of MARF.
  * A version should be bumped here at the beginning of every release cycle
- * according to the versioning guidelines outlined in the manual.
- * <p>
- *
- * $Id: Version.java,v 1.6 2007/12/31 00:17:05 mokhov Exp $
+ * according to the versioning guidelines outlined in the manual.<p>
  *
  * @author Serguei Mokhov
- * @since 0.3.0.5
  */
 public class Version
 {
@@ -272,15 +268,6 @@ public class Version
 		// Will only be activated through scripting of the PACKAGE member
 		// at the distro time.
 		return (PACKAGE.equals("") ? "" : "-" + PACKAGE);
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.6 $";
 	}
 }
 

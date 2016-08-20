@@ -17,12 +17,10 @@ import marf.math.Vector;
  * pipeline concatenation or the implementation of the cropAudio() API.
  * 
  * If no parameters specified, by default cuts out the first 512 elements
- * of the sample array.
- * </p>
+ * of the sample array.</p>
  *
  * @author Serguei Mokhov
  * @since 0.3.0.6
- * @version $Id: Crop.java,v 1.3 2011/11/21 17:48:17 mokhov Exp $
  */
 public class Crop
 extends Raw

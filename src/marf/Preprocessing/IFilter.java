@@ -5,8 +5,6 @@ package marf.Preprocessing;
  * <p>An interface all filters must comply with.</p>
  *
  * @author Serguei Mokhov
- * @since 0.3.0.4
- * @version $Id: IFilter.java,v 1.6 2011/11/21 20:47:05 mokhov Exp $
  */
 public interface IFilter
 {
@@ -27,11 +25,6 @@ public interface IFilter
 	 * @since 0.3.0.6
 	 */
 	int FILTER_DIMENSIONALITY_3D = 2003;
-
-	/**
-	 * Interface source code revision.
-	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.6 $";
 
 	/**
 	 * Applies filtering to the sample array and buffers

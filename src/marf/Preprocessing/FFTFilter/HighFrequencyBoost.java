@@ -16,8 +16,6 @@ import marf.util.Debug;
  * top of the FFTFilter.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: HighFrequencyBoost.java,v 1.31 2011/11/21 20:47:05 mokhov Exp $
- * @since 0.0.1
  */
 public class HighFrequencyBoost
 extends FFTFilter
@@ -25,14 +23,12 @@ extends FFTFilter
 	/**
 	 * Create a response that boosts all frequencies above 1000 Hz.
 	 * Note: 1000Hz ~= 25 * 128 / 8000Hz.
-	 * @since 0.3.0.2
 	 */
 	public static final int DEFAULT_HIGH_FREQUENCY_CUTOFF = 25;
 
 	/**
 	 * Default boost rate of 5*PI to be applied to amplitude values.
 	 * Made up out of the blue.
-	 * @since 0.3.0.3
 	 */
 	public static final double BASE_BOOST_COEFFICIENT = 5 * Math.PI;
 
@@ -40,7 +36,6 @@ extends FFTFilter
 	 * Current boost coefficient. By default is set to
 	 * <code>BASE_BOOST_COEFFICIENT</code>.
 	 * @see #BASE_BOOST_COEFFICIENT
-	 * @since 0.3.0.5
 	 */
 	protected double dBoostCoefficient = BASE_BOOST_COEFFICIENT; 
 
@@ -48,7 +43,6 @@ extends FFTFilter
 	 * Current high frequency cut off. By default is set to
 	 * <code>DEFAULT_HIGH_FREQUENCY_CUTOFF</code>.
 	 * @see #DEFAULT_HIGH_FREQUENCY_CUTOFF
-	 * @since 0.3.0.5
 	 */
 	protected double dHighFrequencyCutoff = DEFAULT_HIGH_FREQUENCY_CUTOFF; 
 	
@@ -57,7 +51,6 @@ extends FFTFilter
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 7235987711570372477L;
 
@@ -65,7 +58,6 @@ extends FFTFilter
 	 * Default constructor for reflective creation of Preprocessing
 	 * clones. Typically should not be used unless really necessary
 	 * for the frameworked modules.
-	 * @since 0.3.0.5
 	 */
 	public HighFrequencyBoost()
 	{
@@ -76,20 +68,11 @@ extends FFTFilter
 	 * Pipelined preprocessing constructor.
 	 * @param poPreprocessing follow-up preprocessing module
 	 * @throws PreprocessingException
-	 * @since 0.3.0.3
 	 */
 	public HighFrequencyBoost(IPreprocessing poPreprocessing)
 	throws PreprocessingException
 	{
 		super(poPreprocessing);
-/*
-		Debug.debug
-		(
-			new StringBuffer("HighFrequencyBoost constructed with preprocessing [")
-			//.append(poPreprocessing)
-			.append("].")
-		);
-*/
 	}
 
 	/**
@@ -101,14 +84,6 @@ extends FFTFilter
 	throws PreprocessingException
 	{
 		super(poSample);
-/*
-		Debug.debug
-		(
-			new StringBuffer("HighFrequencyBoost constructed with sample [")
-			//.append(poSample)
-			.append("].")
-		);
-*/
 	}
 
 	/**
@@ -116,7 +91,6 @@ extends FFTFilter
 	 * TODO: Normalization should only be applied to the boosted part.
 	 *
 	 * @return <code>true</code> if there were changes to the sample
-	 * @since 0.2.0
 	 * @throws PreprocessingException if there were problems during
 	 * underlying <code>super.preprocess()</code> or <code>normalize()</code>.
 	 */
@@ -147,10 +121,9 @@ extends FFTFilter
 	}
 
 	/**
-	 * Creates high-frequency boost response coefficients and sets applies
+	 * Creates high-frequency boost response coefficients and applies
 	 * them to the frequency response vector.
 	 *
-	 * @since 0.3.0.2
 	 * @see marf.Preprocessing.FFTFilter.FFTFilter#generateResponseCoefficients()
 	 */
 	public void generateResponseCoefficients()
@@ -239,16 +212,6 @@ extends FFTFilter
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.31 $";
 	}
 }
 

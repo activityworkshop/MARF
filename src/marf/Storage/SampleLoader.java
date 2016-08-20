@@ -19,13 +19,8 @@ import marf.util.NotImplementedException;
  * sample loading interface. Must be overridden by a concrete sample
  * loader.</p>
  *
- * $Id: SampleLoader.java,v 1.31 2015/04/05 00:20:53 mokhov Exp $
- *
  * @author Serguei Mokhov
  * @author Jimmy Nicolacopoulos
- *
- * @version $Revision: 1.31 $
- * @since 0.0.1
  */
 public abstract class SampleLoader
 implements ISampleLoader
@@ -48,7 +43,6 @@ implements ISampleLoader
 
 	/**
 	 * Current frequency.
-	 * @since 0.3.0
 	 */
 	protected float fRequiredFrequency = DEFAULT_FREQUENCY;
 
@@ -312,16 +306,6 @@ implements ISampleLoader
 	public void setRequiredFrequency(float piRequiredFrequency)
 	{
 		this.fRequiredFrequency = piRequiredFrequency;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.31 $";
 	}
 }
 

@@ -8,11 +8,7 @@ import marf.util.NotImplementedException;
  * TODO: implement.
  * </p>
  *
- * $Id: CodeGenerator.java,v 1.8 2005/12/30 18:36:54 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.8 $
- * @since 0.3.0.2
  */
 public class CodeGenerator
 {
@@ -163,15 +159,6 @@ public class CodeGenerator
 	public static void genClass()
 	{
 		throw new NotImplementedException();
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.8 $";
 	}
 }
 

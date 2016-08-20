@@ -1,8 +1,3 @@
-/*
- * SymTabEntry Class
- * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
-
 package marf.nlp.Parsing;
 
 import java.awt.Point;
@@ -11,14 +6,9 @@ import java.util.Vector;
 
 /**
  * <p>This class denotes one entry per user-defined symbol
- * in the Symbol Table.
- * </p>
- *
- * $Id: SymTabEntry.java,v 1.18 2012/07/18 02:45:45 mokhov Exp $
+ * in the Symbol Table.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.18 $
- * @since 0.3.0.2
  */
 public class SymTabEntry
 {
@@ -40,28 +30,24 @@ public class SymTabEntry
 	/**
 	 * Numeric ID of the entry.
 	 * Not really used.
-	 * @since September 2001
 	 */
 	protected int iID;
 
 	/**
 	 * A flag indicating that the symbol was (true)
 	 * or was not (false) resolved.
-	 * @since September 2001
 	 */
 	protected boolean bDeclared = false;
 
 	/**
 	 * A flag indicating that the symbol was (true)
 	 * or was not (false) reserved.
-	 * @since September 2001
 	 */
 	protected boolean bReserved = false;
 
 	/**
 	 * A flag indicating that the symbol was (true)
 	 * or was not (false) multiply defined.
-	 * @since December 21, 2001
 	 */
 	protected boolean bMultilplyDefined = false;
 
@@ -71,16 +57,13 @@ public class SymTabEntry
 	protected Token oUID = null;
 
 	/**
-	 * Data type of this symbol (e.g. integer, real,
-	 * class).
-	 * @since September 2001
+	 * Data type of this symbol (e.g. integer, real, class).
 	 */
 	protected SymDataType oDataType = null;
 
 	/**
 	 * List of locations where the given ID
 	 * appears in the source code.
-	 * @since September 2001
 	 */
 	protected Vector<Point> oLocationsList = null;
 
@@ -180,8 +163,7 @@ public class SymTabEntry
 	}
 
 	/**
-	 * Get list of occurrences of this token
-	 * entry.
+	 * Get list of occurrences of this token entry.
 	 * @return the locations list
 	 */
 	public Vector<Point> getLocationsList()
@@ -281,15 +263,6 @@ public class SymTabEntry
 	public void setID(int piID)
 	{
 		this.iID = piID;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.18 $";
 	}
 }
 

@@ -1,7 +1,3 @@
-/*
- * Generic Parser
- * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
 package marf.nlp.Parsing;
 
 import java.io.FileWriter;
@@ -23,8 +19,6 @@ import marf.util.Debug;
  * <p>Generic Language Parser.</p>
  * 
  * @author Serguei Mokhov, mokhov@cs.concordia.ca
- * @version $Id: Parser.java,v 1.30 2012/01/09 04:03:23 mokhov Exp $
- * @since 0.3.0.2
  */
 public class Parser
 {
@@ -46,8 +40,7 @@ public class Parser
 
 	/**
 	 * Grammar Compiler.
-	 * Needed to compile source grammar file if TT
-	 * does not exist.
+	 * Needed to compile source grammar file if TT does not exist.
 	 */
 	private GrammarCompiler oGrammarCompiler = null;
 
@@ -204,7 +197,7 @@ public class Parser
 	
 				// Semantic Token
 				if(!oTopElement.isNonTerminal() && !oTopElement.isTerminal())
-			    {
+				{
 					// Take it out from the stack
 					this.oStack.pop();
 	
@@ -371,7 +364,7 @@ public class Parser
 	/**
 	 * Error recovery function.
 	 * Skips syntax errors until next valid symbol in TT.
-	 * @throws LexicalError if invalid token is encounterd
+	 * @throws LexicalError if invalid token is encountered
 	 */
 	private void skipErrors()
 	throws LexicalError
@@ -567,15 +560,6 @@ public class Parser
 	public Vector<String> getSyntaxErrors()
 	{
 		return this.oSyntaxErrors;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.30 $";
 	}
 }
 

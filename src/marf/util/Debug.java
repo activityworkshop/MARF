@@ -4,18 +4,13 @@ package marf.util;
 /**
  * <p>Simple MARF Debugging Facility.</p>
  *
- * $Id: Debug.java,v 1.19 2009/02/08 04:31:45 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.19 $
- * @since 0.3.0.2
  */
 public class Debug
 extends Logger
 {
 	/**
 	 * Default filename to log the debug output to.
-	 * @since 0.3.0.4
 	 */
 	public static final String DEFAULT_DEBUG_LOG_FILENAME = "debug.log";
 
@@ -63,7 +58,6 @@ extends Logger
 	/**
 	 * Allows to atomically query the debug flag.
 	 * @return the current state of the debug flag
-	 * @since 0.3.0.4
 	 */
 	public static synchronized final boolean isDebugOn()
 	{
@@ -108,7 +102,6 @@ extends Logger
 	 * by calling <code>toString()</code> of the parameter.
 	 * This method is properly synchronized.
 	 * @param poObject object to dump to the debug output
-	 * @since 0.3.0.3
 	 */
 	public static synchronized final void debug(final Object poObject)
 	{
@@ -153,15 +146,6 @@ extends Logger
 	public static synchronized final void debug()
 	{
 		debug("");
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.19 $";
 	}
 }
 

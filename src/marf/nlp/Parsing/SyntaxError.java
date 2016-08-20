@@ -1,8 +1,3 @@
-/*
- * SyntaxError Class
- * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
-
 package marf.nlp.Parsing;
 
 import java.io.FileWriter;
@@ -10,14 +5,9 @@ import java.io.IOException;
 
 
 /**
- * <p>Represents a Syntax Error.
- * </p>
- *
- * $Id: SyntaxError.java,v 1.25 2012/01/09 04:03:23 mokhov Exp $
+ * <p>Represents a Syntax Error.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.25 $
- * @since 0.3.0.2
  */
 public class SyntaxError
 extends CompilerError
@@ -49,7 +39,6 @@ extends CompilerError
 
 	/**
 	 * Typical syntax error messages.
-	 * @since October 2, 2001
 	 */
 	private static final String SYNTAX_ERROR_MESSAGES[] =
 	{
@@ -57,15 +46,12 @@ extends CompilerError
 		"Syntax Error",
 		"Mismatched parenthesis",
 		"No main 'program' has been found",
-		"Missing semicolon at the end of a stament",
+		"Missing semicolon at the end of a statement",
 		"Custom error message: "
 	};
 
 	/**
-	 * Token information at which Parser
-	 * encountered the error.
-	 *
-	 * @since October 2, 2001
+	 * Token information at which Parser encountered the error.
 	 */
 	protected Token oFaultingToken = null;
 
@@ -77,9 +63,8 @@ extends CompilerError
 	protected static final int POP = 1;
 
 	/**
-	 * Recovery action code specifying
-	 * that one needs to keep scanning to
-	 * recover.
+	 * Recovery action code specifying that
+	 * one needs to keep scanning to recover.
 	 */
 	protected static final int SCAN = 2;
 
@@ -94,7 +79,6 @@ extends CompilerError
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -7701158080244875322L;
 
@@ -304,15 +288,6 @@ extends CompilerError
 	public void setPopRecoveryAction()
 	{
 		this.iRecoveryActionCode = POP;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.25 $";
 	}
 }
 

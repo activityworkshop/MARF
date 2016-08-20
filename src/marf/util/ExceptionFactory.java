@@ -5,12 +5,10 @@ import marf.Classification.ClassificationException;
 
 /**
  * <p>Factory for producing various MARF exception objects.</p>
- *
- * $Id: ExceptionFactory.java,v 1.2 2007/12/01 00:31:01 mokhov Exp $
+ * TODO: Never used?
  *
  * @author Serguei Mokhov
  * @since 0.3.0.6, Nov 26, 2007
- * @version $Revision: 1.2 $
  */
 public class ExceptionFactory
 {
@@ -18,7 +16,7 @@ public class ExceptionFactory
 	 * Factories are often singletons, so technically, this
 	 * constructor should be private and the getInstance()
 	 * method should be present. We relax this rule to allow
-	 * inheritance to the wishing parties.  
+	 * inheritance to the wishing parties.
 	 */
 	protected ExceptionFactory()
 	{

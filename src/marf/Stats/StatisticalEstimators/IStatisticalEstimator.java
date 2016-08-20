@@ -9,22 +9,12 @@ import marf.nlp.util.NLPStreamTokenizer;
  * If concrete statistical estimators cannot inherit
  * from the generic <code>StatisticalEstimator</code> class
  * (which provides most generic implementation), they must
- * implement this interface then.
- * </p>
- *
- * $Id: IStatisticalEstimator.java,v 1.3 2007/12/18 21:57:15 mokhov Exp $
+ * implement this interface.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.3 $
- * @since 0.3.0.3
  */
 public interface IStatisticalEstimator
 {
-	/**
-	 * Interface source code revision.
-	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.3 $";
-
 	/**
 	 * Classification via calculation of a probability <i>p</i>.
 	 * @return calculated probability value

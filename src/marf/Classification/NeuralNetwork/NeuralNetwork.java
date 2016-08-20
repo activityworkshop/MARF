@@ -37,9 +37,6 @@ import org.xml.sax.SAXParseException;
  *
  * @author Ian Clement
  * @author Serguei Mokhov
- *
- * @version $Id: NeuralNetwork.java,v 1.64 2012/07/09 03:53:32 mokhov Exp $
- * @since 0.0.1
  */
 public class NeuralNetwork
 extends Classification
@@ -53,25 +50,21 @@ extends Classification
 	/**
 	 * How many binary Neurons in the output layer.
 	 * Presumably int (our ID) is 4 bytes, hence 4 * 8 = 32 bits, and so many outputs.
-	 * @since 0.2.0
 	 */
 	public static final int DEFAULT_OUTPUT_NEURON_BITS = 32;
 
 	/**
 	 * Default training constant of <code>1</code> if none supplied.
-	 * @since 0.2.0
 	 */
 	public static final double DEFAULT_TRAINING_CONSTANT = 1;
 
 	/**
 	 * Default number of epoch iterations of <code>64</code> if none supplied.
-	 * @since 0.2.0
 	 */
 	public static final int DEFAULT_EPOCH_NUMBER = 64;
 
 	/**
 	 * Default minimum training error of <code>0.1</code> if none supplied.
-	 * @since 0.2.0
 	 */
 	public static final double DEFAULT_MIN_ERROR = 0.1;
 
@@ -152,7 +145,6 @@ extends Classification
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 6116721242820120028L;
 
@@ -970,7 +962,6 @@ extends Classification
 	 * @param piNumOfInputs number of input Neurons in the input layer
 	 * @param paiHiddenLayers arrays of numbers of Neurons in the hidden layers
 	 * @param piNumOfOutputs number of output Neurons in the output layer
-	 * @since 0.2.0, Serguei
 	 * @throws ClassificationException if the hidden layers array has nothing or is null
 	 */
 	public final void generate(int piNumOfInputs, int[] paiHiddenLayers, int piNumOfOutputs)
@@ -1377,16 +1368,6 @@ extends Classification
 			String strMessage = "FATAL: " + getParseExceptionInfo(poParseException);
 			throw new SAXException(strMessage);
 		}
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.64 $";
 	}
 }
 

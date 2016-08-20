@@ -16,7 +16,6 @@ import marf.util.Debug;
  * <p>Cosine Similarity Measure Classifier.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: CosineSimilarityMeasure.java,v 1.7 2015/03/08 19:47:21 mokhov Exp $
  * @since 0.3.0.6
  */
 public class CosineSimilarityMeasure
@@ -179,15 +178,6 @@ extends Classification
 	public Result getResult()
 	{
 		return this.oResultSet.getMaximumResult();
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.7 $";
 	}
 }
 

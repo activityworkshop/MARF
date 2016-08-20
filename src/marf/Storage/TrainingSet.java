@@ -12,12 +12,9 @@ import marf.util.Debug;
 
 
 /**
- * <p>TrainingSet -- Encapsulates Subject ID and subject's clusters or a feature set.
- * </p>
+ * <p>TrainingSet -- Encapsulates Subject ID and subject's clusters or a feature set.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: TrainingSet.java,v 1.53 2015/03/08 19:47:22 mokhov Exp $
- * @since 0.0.1, December 5, 2002
  */
 public class TrainingSet
 extends StorageManager
@@ -25,14 +22,13 @@ extends StorageManager
 	/*
 	 * NOTE: Be careful when you mess with this file. Any new fields
 	 *       or structural changes will change the on-disk layout of
-	 *       whole TrainingSet. Until an upgrade utility is available,
+	 *       the whole TrainingSet. Until an upgrade utility is available,
 	 *       you will have to retrain ALL your models that use TrainingSet
 	 *       in DUMP_BINARY and DUMP_GZIP_BINARY models.
 	 */
 
 	/**
 	 * Default TrainingSet file name of <code>marf.training.set</code>.
-	 * @since 0.3.0.2
 	 */
 	public static final String DEFAULT_TRAINING_SET_FILENAME = "marf.training.set";
 
@@ -79,7 +75,6 @@ extends StorageManager
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 2733362635058973186L;
 
@@ -123,7 +118,6 @@ extends StorageManager
 	 * @return vector of training samples.
 	 */
 	public final Vector<ITrainingSample> getClusters()
-//	public final Hashtable getClusters()
 	{
 		return this.oTrainingSamples;
 	}
@@ -186,7 +180,6 @@ extends StorageManager
 		 * Check if this sample is already in the training set
 		 * for these feature extraction & preprocessing methods.
 		 */
-//		Cluster oTrainingSetData = null;
 		ITrainingSample oTrainingSetData = null;
 		boolean bNewSubject = true;
 
@@ -220,8 +213,6 @@ extends StorageManager
 
 		if(bNewSubject == true)
 		{
-			//oTrainingSetData = new Cluster();
-
 			switch(this.iTrainingSetFormat)
 			{
 				case TRAINING_SET_SAMPLES:
@@ -462,20 +453,9 @@ extends StorageManager
 			.append("Preprocessing Method: ").append(this.iPreprocessingMethod).append("\n")
 			.append("Feature Extraction Method: ").append(this.iFeatureExtractionMethod).append("\n")
 			.append("TrainingSet Size: ").append(size()).append("\n")
-			.append("Training Set Samples: ").append(this.oTrainingSamples).append("\n")
-			.append("TrainingSet Source code revision: ").append(getMARFSourceCodeRevision()).append("\n");
+			.append("Training Set Samples: ").append(this.oTrainingSamples).append("\n");
 
 		return oBuffer.toString();
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.53 $";
 	}
 }
 

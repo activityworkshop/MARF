@@ -5,20 +5,11 @@ import marf.Storage.Sample;
 /**
  * <p>Preprocessing Interface.</p>
  *
- * $Id: IPreprocessing.java,v 1.7 2006/07/28 16:56:22 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.7 $
- * @since 0.3.0
  */
 public interface IPreprocessing
 extends Cloneable
 {
-	/**
-	 * Interface source code revision.
-	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.7 $";
-
 	/**
 	 * Derivatives must implement this method to do general
 	 * preprocessing and perhaps calling <code>removeNoise()</code>
@@ -114,7 +105,6 @@ extends Cloneable
 	/**
 	 * Allows setting a sample object reference.
 	 * @param poSample new sample object
-	 * @since 0.3.0.4
 	 */
 	void setSample(Sample poSample);
 	
@@ -123,7 +113,6 @@ extends Cloneable
 	 * with the Cloneable interface.
 	 * @return a copy of the object implementing this interface
 	 * @throws CloneNotSupportedException if for some reason cloning is unsupported. 
-	 * @since 0.3.0.5
 	 */
     Object clone()
     throws CloneNotSupportedException;

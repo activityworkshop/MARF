@@ -11,12 +11,9 @@ import marf.util.comparators.ResultComparator;
 
 /**
  * <p>Class ResultSet represents classification result
- * set - IDs and some stats. May be sorted.
- * </p>
+ * set - IDs and some stats. May be sorted.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: ResultSet.java,v 1.24 2010/09/27 23:56:03 mokhov Exp $
- * @since 0.3.0.2
  */
 public class ResultSet
 implements Serializable, Cloneable
@@ -61,7 +58,6 @@ implements Serializable, Cloneable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -3133714664001380852L;
 
@@ -517,15 +513,6 @@ implements Serializable, Cloneable
 	public Object clone()
 	{
 		return new ResultSet(this);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.24 $";
 	}
 }
 

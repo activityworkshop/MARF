@@ -11,11 +11,7 @@ import marf.Storage.StorageManager;
  * then they must implement the <code>IFeatureExtraction</code> interface.
  * </p>
  *
- * $Id: FeatureExtraction.java,v 1.38 2012/05/30 16:24:18 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.38 $
- * @since 0.0.1
  * 
  * @see IFeatureExtraction
  */
@@ -44,7 +40,6 @@ implements IFeatureExtraction
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	private static final long serialVersionUID = 7608607169147548576L;
 
@@ -125,16 +120,6 @@ implements IFeatureExtraction
 		oClone.adFeatures = (double[])this.adFeatures.clone();
 		oClone.oPreprocessing = this.oPreprocessing;
 		return oClone;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.38 $";
 	}
 }
 

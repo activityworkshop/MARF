@@ -14,10 +14,7 @@ import javax.swing.JPanel;
  * 
  * TODO: complete implementation and documentation. 
  * 
- * $Id: ColoredStatusBox.java,v 1.2 2007/12/18 03:46:08 mokhov Exp $
- * 
  * @author Serguei Mokhov
- * @version $Revision: 1.2 $
  * @since 0.3.0.6
  */
 public class ColoredStatusBox

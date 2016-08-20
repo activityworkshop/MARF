@@ -10,12 +10,8 @@ import marf.util.BaseThread;
 /**
  * <p>Class Neuron -- a basic element of a neural network.</p>
  *
- * $Id: Neuron.java,v 1.20 2009/02/08 04:31:45 mokhov Exp $
- *
  * @author Ian Clement
  * @author Serguei Mokhov
- * @version $Revision: 1.20 $
- * @since 0.0.1
  */
 public class Neuron
 extends BaseThread
@@ -29,25 +25,21 @@ implements Serializable
 
 	/**
 	 * Indicates undefined neuron type.
-	 * @since 0.1.2
 	 */
 	public static final int UNDEF  = -1;
 
 	/**
 	 * Indicates input neuron.
-	 * @since 0.1.2
 	 */
 	public static final int INPUT  = 0;
 
 	/**
 	 * Indicates middle (hidden) neuron.
-	 * @since 0.1.2
 	 */
 	public static final int HIDDEN = 1;
 
 	/**
 	 * Indicates output neuron.
-	 * @since 0.1.2
 	 */
 	public static final int OUTPUT = 2;
 
@@ -108,7 +100,6 @@ implements Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.6
 	 */
 	private static final long serialVersionUID = -1386828790026558068L;
 
@@ -350,21 +341,10 @@ implements Serializable
 	/**
 	 * The body of a Neuron thread.
 	 * TODO: complete.
-	 * @since 0.3.0.2
 	 */
 	public void run()
 	{
 		eval();
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.20 $";
 	}
 }
 

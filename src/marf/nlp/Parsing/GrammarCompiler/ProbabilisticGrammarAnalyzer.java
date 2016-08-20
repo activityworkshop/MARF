@@ -10,14 +10,10 @@ import marf.util.Debug;
 
 
 /**
- * <p>Probabilistic Grammar Analyzer -- an lexical analyzer designed
+ * <p>Probabilistic Grammar Analyzer -- a lexical analyzer designed
  * for probabilistic grammars out of a stream of characters.</p>
  *
- * $Id: ProbabilisticGrammarAnalyzer.java,v 1.16 2007/12/18 21:37:57 mokhov Exp $
- * 
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
- * @since 0.3.0.2
  */
 public class ProbabilisticGrammarAnalyzer
 extends GrammarAnalyzer
@@ -155,15 +151,6 @@ extends GrammarAnalyzer
 
 			this.oToken = createToken(this.oStreamTokenizer.sval, this.oTokenType);
 		}
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.16 $";
 	}
 }
 

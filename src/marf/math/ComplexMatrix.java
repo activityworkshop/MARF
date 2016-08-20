@@ -9,7 +9,6 @@ import marf.util.Debug;
  * but for operations on matrices with complex numbers.</p>
  * 
  * @author Serguei Mokhov
- * @version $Id: ComplexMatrix.java,v 1.14 2011/11/21 20:51:20 mokhov Exp $
  * @since 0.3.0.6
  * @see Matrix
  */
@@ -623,7 +622,7 @@ extends Matrix
 	protected Matrix getNewMatrix()
 	{
 		//System.out.println("[[[ in default ComplexMatrix ]]]");
-		return new ComplexMatrix(this.iRows, this.iCols);		
+		return new ComplexMatrix(this.iRows, this.iCols);
 	}
 	
 	/* (non-Javadoc)

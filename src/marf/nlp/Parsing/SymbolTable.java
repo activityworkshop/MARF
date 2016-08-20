@@ -12,8 +12,6 @@ import marf.util.NotImplementedException;
  * </p>
  *
  * @author Serguei Mokhov
- * @version $Id: SymbolTable.java,v 1.24 2012/07/18 02:45:45 mokhov Exp $
- * @since 0.3.0.2
  */
 public class SymbolTable
 {
@@ -95,8 +93,7 @@ public class SymbolTable
 	 * Not implemented.
 	 * The same as above <code>addSymbol(Token)</code>, just has
 	 * an extra parameter for convenience
-	 * if on the time of insertion the symbol
-	 * is already defined.
+	 * if on the time of insertion the symbol is already defined.
 	 * 
 	 * @param poToken
 	 * @param pbResolved
@@ -111,12 +108,10 @@ public class SymbolTable
 
 	/**
 	 * Not implemented.
-	 * This method adds also a type along
-	 * with the token. This as well assumes
-	 * that the token is defined because
-	 * invocation of the method can happen
-	 * only during the declaration of a symbol
-	 * in the source code.
+	 * This method adds also a type along with the token.
+	 * This as well assumes that the token is defined because
+	 * invocation of the method can happen only during the
+	 * declaration of a symbol in the source code.
 	 * 
 	 * @param oToken
 	 * @param piSymDataType
@@ -306,9 +301,8 @@ public class SymbolTable
 
 	/**
 	 * Not implemented.
-	 * Returns a symbol table entry by
-	 * an entry ID. 'null' means there is
-	 * no entry with such an ID.
+	 * Returns a symbol table entry by an entry ID.
+	 * 'null' means there is no entry with such an ID.
 	 * @param piID
 	 * @return null
 	 */
@@ -318,8 +312,7 @@ public class SymbolTable
 	}
 
 	/**
-	 * This method returns the entry by
-	 * token's lexeme.
+	 * This method returns the entry by token's lexeme.
 	 * @param pstrLexeme the lexeme of the entry to look up
 	 * @return SymTabEntry reference corresponding to the lexeme
 	 */
@@ -381,21 +374,12 @@ public class SymbolTable
 
 	/**
 	 * Not implemented.
-	 * @param piOpertation
+	 * @param piOperation
 	 * @return false
 	 */
-	public boolean serialize(int piOpertation)
+	public boolean serialize(int piOperation)
 	{
 		return false;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.24 $";
 	}
 }
 

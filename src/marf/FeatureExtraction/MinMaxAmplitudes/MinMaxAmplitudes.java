@@ -18,8 +18,6 @@ import marf.util.Debug;
  * 20 the same maximums or minimums if others are available.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: MinMaxAmplitudes.java,v 1.16 2015/03/12 15:30:14 mokhov Exp $
- * @since 0.3.0.2
  */
 public class MinMaxAmplitudes
 extends FeatureExtraction
@@ -39,7 +37,6 @@ extends FeatureExtraction
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 5096308560737883614L;
 
@@ -122,15 +119,6 @@ extends FeatureExtraction
 			.append("Min/Max Data: ")
 			.append(Arrays.arrayToVector(this.adFeatures))
 			.toString();
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.16 $";
 	}
 }
 

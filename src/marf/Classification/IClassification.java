@@ -8,19 +8,10 @@ import marf.Storage.ResultSet;
 /**
  * <p>Classification Interface.</p>
  *
- * $Id: IClassification.java,v 1.6 2006/07/31 02:19:13 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.6 $
- * @since 0.3.0.3
  */
 public interface IClassification
 {
-	/**
-	 * Interface source code revision.
-	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.6 $";
-
 	/* Classification API */
 
 	/**
@@ -88,14 +79,12 @@ public interface IClassification
 	/**
 	 * Retrieves the features source.
 	 * @return returns the FeatureExtraction reference
-	 * @since 0.3.0.4
 	 */
 	IFeatureExtraction getFeatureExtraction();
 
 	/**
 	 * Allows setting the features source.
 	 * @param poFeatureExtraction the FeatureExtraction object to set
-	 * @since 0.3.0.4
 	 */
 	void setFeatureExtraction(IFeatureExtraction poFeatureExtraction);
 }

@@ -21,8 +21,6 @@ import marf.util.comparators.FrequencyComparator;
  * <p>Module exercising Zipf's Law.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: ZipfLaw.java,v 1.35 2012/07/09 03:53:32 mokhov Exp $
- * @since 0.3.0.2
  */
 public class ZipfLaw
 extends Stochastic
@@ -74,7 +72,6 @@ extends Stochastic
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -7356104653992493029L;
 
@@ -692,15 +689,6 @@ extends Stochastic
 			.append(this.oStats);
 
 		return oBuffer.toString();
-	}
-	
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.35 $";
 	}
 }
 

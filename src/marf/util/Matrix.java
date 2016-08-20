@@ -7,11 +7,7 @@ package marf.util;
  *
  * TODO: complete
  *
- * $Id: Matrix.java,v 1.15 2007/12/23 06:29:47 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
- * @since 0.3.0.1
  *
  * @see FreeVector
  */
@@ -30,7 +26,6 @@ extends FreeVector
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 3533845945234893934L;
 
@@ -45,7 +40,7 @@ extends FreeVector
 
 	/**
 	 * Creates a free matrix with user-defined dimensions.
-	 * The dimensions array is properly clonned internally.
+	 * The dimensions array is properly cloned internally.
 	 * @param paiDimensions the desired dimensions; if null, a 1-by-1 matrix created
 	 */
 	public Matrix(int[] paiDimensions)
@@ -129,16 +124,6 @@ extends FreeVector
 	public synchronized void add(int[] paiPointIndex, Object poElement)
 	{
 		throw new NotImplementedException(this, "add()");
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.15 $";
 	}
 }
 

@@ -18,7 +18,6 @@ import marf.util.Arrays;
  * 
  * @author Serguei Mokhov
  * @since 0.3.0.6
- * @version $Id: RawFeatureExtraction.java,v 1.4 2012/07/18 16:00:20 mokhov Exp $
  */
 public class RawFeatureExtraction
 extends FeatureExtraction

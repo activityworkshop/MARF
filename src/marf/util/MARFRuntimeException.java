@@ -5,7 +5,6 @@ package marf.util;
  * <p>This class extends RuntimeException for MARF specifics.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: MARFRuntimeException.java,v 1.3 2012/07/18 02:45:45 mokhov Exp $
  * @since 0.3.0.6
  */
 public class MARFRuntimeException
@@ -83,15 +82,6 @@ extends RuntimeException
 	public String toString()
 	{
 		return getMessage();
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.3 $";
 	}
 }
 

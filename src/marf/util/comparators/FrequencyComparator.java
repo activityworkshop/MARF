@@ -7,11 +7,7 @@ import marf.util.SortComparator;
 /**
  * <p>Compares StatisticalObjects by their frequency when sorting.</p>
  *
- * $Id: FrequencyComparator.java,v 1.15 2007/12/01 00:26:51 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
- * @since 0.3.0.2
  *
  * @see StatisticalObject
  * @see marf.Stats.WordStats
@@ -24,7 +20,6 @@ extends SortComparator
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 5923172975252427681L;
 
@@ -64,15 +59,6 @@ extends SortComparator
 			default:
 				return (oStats1.getFrequency() - oStats2.getFrequency());
 		}
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.15 $";
 	}
 }
 

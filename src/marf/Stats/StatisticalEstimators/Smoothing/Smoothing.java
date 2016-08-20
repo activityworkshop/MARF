@@ -11,11 +11,7 @@ import marf.Stats.StatisticalEstimators.StatisticalEstimator;
  * TODO: complete exception handling.
  * </p>
  *
- * $Id: Smoothing.java,v 1.15 2006/01/15 06:58:08 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
- * @since 0.3.0.2
  * @see ISmoothing
  */
 public abstract class Smoothing
@@ -27,7 +23,6 @@ implements ISmoothing
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	private static final long serialVersionUID = 3404406955334414583L;
 
@@ -63,15 +58,6 @@ implements ISmoothing
 		}
 
 		return true;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.15 $";
 	}
 }
 

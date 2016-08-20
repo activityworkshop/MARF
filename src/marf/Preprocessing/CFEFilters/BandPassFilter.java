@@ -7,12 +7,8 @@ import marf.math.ComplexMatrix;
 
 /**
  * <p>Implements band-pass CFE filter based on Shivani Bhat's
- * thesis work.
- * </p>
+ * thesis work.</p>
  * 
- * $Id: BandPassFilter.java,v 1.4 2007/01/29 00:42:42 mokhov Exp $
- * 
- * @version $Revision: 1.4 $
  * @author Serguei Mokhov
  * @author Shivani Haridas Bhat
  */

@@ -6,14 +6,9 @@ import marf.util.Debug;
 
 
 /**
- * <p>A GUI panel container that is capable of resizing itself.
- * </p>
- *
- * $Id: SmartSizablePanel.java,v 1.12 2007/12/18 03:46:08 mokhov Exp $
+ * <p>A GUI panel container that is capable of resizing itself.</p>
  *
  * @author Serguei Mokhov
- * @since 0.3.0.2
- * @version $Revision: 1.12 $
  */
 public class SmartSizablePanel
 extends Panel
@@ -43,7 +38,6 @@ extends Panel
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 6046101142847554184L;
 
@@ -186,15 +180,6 @@ extends Panel
 	public int getHeight()
 	{
 		return this.iHeight;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.12 $";
 	}
 }
 

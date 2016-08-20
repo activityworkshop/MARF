@@ -12,8 +12,6 @@ import marf.util.NotImplementedException;
  * <p>Cluster contains a cluster information per subject.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: Cluster.java,v 1.21 2015/03/08 19:47:22 mokhov Exp $
- * @since 0.3.0.1
  */
 public class Cluster
 extends TrainingSample
@@ -22,7 +20,6 @@ extends TrainingSample
 	 * How many times the mean was computed.
 	 * Used in recomputation of it when new data is coming in.
 	 */
-//	protected int iMeanCount = 0;
 	private int iMeanCount = 0;
 
 	/**
@@ -30,14 +27,11 @@ extends TrainingSample
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -8773915807751754560L;
 
 	/**
 	 * Default cluster constructor.
-	 * Explicitly appeared in 0.3.0.5.
-	 * @since 0.3.0.5
 	 */
 	public Cluster()
 	{
@@ -46,7 +40,6 @@ extends TrainingSample
 	/**
 	 * Copy-constructor.
 	 * @param poCluster the Cluster object to copy properties of
-	 * @since 0.3.0.5
 	 */
 	public Cluster(final Cluster poCluster)
 	{
@@ -89,7 +82,6 @@ extends TrainingSample
 	 * Increases mean count by one.
 	 * @return new mean count
 	 */
-//	public final int incMeanCount()
 	private final int incMeanCount()
 	{
 		return (++this.iMeanCount);
@@ -168,7 +160,6 @@ extends TrainingSample
 	/**
 	 * Write one training cluster as a CSV text.
 	 * @param poWriter BufferedWriter to write to
-	 * @since 0.3.0.5
 	 * @throws StorageException in case of any error while dumping
 	 */
 	public void dumpCSV(BufferedWriter poWriter)
@@ -199,7 +190,6 @@ extends TrainingSample
 	 * @param poReader BufferedReader to read from
 	 * @throws StorageException never thrown
 	 * @throws NotImplementedException
-	 * @since 0.3.0.5
 	 */
 	public void restoreCSV(BufferedReader poReader)
 	throws StorageException
@@ -210,7 +200,6 @@ extends TrainingSample
 	/**
 	 * Implements Cloneable interface for the Cluster object.
 	 * @see java.lang.Object#clone()
-	 * @since 0.3.0.5
 	 */
 	public Object clone()
 	{
@@ -228,20 +217,9 @@ extends TrainingSample
 		StringBuffer oBuffer = new StringBuffer(super.toString());
 
 		oBuffer
-			.append("Mean Count: ").append(this.iMeanCount).append("\n")
-			.append("Cluster Source code revision: ").append(getMARFSourceCodeRevision()).append("\n");
+			.append("Mean Count: ").append(this.iMeanCount).append("\n");
 
 		return oBuffer.toString();
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.21 $";
 	}
 } // class Cluster
 

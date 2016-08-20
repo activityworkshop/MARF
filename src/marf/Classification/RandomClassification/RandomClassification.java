@@ -20,8 +20,6 @@ import marf.util.Debug;
  * If they are not, debug them.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: RandomClassification.java,v 1.22 2012/07/09 03:53:32 mokhov Exp $
- * @since 0.2.0
  */
 public class RandomClassification
 extends Classification
@@ -36,7 +34,6 @@ extends Classification
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -6770780209979417110L;
 
@@ -256,16 +253,6 @@ extends Classification
 			.append("ID data: ").append(this.oIDs);
 
 		return oBuffer.toString();
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.22 $";
 	}
 }
 

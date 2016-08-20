@@ -1,10 +1,3 @@
-/*
- * WordStatsTest.java
- * JUnit based test
- *
- * Created on December 27, 2005, 9:19 PM
- */
-
 package marf.junit.Stats;
 
 import junit.framework.TestCase;
@@ -14,10 +7,7 @@ import marf.Stats.WordStats;
 /**
  * <p>WordStats data structure unit tests.</p>
  *
- * $Id: WordStatsTest.java,v 1.2 2006/02/23 01:16:46 mokhov Exp $
- *
  * @author Shuxin Fan
- * @since 0.3.0.5
  */
 public class WordStatsTest
 extends TestCase

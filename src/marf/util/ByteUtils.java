@@ -5,11 +5,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * <p>Byte-Array Conversion Utility Functions.</p>
  *
- * $Id: ByteUtils.java,v 1.10 2009/02/22 02:16:01 mokhov Exp $
- *
- * @version $Revision: 1.10 $
  * @author Serguei Mokhov
- * @since 0.3.0.1
  */
 public class ByteUtils
 {
@@ -267,15 +263,6 @@ public class ByteUtils
 		}
 
 		return aRecordData;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.10 $";
 	}
 }
 

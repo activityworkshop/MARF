@@ -21,8 +21,6 @@ import marf.util.Debug;
  * </p>
  *
  * @author Serguei Mokhov
- * @version $Id: MaxProbabilityClassifier.java,v 1.31 2011/11/21 17:44:43 mokhov Exp $
- * @since 0.3.0.2
  */
 public class MaxProbabilityClassifier
 extends Stochastic
@@ -43,7 +41,6 @@ extends Stochastic
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 8665926058819588355L;
 
@@ -275,15 +272,6 @@ extends Stochastic
 			default:
 				throw new StorageException("Unsupported dump mode: " + this.iCurrentDumpMode);
 		}
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.31 $";
 	}
 }
 

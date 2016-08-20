@@ -6,12 +6,8 @@ import marf.FeatureExtraction.IFeatureExtraction;
 /**
  * <p>Class EuclideanDistance.</p>
  *
- * $Id: EuclideanDistance.java,v 1.21 2007/12/31 00:17:04 mokhov Exp $
- *
  * @author Stephen Sinclair
  * @author Serguei Mokhov
- * @version $Revision: 1.21 $
- * @since 0.0.1
  */
 public class EuclideanDistance
 extends Distance
@@ -21,7 +17,6 @@ extends Distance
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 6805036936942102456L;
 
@@ -50,16 +45,6 @@ extends Distance
 		}
 
 		return dDistance;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.21 $";
 	}
 }
 

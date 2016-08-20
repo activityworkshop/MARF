@@ -22,8 +22,6 @@ import java.util.List;
  * TODO: allow negative index boundaries.
  *
  * @author Serguei Mokhov
- * @version $Id: FreeVector.java,v 1.16 2010/03/06 02:40:10 mokhov Exp $
- * @since 0.3.0.1
  */
 public class FreeVector<E>
 extends Vector<E>
@@ -33,7 +31,6 @@ extends Vector<E>
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 8706834105778495182L;
 
@@ -182,7 +179,7 @@ extends Vector<E>
 
 	/**
 	 * Removes an element at index.
-	 * If the index is beyond the upper boundary, returns null.  
+	 * If the index is beyond the upper boundary, returns null.
 	 * Overrides java.util.Vector.
 	 * @param piIndex index of the element to be removed
 	 * @return object reference of the element just removed; null if index exceeds the upper bound
@@ -245,16 +242,6 @@ extends Vector<E>
 	{
 		// TODO: implement
 		throw new NotImplementedException(this, "removeRange()");
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.16 $";
 	}
 }
 

@@ -19,11 +19,7 @@ import marf.util.NotImplementedException;
  * If that's not possible, implement <code>IStorageManager interface</code>.
  * </p>
  *
- * $Id: StorageManager.java,v 1.34 2009/02/22 02:16:01 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.34 $
- * @since 0.0.1
  * 
  * @see IStorageManager
  */
@@ -31,17 +27,14 @@ public abstract class StorageManager
 implements IStorageManager
 {
 	/**
-	 * Indicates in which format dump training data.
-	 * <p>Can either be one of the <code>DUMP_</code> flags,
+	 * Indicates in which format to dump training data.
+	 * <p>Can be either one of the <code>DUMP_</code> flags,
 	 * with the <code>DUMP_GZIP_BINARY</code> being the default.</p>
-	 *
-	 * @since 0.2.0
 	 */
 	protected transient int iCurrentDumpMode = DUMP_GZIP_BINARY;
 
 	/**
 	 * Filename of the file to be dumped/restored.
-	 * @since 0.3.0
 	 */
 	protected transient String strFilename = null;
 
@@ -49,12 +42,10 @@ implements IStorageManager
 	 * Actual object to be serialized (primarily for DUMP_GZIP_BINARY and DUMP_BINARY modes).
 	 * Has to be back-synchronized. In 0.3.0.6 the type was changed from Object to Serializable.
 	 *
-	 * @since 0.3.0.2
 	 * @see #backSynchronizeObject()
 	 * @see IStorageManager#DUMP_GZIP_BINARY
 	 * @see IStorageManager#DUMP_BINARY
 	 */
-//	protected Object oObjectToSerialize = null;
 	protected Serializable oObjectToSerialize = null;
 
 	/**
@@ -62,8 +53,6 @@ implements IStorageManager
 	 * <code>restoreBinary()</code> or <code>restoreGzipBinary()</code>
 	 * to create a file if it does not exist. If set to <code>false<code>,
 	 * an exception is thrown.
-	 *
-	 * @since 0.3.0
 	 *
 	 * @see #restoreBinary()
 	 * @see #restoreGzipBinary()
@@ -75,14 +64,12 @@ implements IStorageManager
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	private static final long serialVersionUID = -7137065556183693005L;
 
 	/**
 	 * Default constructor equivalent to <code>StorageManager(null, getClass().getName())</code>.
 	 * Sets internal filename to the class name of the derivative.
-	 * @since 0.3.0.2
 	 * @see #StorageManager(Serializable, String)
 	 * @see #strFilename
 	 */
@@ -100,7 +87,6 @@ implements IStorageManager
 	 * Constructor with filename parameter equivalent to
 	 * <code>StorageManager(null, pstrFilename)</code>.
 	 * @param pstrFilename customized filename
-	 * @since 0.3.0.2
 	 * @see #StorageManager(Serializable, String)
 	 * @see #strFilename
 	 */
@@ -114,7 +100,6 @@ implements IStorageManager
 	 * Sets internal filename to the class name of the parameter.
 	 *
 	 * @param poObjectToSerialize reference to object to be dumped to a file
-	 * @since 0.3.0.2
 	 * @see #oObjectToSerialize
 	 * @see #bDumpOnNotFound
 	 */
@@ -167,7 +152,6 @@ implements IStorageManager
 	 *
 	 * @param poObjectToSerialize reference to object to be dumped to a file
 	 * @param pstrFilename customized filename
-	 * @since 0.3.0.2
 	 * @see #oObjectToSerialize
 	 * @see #strFilename
 	 * @see #bDumpOnNotFound
@@ -183,7 +167,6 @@ implements IStorageManager
 	 * @param pstrFilename customized filename
 	 * @param pbDumpOnNotFound if <code>true</code>, a dump file will be created if it does not exist;
 	 * if <code>false</code>, an exception will be thrown
-	 * @since 0.3.0.2
 	 * @see #StorageManager(Serializable, String)
 	 * @see #strFilename
 	 */
@@ -199,7 +182,6 @@ implements IStorageManager
 	 * @param poObjectToSerialize reference to object to be dumped to a file
 	 * @param pbDumpOnNotFound if <code>true</code>, a dump file will be created if it does not exist;
 	 * if <code>false</code>, an exception will be thrown
-	 * @since 0.3.0.2
 	 * @see #oObjectToSerialize
 	 * @see #bDumpOnNotFound
 	 */
@@ -232,7 +214,6 @@ implements IStorageManager
 	 * @param pbDumpOnNotFound if <code>true</code>, a dump file will be created if it does not exist;
 	 * if <code>false</code>, an exception will be thrown
 	 *
-	 * @since 0.3.0.2
 	 * @see #oObjectToSerialize
 	 * @see #strFilename
 	 */
@@ -320,7 +301,6 @@ implements IStorageManager
 	 * Implements object dump in GZIP-compressed form. Attempts
 	 * to save internal object reference to the generated/specified filename
 	 * @throws StorageException in case of I/O or otherwise error during object dump
-	 * @since 0.3.0
 	 * @see #oObjectToSerialize
 	 * @see #strFilename
 	 */
@@ -359,7 +339,6 @@ implements IStorageManager
 	 * Implements object dump in plain binary form without compression. Attempts
 	 * to save internal object reference to the generated/specified filename
 	 * @throws StorageException in case of I/O or otherwise error during object dump
-	 * @since 0.3.0
 	 * @see #oObjectToSerialize
 	 * @see #strFilename
 	 */
@@ -397,7 +376,6 @@ implements IStorageManager
 	 * with the CSV dump mode, they must override this method.
 	 * @throws NotImplementedException
 	 * @throws StorageException, declared, but never thrown
-	 * @since 0.3.0
 	 * @see #dump()
 	 */
 	public synchronized void dumpCSV()
@@ -411,7 +389,6 @@ implements IStorageManager
 	 * with the XML dump mode, they must override this method.
 	 * @throws NotImplementedException
 	 * @throws StorageException, declared, but never thrown
-	 * @since 0.3.0
 	 * @see #dump()
 	 */
 	public synchronized void dumpXML()
@@ -425,7 +402,6 @@ implements IStorageManager
 	 * with the HTML dump mode, they must override this method.
 	 * @throws NotImplementedException
 	 * @throws StorageException, declared, but never thrown
-	 * @since 0.3.0
 	 * @see #dump()
 	 */
 	public synchronized void dumpHTML()
@@ -439,7 +415,6 @@ implements IStorageManager
 	 * with the SQL dump mode, they must override this method.
 	 * @throws NotImplementedException
 	 * @throws StorageException, declared, but never thrown
-	 * @since 0.3.0
 	 * @see #dump()
 	 */
 	public synchronized void dumpSQL()
@@ -512,7 +487,6 @@ implements IStorageManager
 	 * did not exist, it will be created.
 	 *
 	 * @throws StorageException in case of I/O or otherwise error during object restoration
-	 * @since 0.3.0
 	 * @see #backSynchronizeObject()
 	 * @see #strFilename
 	 */
@@ -544,15 +518,15 @@ implements IStorageManager
         {
         	if(this.bDumpOnNotFound == true)
         	{
-	            System.err.println
-	            (
-	                "StorageManager.restore() --- file not found: \""
+				System.err.println
+				(
+					"StorageManager.restore() --- file not found: \""
 					+ this.strFilename + "\", " +
-	                e.getMessage() + "\n" +
-	                "Creating one now..."
-	            );
+					e.getMessage() + "\n" +
+					"Creating one now..."
+				);
 	
-	            dump();
+				dump();
         	}
         	else
         	{
@@ -585,7 +559,6 @@ implements IStorageManager
 	 * did not exist, it will be created.
 	 *
 	 * @throws StorageException in case of I/O or otherwise error during object restoration
-	 * @since 0.3.0
 	 * @see #backSynchronizeObject()
 	 * @see #strFilename
 	 */
@@ -619,15 +592,15 @@ implements IStorageManager
         {
         	if(this.bDumpOnNotFound == true)
         	{
-	            System.err.println
-	            (
-	                "StorageManager.restore() --- file not found: \""
+				System.err.println
+				(
+					"StorageManager.restore() --- file not found: \""
 					+ this.strFilename + "\", " +
-	                e.getMessage() + "\n" +
-	                "Creating one now..."
-	            );
-	
-	            dump();
+					e.getMessage() + "\n" +
+					"Creating one now..."
+				);
+
+				dump();
         	}
         	else
         	{
@@ -661,7 +634,6 @@ implements IStorageManager
 	 * with the CSV dump mode, they must override this method.
 	 * @throws NotImplementedException
 	 * @throws StorageException, declared, but never thrown
-	 * @since 0.3.0
 	 * @see #restore()
 	 */
 	public synchronized void restoreCSV()
@@ -675,7 +647,6 @@ implements IStorageManager
 	 * with the XML dump mode, they must override this method.
 	 * @throws NotImplementedException
 	 * @throws StorageException, declared, but never thrown
-	 * @since 0.3.0
 	 * @see #restore()
 	 */
 	public synchronized void restoreXML()
@@ -689,7 +660,6 @@ implements IStorageManager
 	 * with the HTML dump mode, they must override this method.
 	 * @throws NotImplementedException
 	 * @throws StorageException, declared, but never thrown
-	 * @since 0.3.0
 	 * @see #restore()
 	 */
 	public synchronized void restoreHTML()
@@ -703,7 +673,6 @@ implements IStorageManager
 	 * with the SQL dump mode, they must override this method.
 	 * @throws NotImplementedException
 	 * @throws StorageException, declared, but never thrown
-	 * @since 0.3.0
 	 * @see #restore()
 	 */
 	public synchronized void restoreSQL()
@@ -717,7 +686,6 @@ implements IStorageManager
 	 * with the generic implementation of <code>restore()</code>. By default
 	 * this method is unimplemented.
 	 * @throws NotImplementedException
-	 * @since 0.3.0.2
 	 * @see #restore()
 	 */
 	public synchronized void backSynchronizeObject()
@@ -738,7 +706,6 @@ implements IStorageManager
 	/**
 	 * Retrieves inner filename reference.
 	 * @return filename string
-	 * @since 0.3.0
 	 */
 	public synchronized String getFilename()
 	{
@@ -748,7 +715,6 @@ implements IStorageManager
 	/**
 	 * Allows to alter inner filename reference.
 	 * @param pstrFilename new filename
-	 * @since 0.3.0
 	 */
 	public synchronized void setFilename(String pstrFilename)
 	{
@@ -758,7 +724,6 @@ implements IStorageManager
 	/**
 	 * Retrieves default filename extension of this storage manager.
 	 * @return extension String
-	 * @since 0.3.0
 	 */
 	public synchronized String getDefaultExtension()
 	{
@@ -770,7 +735,6 @@ implements IStorageManager
 	 * @param piDumpMode dump mode to query extensions map by
 	 * @return extension String; "unknown" is returned if the parameter
 	 * is outside of the range
-	 * @since 0.3.0
 	 */
 	public static String getDefaultExtension(int piDumpMode)
 	{
@@ -787,7 +751,6 @@ implements IStorageManager
 	/**
 	 * Retrieves current dump mode.
 	 * @return the mode, integer
-	 * @since 0.3.0
 	 */
 	public synchronized final int getDumpMode()
 	{
@@ -797,7 +760,6 @@ implements IStorageManager
 	/**
 	 * Sets the dump mode.
 	 * @param piCurrentDumpMode the mode
-	 * @since 0.3.0
 	 */
 	public synchronized final void setDumpMode(final int piCurrentDumpMode)
 	{
@@ -808,7 +770,6 @@ implements IStorageManager
 	 * Enables or disables creation of a file if it does not exist.
 	 * @param pbEnable new value of the flag
 	 * @return old value of the flag
-	 * @since 0.3.0
 	 * @see #bDumpOnNotFound
 	 */
 	public synchronized final boolean enableDumpOnNotFound(boolean pbEnable)
@@ -823,7 +784,6 @@ implements IStorageManager
 	 * The object to serialize is not clone, but rather
 	 * its reference is copied by assignment.
 	 * @see java.lang.Object#clone()
-	 * @since 0.3.0.5
 	 */
 	public synchronized Object clone()
 	{
@@ -849,7 +809,6 @@ implements IStorageManager
 	 * the parameter is not null and its toString() output
 	 * is equal to this one.
 	 * @see java.lang.Object#equals(java.lang.Object)
-	 * @since 0.3.0.5
 	 */
 	public synchronized boolean equals(Object poStorageManager)
 	{
@@ -866,7 +825,6 @@ implements IStorageManager
 	 * returning the hash code of the <code>toString()</code>.
 	 * @see java.lang.Object#hashCode()
 	 * @see #equals(Object)
-	 * @since 0.3.0.5
 	 */
 	public synchronized int hashCode()
 	{
@@ -877,7 +835,6 @@ implements IStorageManager
 	 * Default implementation of the toString() for all storage
 	 * manager derivatives.
 	 * @see java.lang.Object#toString()
-	 * @since 0.3.0.5
 	 */
 	public synchronized String toString()
 	{
@@ -893,16 +850,6 @@ implements IStorageManager
 			.append("Dump if not found: ").append(this.bDumpOnNotFound).append("\n")
 			.append("Object to dump: ").append(strObjectName).append("\n")
 			.toString();
-	}
-	
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.34 $";
 	}
 }
 

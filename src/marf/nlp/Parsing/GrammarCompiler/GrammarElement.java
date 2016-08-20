@@ -10,8 +10,6 @@ import marf.nlp.Parsing.Token;
  * <p>Generic grammar token that must be subclassed.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: GrammarElement.java,v 1.14 2012/07/18 02:45:45 mokhov Exp $
- * @since 0.3.0.2
  */
 public abstract class GrammarElement
 implements Serializable
@@ -41,7 +39,6 @@ implements Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	private static final long serialVersionUID = -7580710676855516151L;
 
@@ -211,15 +208,6 @@ implements Serializable
 	public boolean isEqualByName(final String pstrName)
 	{
 		return this.strName.equals(pstrName);
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.14 $";
 	}
 }
 

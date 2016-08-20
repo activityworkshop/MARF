@@ -11,11 +11,7 @@ import marf.util.InvalidSampleFormatException;
  *
  * NOTE: this code is still experimental.<br />
  *
- * $Id: MARFAudioFileFormat.java,v 1.14 2007/12/23 06:29:46 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.14 $
- * @since 0.3.0.2
  */
 public class MARFAudioFileFormat
 extends AudioFileFormat
@@ -48,49 +44,41 @@ extends AudioFileFormat
 
 	/**
 	 * Sine sample format.
-	 * @since 0.3.0
 	 */
 	public static final int SINE   = 703;
 
 	/**
 	 * AIFF sample format.
-	 * @since 0.3.0
 	 */
 	public static final int AIFF   = 704;
 
 	/**
 	 * AIFF-C sample format.
-	 * @since 0.3.0
 	 */
 	public static final int AIFFC  = 705;
 
 	/**
 	 * AU sample format.
-	 * @since 0.3.0
 	 */
 	public static final int AU     = 706;
 
 	/**
 	 * SND sample format.
-	 * @since 0.3.0
 	 */
 	public static final int SND    = 707;
 
 	/**
 	 * MIDI sample format.
-	 * @since 0.3.0
 	 */
 	public static final int MIDI   = 708;
 
 	/**
 	 * Custom (plug-in) sample format.
-	 * @since 0.3.0.5
 	 */
 	public static final int CUSTOM = 709;
 
 	/**
 	 * Textual sample format.
-	 * @since 0.3.0.6
 	 */
 	public static final int TEXT   = 710;
 
@@ -108,13 +96,11 @@ extends AudioFileFormat
 
 	/**
 	 * Default sample array's size (1024).
-	 * @since 0.3.0
 	 */
 	public static final int DEFAULT_SAMPLE_SIZE = 1024;
 
 	/**
 	 * Default sample chunk's size (128).
-	 * @since 0.3.0
 	 */
 	public static final int DEFAULT_CHUNK_SIZE = 128;
 
@@ -299,13 +285,11 @@ extends AudioFileFormat
 
 		/**
 		 * Specifies custom plug-in file.
-		 * @since 0.3.0.5
 		 */
 		public static final Type CUSTOM = new Type("CUSTOM", "plugin");
 
 		/**
 		 * Specifies text file.
-		 * @since 0.3.0.6
 		 */
 		public static final Type TEXT = new Type("TEXT", "txt");
 
@@ -392,15 +376,6 @@ extends AudioFileFormat
 			
 			return oType;
 		}
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.14 $";
 	}
 }
 

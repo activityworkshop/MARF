@@ -12,11 +12,7 @@ import java.util.Date;
  * <p>All methods are properly synchronized should multiple threads
  * access the same logger.</p>
  *
- * $Id: Logger.java,v 1.10 2007/12/23 06:29:47 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.10 $
- * @since 0.3.0.2
  */
 public class Logger
 extends BaseThread
@@ -336,15 +332,6 @@ extends BaseThread
 	public synchronized void setLogFilename(String pstrFilename)
 	{
 		this.strFilename = pstrFilename;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.10 $";
 	}
 }
 

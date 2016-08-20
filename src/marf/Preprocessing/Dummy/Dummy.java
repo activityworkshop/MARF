@@ -10,11 +10,7 @@ import marf.Storage.Sample;
  * <p>Implements dummy preprocessing module for testing purposes
  * that does only normalization.</p>
  *
- * $Id: Dummy.java,v 1.27 2007/12/16 01:11:05 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.27 $
- * @since 0.0.1
  */
 public class Dummy
 extends Preprocessing
@@ -24,7 +20,6 @@ extends Preprocessing
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -8360158324170431628L;
 
@@ -73,16 +68,6 @@ extends Preprocessing
 	throws PreprocessingException
 	{
 		return super.preprocess();
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.27 $";
 	}
 }
 

@@ -8,11 +8,7 @@ import java.io.Serializable;
  * indicating either certain distance from the sample being recognized
  * or a probability.</p>
  *
- * <p>$Id: Result.java,v 1.22 2006/01/02 22:24:00 mokhov Exp $</p>
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.22 $
- * @since 0.0.1
  */
 public class Result
 implements Serializable, Cloneable
@@ -24,13 +20,11 @@ implements Serializable, Cloneable
 
 	/**
 	 * Textual result description.
-	 * @since 0.3.0
 	 */
 	protected String strDescription = "";
 
 	/**
 	 * Distance/probability.
-	 * @since 0.3.0
 	 */
 	protected double dOutcome = 0.0;
 
@@ -39,7 +33,6 @@ implements Serializable, Cloneable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 5289013996325438809L;
 
@@ -65,7 +58,6 @@ implements Serializable, Cloneable
 	 * ID/outcome Constructor. Equivalent to <code>Result(piID, pdOutcome, "")</code>.
 	 * @param piID integer ID of the subject
 	 * @param pdOutcome distance/probability of the result
-	 * @since 0.3.0
 	 */
 	public Result(final int piID, final double pdOutcome)
 	{
@@ -77,7 +69,6 @@ implements Serializable, Cloneable
 	 * Equivalent to <code>Result(piID, 0, pstrDescription)</code>.
 	 * @param piID integer ID of the subject
 	 * @param pstrDescription textual description of the result
-	 * @since 0.3.0
 	 */
 	public Result(final int piID, final String pstrDescription)
 	{
@@ -89,7 +80,6 @@ implements Serializable, Cloneable
 	 * Equivalent to <code>Result(0, pdOutcome, pstrDescription)</code>.
 	 * @param pdOutcome distance/probability of the result
 	 * @param pstrDescription textual description of the result
-	 * @since 0.3.0
 	 */
 	public Result(final double pdOutcome, final String pstrDescription)
 	{
@@ -101,7 +91,6 @@ implements Serializable, Cloneable
 	 * @param piID integer ID of the subject
 	 * @param pdOutcome distance/probability of the result
 	 * @param pstrDescription textual description of the result
-	 * @since 0.3.0
 	 */
 	public Result(final int piID, final double pdOutcome, final String pstrDescription)
 	{
@@ -113,7 +102,6 @@ implements Serializable, Cloneable
 	/**
 	 * Copy-constructor.
 	 * @param poResult Result object to copy data from
-	 * @since 0.3.0.5
 	 */
 	public Result(final Result poResult)
 	{
@@ -132,7 +120,6 @@ implements Serializable, Cloneable
 	/**
 	 * Retrieves the outcome value.
 	 * @return distance/probability of the result
-	 * @since 0.3.0
 	 */
 	public final double getOutcome()
 	{
@@ -142,7 +129,6 @@ implements Serializable, Cloneable
 	/**
 	 * Retrieves textual description of the result.
 	 * @return string describing the result
-	 * @since 0.3.0
 	 */
 	public final String getDescription()
 	{
@@ -153,7 +139,6 @@ implements Serializable, Cloneable
 	 * Retrieves the result values in a form of string, which is
 	 * of the following form: [ID:outcome:description].
 	 * @return string representation of the Result object
-	 * @since 0.3.0
 	 */
 	public String toString()
 	{
@@ -179,7 +164,6 @@ implements Serializable, Cloneable
 	/**
 	 * Sets outcome value.
 	 * @param pdOutcome resulting outcome
-	 * @since 0.3.0.2
 	 */
 	public final void setOutcome(double pdOutcome)
 	{
@@ -189,7 +173,6 @@ implements Serializable, Cloneable
 	/**
 	 * Sets description of the result.
 	 * @param pstrDescription description string
-	 * @since 0.3.0.2
 	 */
 	public final void setDescription(String pstrDescription)
 	{
@@ -198,22 +181,11 @@ implements Serializable, Cloneable
 
 	/**
 	 * Implements Cloneable interface for the Result object.
-	 * @since 0.3.0.5
 	 * @see java.lang.Object#clone()
 	 */
 	public Object clone()
 	{
 		return new Result(this);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.22 $";
 	}
 }
 

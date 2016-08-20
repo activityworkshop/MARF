@@ -12,11 +12,7 @@ import marf.util.Arrays;
 /**
  * <p>Implementation of random feature extraction for testing as a baseline.</p>
  *
- * $Id: RandomFeatureExtraction.java,v 1.18 2007/12/18 03:45:42 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.18 $
- * @since 0.2.0
  */
 public class RandomFeatureExtraction
 extends FeatureExtraction
@@ -31,7 +27,6 @@ extends FeatureExtraction
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -5469714962808143269L;
 
@@ -111,16 +106,6 @@ extends FeatureExtraction
 			e.printStackTrace(System.err);
 			throw new FeatureExtractionException(e);
 		}
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.18 $";
 	}
 }
 

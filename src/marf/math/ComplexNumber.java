@@ -6,11 +6,8 @@ import java.io.Serializable;
 /**
  * <p>Implements complex number arithmetic.</p>
  * 
- * $Id: ComplexNumber.java,v 1.3 2007/12/18 03:45:42 mokhov Exp $
- * 
  * @author Serguei Mokhov
  * @since 0.3.0.6
- * @version $Revision: 1.3 $
  */
 public final class ComplexNumber
 implements Cloneable, Serializable

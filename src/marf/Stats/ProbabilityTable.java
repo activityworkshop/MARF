@@ -10,12 +10,9 @@ import marf.util.Matrix;
 
 /**
  * <p>Probabilities Table for N-grams.
- * The class is properly synchronized as of 0.3.0.5.
- * </p>
+ * The class is properly synchronized as of 0.3.0.5.</p>
  *
  * @author Serguei A. Mokhov
- * @version $Id: ProbabilityTable.java,v 1.42 2010/08/21 21:56:55 mokhov Exp $
- * @since 0.3.0.2
  */
 public class ProbabilityTable
 implements Serializable
@@ -44,7 +41,6 @@ implements Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 8675912614927409276L;
 
@@ -86,7 +82,6 @@ implements Serializable
 	 * @param poObservationList a collection of observations
 	 * @return the probability
 	 */
-	//public final synchronized double p(final Vector poObservationList)
 	public final synchronized Double p(final Vector<String> poObservationList)
     {
 		double dProbability = getOccurrence(poObservationList);
@@ -729,15 +724,6 @@ implements Serializable
 	public final synchronized String getLang()
 	{
 		return this.strLang;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.42 $";
 	}
 }
 

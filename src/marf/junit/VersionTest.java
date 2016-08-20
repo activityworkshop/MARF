@@ -11,12 +11,8 @@ import junit.framework.TestCase;
  * 
  * TODO: document; finish.
  *
- *
- * $Id: VersionTest.java,v 1.2 2006/06/25 16:35:51 mokhov Exp $
- *
  * @author Serguei Mokhov
  * @since 0.3.0.6
- * @version $Revision: 1.2 $
  */
 public class VersionTest
 extends TestCase

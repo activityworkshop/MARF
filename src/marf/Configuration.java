@@ -12,12 +12,10 @@ import marf.util.NotImplementedException;
 
 /**
  * <p>Encapsulates MARF configuration parameters for serialization
- * to disk or network.
- * </p>
+ * to disk or network.</p>
  * 
  * @author Serguei Mokhov
  * @since 0.3.0.6
- * @version $Id: Configuration.java,v 1.8 2015/03/08 19:47:21 mokhov Exp $
  */
 public class Configuration
 implements Serializable, Cloneable
@@ -49,7 +47,6 @@ implements Serializable, Cloneable
 
 	/**
 	 * Indicates current training sample clustering format.
-	 * @since March 2015
 	 */
 	protected  int          iClusterFormat           = MARF.CLUSTER_MEAN;
 

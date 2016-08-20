@@ -20,13 +20,8 @@ import marf.util.Debug;
 /**
  * <p>Class FFT implements Fast Fourier Transform.</p>
  *
- * $Id: FFT.java,v 1.56 2012/05/30 16:24:18 mokhov Exp $
- *
  * @author Stephen Sinclair
  * @author Serguei Mokhov
- *
- * @version $Revision: 1.56 $
- * @since 0.0.1
  */
 public class FFT
 extends FeatureExtraction
@@ -40,7 +35,6 @@ extends FeatureExtraction
 	/**
 	 * FFT chunk size.
 	 * Must be a power of 2.
-	 * @since 0.3.0.4
 	 */
 	protected int iChunkSize = DEFAULT_CHUNK_SIZE;
 
@@ -49,7 +43,6 @@ extends FeatureExtraction
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 4400274959804693096L;
 
@@ -195,7 +188,7 @@ extends FeatureExtraction
 
 				for(i = 0; i < iHalfChunkSize; i++)
 				{
-		    		this.adFeatures[i] += adMagnitude[i];
+					this.adFeatures[i] += adMagnitude[i];
 				}
 
 				iNbrDataRecv = poSample.getNextChunk(adSampleChunk);
@@ -245,7 +238,6 @@ extends FeatureExtraction
 	 * @return the old value of the chunk size (in case some callers are interested in backing it up)
 	 * @throws IllegalArgumentException if the chunk size parameter is
 	 * less than 1 or not a power of 2
-	 * @since 0.3.0.4
 	 */
 	public synchronized int setChunkSize(int piChunkSize)
 	{
@@ -266,21 +258,10 @@ extends FeatureExtraction
 	/**
 	 * Allows getting the current chunk size.
 	 * @return the current chunk size
-	 * @since 0.3.0.4
 	 */
 	public synchronized int getChunkSize()
 	{
 		return this.iChunkSize;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.56 $";
 	}
 }
 

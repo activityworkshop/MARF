@@ -9,11 +9,7 @@ import marf.util.NotImplementedException;
 /**
  * <p>Class Segmentation.</p>
  *
- * $Id: Segmentation.java,v 1.16 2006/08/04 03:31:05 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
- * @since 0.0.1
  */
 public class Segmentation
 extends FeatureExtraction
@@ -23,7 +19,6 @@ extends FeatureExtraction
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -8113388768153118543L;
 
@@ -48,16 +43,6 @@ extends FeatureExtraction
 	throws FeatureExtractionException
 	{
 		throw new NotImplementedException("Segmentation.extractFeatures()");
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.16 $";
 	}
 }
 

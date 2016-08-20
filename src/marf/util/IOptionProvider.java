@@ -8,12 +8,8 @@ import java.util.Vector;
  * <p>Anything that provides an options set to option consumers
  * must conform to this SIMPLE interface.</p>
  * 
- * $Id: IOptionProvider.java,v 1.2 2010/03/06 02:40:10 mokhov Exp $
- * $MARF$
- * 
  * @author Serguei Mokhov
  * @since 0.3.0.6
- * @version $Revision: 1.2 $
  */
 public interface IOptionProvider
 {

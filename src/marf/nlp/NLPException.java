@@ -5,14 +5,9 @@ import marf.util.MARFException;
 
 /**
  * <p>NLPException is a root of exception hierarchy in the NLP
- * exception processing.
- * </p>
- *
- * <p>$Id: NLPException.java,v 1.5 2006/03/02 01:19:19 mokhov Exp $</p>
+ * exception processing.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.5 $
- * @since 0.3.0.4
  */
 public class NLPException
 extends MARFException
@@ -59,15 +54,6 @@ extends MARFException
 	public NLPException(String pstrMessage, Exception poException)
 	{
 		super(pstrMessage, poException);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.5 $";
 	}
 }
 

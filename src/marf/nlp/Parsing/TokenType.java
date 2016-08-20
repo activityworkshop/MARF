@@ -1,8 +1,3 @@
-/*
- * TokenType Class
- * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
-
 package marf.nlp.Parsing;
 
 import java.io.Serializable;
@@ -11,15 +6,9 @@ import java.util.Hashtable;
 
 /**
  * <p>Generic Token Type.
- * Can be subclassed for more specific
- * token types.
- * </p>
- *
- * $Id: TokenType.java,v 1.21 2012/01/09 04:03:23 mokhov Exp $
+ * Can be subclassed for more specific token types.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.21 $
- * @since 0.3.0.2
  */
 public class TokenType
 implements Serializable
@@ -61,9 +50,8 @@ implements Serializable
 
 	/**
 	 * End of File.
-	 * Not really a token type, but
-	 * and indicator of the fact the the end
-	 * of the source file has been reached
+	 * Not really a token type, but an indicator
+	 * that the end of the source file has been reached
 	 */
 	public static final int EOF = -8;
 
@@ -108,7 +96,6 @@ implements Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 8903691871078901508L;
 
@@ -131,22 +118,12 @@ implements Serializable
 
 	/**
 	 * Allows setting the current token type.
-	 * @param piType the piType token type
+	 * @param piType the token type
 	 * @since 0.3.0.5
 	 */
 	public void setType(int piType)
 	{
 		this.iType = piType;
-	}
-
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.21 $";
 	}
 }
 

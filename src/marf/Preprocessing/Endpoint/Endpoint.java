@@ -20,8 +20,6 @@ import marf.util.Arrays;
  * apply.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: Endpoint.java,v 1.29 2011/11/21 17:55:20 mokhov Exp $
- * @since 0.0.1; fully implemented as of 0.3.0.5
  */
 public class Endpoint
 extends Preprocessing
@@ -46,7 +44,6 @@ extends Preprocessing
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -3032497180742434272L;
 
@@ -207,16 +204,6 @@ extends Preprocessing
 				enableEdgeEndpoints(((Boolean)oEndpointParams.elementAt(4)).booleanValue());
 			}
 		}
-	}
-	
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.29 $";
 	}
 }
 

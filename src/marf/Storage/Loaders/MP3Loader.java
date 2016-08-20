@@ -10,8 +10,6 @@ import marf.util.NotImplementedException;
 /**
  * TODO: Not Implemented.
  * @author Serguei Mokhov
- * @version $Revision: 1.15 $
- * @since 0.0.1
  */
 public class MP3Loader
 extends AudioSampleLoader
@@ -73,16 +71,6 @@ extends AudioSampleLoader
 	throws StorageException
 	{
 		throw new NotImplementedException("saveSample()");
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.15 $";
 	}
 }
 

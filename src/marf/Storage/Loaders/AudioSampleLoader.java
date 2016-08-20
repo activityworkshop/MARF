@@ -15,13 +15,8 @@ import marf.Storage.StorageException;
  * <p>Abstract class that provides a generic sound-oriented implementation of the
  * sample loading interface. Must be overridden by a concrete audio sample loader.</p>
  *
- * $Id: AudioSampleLoader.java,v 1.8 2015/04/05 00:20:53 mokhov Exp $
- *
  * @author Serguei Mokhov
  * @author Jimmy Nicolacopoulos
- *
- * @version $Revision: 1.8 $
- * @since 0.3.0.6
  */
 public abstract class AudioSampleLoader
 extends SampleLoader
@@ -188,15 +183,6 @@ extends SampleLoader
 	public void setEncoding(AudioFormat.Encoding poEncoding)
 	{
 		this.oEncoding = poEncoding;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.8 $";
 	}
 }
 

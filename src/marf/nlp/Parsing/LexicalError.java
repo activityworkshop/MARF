@@ -1,8 +1,3 @@
-/*
- * LexicalError Class
- * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
-
 package marf.nlp.Parsing;
 
 import java.io.FileWriter;
@@ -12,76 +7,54 @@ import java.io.IOException;
 /**
  * <p>This class denotes a lexical error type.</p>
  *
- * $Id: LexicalError.java,v 1.24 2012/01/09 04:03:23 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.24 $
- * @since 0.3.0.2 (in MARF)
  */
 public class LexicalError
 extends CompilerError
 {
 	/**
-	 * Character encountered is not part of the
-	 * MARF's alphabet.
-	 *
-	 * @since October 2, 2001
+	 * Character encountered is not part of MARF's alphabet.
 	 */
 	public static final int ERR_INVALID_CHAR = 1;
 
 	/**
 	 * Leading zeros are not allowed in numbers.
-	 *
-	 * @since October 2, 2001
 	 */
 	public static final int ERR_LEADING_ZEROS = 2;
 
 	/**
 	 * Not meaningful trailing zeros aren't allowed.
-	 *
-	 * @since October 2, 2001
 	 */
 	public static final int ERR_TRAILING_ZEROS = 3;
 
 	/**
 	 * Badly formed real number.
-	 *
-	 * @since October 2, 2001
 	 */
 	public static final int ERR_BAD_REAL = 4;
 
 	/**
 	 * Invalid number format.
-	 *
-	 * @since October 2, 2001
 	 */
 	public static final int ERR_INVALID_NUMBER_FORMAT = 5;
 
 	/**
 	 * Unexpected EOF and no ending comment.
-	 *
-	 * @since December 20, 2001
 	 */
 	public static final int ERR_UNEXPECTED_EOF = 6;
 
 	/**
 	 * Mismatched comment.
-	 *
-	 * @since December 21, 2001
 	 */
 	public static final int ERR_EXTRA_CLOSING_COMMENT = 7;
 
 	/**
 	 * Custom error message as alternative to 'unknown'.
-	 *
-	 * @since October 2, 2001
 	 */
 	public static final int ERR_CUSTOM = 8;
 
 	/**
 	 * Standard set of lexical error messages.
 	 * Must correspond to the <code>ERR_</code> indexes above.
-	 * @since October 2, 2001
 	 */
 	private static final String LEXICAL_ERROR_MESSAGES[] =
 	{
@@ -99,8 +72,6 @@ extends CompilerError
 	/**
 	 * Token information at which Lexer
 	 * encountered the error.
-	 *
-	 * @since October 2, 2001
 	 */
 	protected Token oFaultingToken = null;
 
@@ -109,7 +80,6 @@ extends CompilerError
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -3570759402876617546L;
 
@@ -214,15 +184,6 @@ extends CompilerError
 				return false;
 			}
 		}
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.24 $";
 	}
 }
 

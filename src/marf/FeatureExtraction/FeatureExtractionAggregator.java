@@ -40,10 +40,7 @@ import marf.util.ExpandedThreadGroup;
  * as a concatenated feature vector. Some meta-information is available
  * if needed.</p>
  *
- * $Id: FeatureExtractionAggregator.java,v 1.10 2010/06/07 22:00:37 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.10 $
  * @since 0.3.0.5
  * 
  * @see marf.FeatureExtraction.FFT.FFT
@@ -435,15 +432,6 @@ extends FeatureExtraction
 		{
 			return this.oLastException;
 		}
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.10 $";
 	}
 }
 

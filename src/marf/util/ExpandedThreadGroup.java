@@ -1,6 +1,3 @@
-/*
- * Created on Apr 20, 2004
- */
 package marf.util;
 
 import java.util.Vector;
@@ -13,11 +10,7 @@ import java.util.Vector;
  * <p>Maintains local references to the group-belonging threads
  * for extra group control in a form of a Vector.</p>
  *
- * $Id: ExpandedThreadGroup.java,v 1.17 2010/06/11 21:00:48 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.17 $
- * @since 0.3.0.1
  */
 public class ExpandedThreadGroup
 extends ThreadGroup
@@ -52,7 +45,7 @@ extends ThreadGroup
 	 * @param pstrName Group's name
 	 */
 	public ExpandedThreadGroup(ExpandedThreadGroup poParent, String pstrName)
-	{  
+	{
 		super(poParent, pstrName);
 	}
 
@@ -89,7 +82,7 @@ extends ThreadGroup
 		int i = 0;
 		
 		try
-		{		
+		{
 			aoBabies = enumerate(true);
 
 			for(i = 0; i < aoBabies.length; i++)
@@ -158,15 +151,6 @@ extends ThreadGroup
 	public synchronized void addThread(Thread poThread)
 	{
 		this.oGroup.add(poThread);
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.17 $";
 	}
 }
 

@@ -15,8 +15,6 @@ import marf.util.NotImplementedException;
  * Class WaveGrapher.
  *
  * @author Stephen Sinclair
- * @version $Id: WaveGrapher.java,v 1.17 2012/07/18 16:00:20 mokhov Exp $
- * @since 0.0.1
  */
 public class WaveGrapher
 extends StorageManager
@@ -26,7 +24,6 @@ extends StorageManager
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -8014202943411824894L;
 
@@ -108,16 +105,6 @@ extends StorageManager
 	throws StorageException
 	{
 		throw new NotImplementedException("WaveGrapher.restore()");
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.17 $";
 	}
 }
 

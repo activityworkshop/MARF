@@ -4,11 +4,7 @@ package marf.Stats;
 /**
  * <p>N-gram Observation.</p>
  *
- * $Id: Ngram.java,v 1.16 2007/12/18 21:57:14 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
- * @since 0.3.0.2
  */
 public class Ngram
 extends Observation
@@ -34,7 +30,6 @@ extends Observation
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -7377051981115115072L;
 
@@ -118,7 +113,6 @@ extends Observation
 	/**
 	 * Allows querying for the contained N-gram elements.
 	 * @return the collection of the elements
-	 * @since 0.3.0.5
 	 */
 	public final Ngram[] getNgramElements()
 	{
@@ -131,7 +125,6 @@ extends Observation
 	 * Should be less than or equal to the length of
 	 * the elements array.
 	 * @return current capacity of the n-gram
-	 * @since 0.3.0.5
 	 */
 	public final int getCapacity()
 	{
@@ -142,20 +135,10 @@ extends Observation
 	/**
 	 * Implements Cloneable interface for the Ngram object.
 	 * @see java.lang.Object#clone()
-	 * @since 0.3.0.5
 	 */
 	public Object clone()
 	{
 		return new Ngram(this);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.16 $";
 	}
 }
 

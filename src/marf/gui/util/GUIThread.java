@@ -9,11 +9,8 @@ import marf.util.ExpandedThreadGroup;
  * 
  * TODO: complete and document.
  * 
- * $Id: GUIThread.java,v 1.2 2007/12/18 03:46:08 mokhov Exp $
- * 
  * @author Serguei Mokhov
  * @since 0.3.0.6
- * @version $Revision: 1.2 $
  */
 public class GUIThread
 extends BaseThread

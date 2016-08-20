@@ -1,8 +1,3 @@
-/*
- * TokenSubType Class
- * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
-
 package marf.nlp.Parsing;
 
 import java.util.Hashtable;
@@ -11,11 +6,7 @@ import java.util.Hashtable;
 /**
  * <p>MARF Specific Tokens Types.</p>
  *
- * $Id: TokenSubType.java,v 1.21 2012/01/09 04:03:23 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.21 $
- * @since 0.3.0.2
  */
 public class TokenSubType
 extends TokenType
@@ -217,31 +208,26 @@ extends TokenType
 
 	/**
 	 * Maps constants and keyword spellings.
-	 * @since October 2, 2001
 	 */
 	public static Hashtable<String, Integer> soKeywords = new Hashtable<String, Integer>();
 
 	/**
 	 * Maps constants and punctuation.
-	 * @since October 2, 2001
 	 */
 	public static Hashtable<String, Integer> soValidPunctuation = new Hashtable<String, Integer>();
 
 	/**
 	 * Maps constants and operators.
-	 * @since October 2, 2001
 	 */
 	public static Hashtable<String, Integer> soOperators = new Hashtable<String, Integer>();
 
 	/**
 	 * Maps constants and brackets, parentheses, and braces.
-	 * @since October 2, 2001
 	 */
 	public static Hashtable<String, Integer> soBrackets = new Hashtable<String, Integer>();
 
 	/**
 	 * Matches numbers to literals for output purposes.
-	 * @since October 2, 2001
 	 */
 	public static Hashtable<Integer, String> soTokenSubTypes = new Hashtable<Integer, String>();
 
@@ -336,7 +322,6 @@ extends TokenType
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 8570456006441229360L;
 
@@ -394,15 +379,6 @@ extends TokenType
 	public void setSubtype(int piSubtype)
 	{
 		this.iSubtype = piSubtype;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.21 $";
 	}
 }
 

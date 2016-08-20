@@ -22,12 +22,12 @@ import java.util.Vector;
  * 
  * WARNING: this is not a great option to keep passwords in memory, because
  * the data is kept as strings.</p>
- *  
+ * TODO: Why not just use properties files?
+ *
  * @author Marc-Andre Laverdiere
  * @author Serguei Mokhov
  * 
  * @since 0.3.0.6
- * @version $Id: OptionFileLoader.java,v 1.3 2012/07/18 02:45:45 mokhov Exp $
  */
 public class OptionFileLoader
 implements IOptionProvider
@@ -203,7 +203,7 @@ implements IOptionProvider
 		{
 			return (pstrLine.substring(iCommentPosition + 1, pstrLine.length())).trim(); //the rest of the line
 		}
-	}	
+	}
 	
 	/**
 	 * @return true if a configuration file was loaded, false otherwise.

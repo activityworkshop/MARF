@@ -8,12 +8,9 @@ import junit.framework.TestCase;
 /**
  * <p>Unit-tests some methods of the marf.Preprocessing.Preprocessing class.</p>
  * 
- * $Id: PreprocessingTest.java,v 1.1 2007/01/06 02:46:18 mokhov Exp $
- * 
  * @author Serguei Mokhov
  * @see marf.Preprocessing.Preprocessing
  * @since 0.3.0.6
- * @version $Revision: 1.1 $
  */
 public class PreprocessingTest
 extends TestCase
@@ -49,13 +46,6 @@ extends TestCase
 	 * Test method for 'marf.Preprocessing.Preprocessing.clone()'
 	 */
 	public final void testClone() {
-
-	}
-
-	/*
-	 * Test method for 'marf.Preprocessing.Preprocessing.getMARFSourceCodeRevision()'
-	 */
-	public final void testGetMARFSourceCodeRevision() {
 
 	}
 

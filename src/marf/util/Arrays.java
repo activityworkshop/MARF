@@ -22,13 +22,8 @@ import java.util.Vector;
  * existing methods, plus adds the <code>copy()</code> wrappers of <code>System.arraycopy()</code>,
  * and <code>arrayToVector()</code> methods.</p>
  *
- * <p>$Id: Arrays.java,v 1.43 2011/03/08 02:55:50 mokhov Exp $</p>
- *
  * @author Serguei Mokhov
  * @author Shuxin Fan
- *
- * @version $Revision: 1.43 $
- * @since 0.3.0.1
  *
  * @see java.util.Arrays
  * @see System#arraycopy(Object, int, Object, int, int)
@@ -4269,23 +4264,6 @@ public class Arrays
 	public static int binarySearch(Object[] paoArray, Object poValue, Comparator<Object> poComparator)
 	{
 		return java.util.Arrays.binarySearch(paoArray, poValue, poComparator);
-	}
-
-	/*
-	 * ----
-	 * Misc
-	 * ----
-	 */
-
-	/**
-	 * Returns source code revision information.
-	 *
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.43 $";
 	}
 }
 

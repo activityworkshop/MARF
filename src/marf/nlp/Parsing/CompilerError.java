@@ -1,8 +1,3 @@
-/*
- * CompilerError Class.
- * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
-
 package marf.nlp.Parsing;
 
 import marf.nlp.NLPException;
@@ -14,31 +9,24 @@ import marf.nlp.NLPException;
  * between various error types like
  * lexical, syntax, semantic and such.</p>
  *
- * $Id: CompilerError.java,v 1.23 2012/01/09 04:03:23 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.23 $
- * @since 0.3.0.2
  */
 public class CompilerError
 extends NLPException
 {
 	/**
 	 * Error code signifying "no error".
-	 * @since October 2, 2001
 	 */
 	public static final int OK = 0;
 
 	/**
 	 * Error code of the last error occurred.
-	 * @since October 2, 2001
 	 */
 	protected int iCurrentErrorCode = OK;
 
 	/**
 	 * Line number where the given error occurred.
 	 * The default value of (-1) means it was not yet initialized.
-	 * @since October 2, 2001
 	 */
 	protected int iLineNo = -1;
 
@@ -47,13 +35,11 @@ extends NLPException
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -6425511198047596019L;
 
 	/**
 	 * Default Constructor.
-	 * @since October 2, 2001
 	 */
 	public CompilerError()
 	{
@@ -90,8 +76,6 @@ extends NLPException
 	}
 
 	/**
-	 * Access method for the current error code property.
-	 *
 	 * @return the current value of the iCurrentErrorCode property
 	 */
 	public int getCurrentErrorCode()
@@ -100,21 +84,10 @@ extends NLPException
 	}
 
 	/**
-	 * Access method for the line number property.
-	 *
 	 * @return the current value of the iLineNo property
 	 */
 	public int getLineNo()
 	{
 		return this.iLineNo;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.23 $";
 	}
 }

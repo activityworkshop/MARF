@@ -8,11 +8,7 @@ import marf.util.NotImplementedException;
  * To be used by an application to contain information
  * about known subjects (speakers, instruments, languages, etc).</p>
  *
- * $Id: Database.java,v 1.11 2007/12/23 06:29:46 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.11 $
- * @since 0.3.0.2
  */
 public class Database
 extends StorageManager
@@ -28,7 +24,6 @@ implements IDatabase
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -2712666434829768112L;
 
@@ -138,15 +133,6 @@ implements IDatabase
 	{
 		Database oClone = (Database)super.clone();
 		return oClone;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.11 $";
 	}
 }
 

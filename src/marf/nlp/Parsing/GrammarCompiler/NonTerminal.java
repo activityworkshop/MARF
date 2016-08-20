@@ -9,11 +9,7 @@ import marf.nlp.Parsing.Token;
  * <p>Non-terminal grammar element.
  * E.g.: &lt;prog&gt;.</p>
  *
- * $Id: NonTerminal.java,v 1.12 2010/06/27 22:18:12 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.12 $
- * @since 0.3.0.2
  */
 public class NonTerminal
 extends GrammarElement
@@ -34,7 +30,6 @@ extends GrammarElement
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 5638226005744022394L;
 
@@ -162,15 +157,6 @@ extends GrammarElement
 	public boolean isNonTerminal()
 	{
 		return true;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.12 $";
 	}
 }
 

@@ -25,11 +25,7 @@ import marf.util.Debug;
  * and produces a corresponding transition table for
  * a given language denoted by the grammar.</p>
  *
- * $Id: GrammarCompiler.java,v 1.31 2010/06/27 22:18:12 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.31 $
- * @since 0.3.0.2
  */
 public class GrammarCompiler
 extends StorageManager
@@ -99,7 +95,6 @@ extends StorageManager
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -8821074737532287405L;
 
@@ -1201,15 +1196,6 @@ extends StorageManager
 	public static final TransitionTable getTransitionTable()
 	{
 		return soTransitionTable;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.31 $";
 	}
 }
 

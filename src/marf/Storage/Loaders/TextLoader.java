@@ -16,12 +16,9 @@ import marf.util.InvalidSampleFormatException;
 
 
 /**
- * <p>Loads text samples assuming character code to be the absolute value.
- * </p>
+ * <p>Loads text samples assuming character code to be the absolute value.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: TextLoader.java,v 1.6 2015/04/05 00:20:54 mokhov Exp $
- * @since 0.3.0.6
  */
 public class TextLoader
 extends SampleLoader
@@ -311,15 +308,6 @@ extends SampleLoader
 	throws StorageException
 	{
 		return this.oSample.getSampleArray().length;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.6 $";
 	}
 }
 

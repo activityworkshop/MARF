@@ -6,26 +6,16 @@ import java.io.Serializable;
 /**
  * <p>Subject database interface.</p>
  * 
- * $Id: IDatabase.java,v 1.8 2006/08/11 19:19:59 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.8 $
- * @since 0.3.0.2
  */
 public interface IDatabase
 extends Serializable
 {
 	/**
-	 * Interface source code revision.
-	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.8 $";
-
-	/**
 	 * For serialization versioning.
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	long serialVersionUID = 3425923890218987256L;
 

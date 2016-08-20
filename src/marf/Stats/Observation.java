@@ -4,11 +4,7 @@ package marf.Stats;
 /**
  * <p>Generic Observation of an occurrence of something (like a word or an n-gram).</p>
  *
- * $Id: Observation.java,v 1.13 2007/12/18 21:57:14 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.13 $
- * @since 0.3.0.2
  */
 public class Observation
 extends WordStats
@@ -35,13 +31,11 @@ extends WordStats
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 608350003332106275L;
 
 	/**
 	 * Constructs default unseen observation with zero probabilities.
-	 * @since 0.3.0.5
 	 */
 	public Observation()
 	{
@@ -51,7 +45,6 @@ extends WordStats
 	/**
 	 * Copy-constructor.
 	 * @param poObservation the Observation object to copy properties of
-	 * @since 0.3.0.5
 	 */
 	public Observation(final Observation poObservation)
 	{
@@ -67,7 +60,6 @@ extends WordStats
 	/**
 	 * Indicates whether this observation was actually seen.
 	 * @return <code>true</code> if it was seen
-	 * @since 0.3.0.5
 	 */
 	public boolean wasSeen()
 	{
@@ -76,7 +68,6 @@ extends WordStats
 
 	/**
 	 * Marks this observation as seen.
-	 * @since 0.3.0.5
 	 */
 	public void markAsSeen()
 	{
@@ -86,7 +77,6 @@ extends WordStats
 	/**
 	 * Allows querying for the current value of the posterior probability.
 	 * @return the current posterior probability of this observation
-	 * @since 0.3.0.5
 	 */
 	public double getPosteriorProbability()
 	{
@@ -96,7 +86,6 @@ extends WordStats
 	/**
 	 * Allows setting the new value of the posterior probability.
 	 * @param pdPosteriorProbability the posterior probability to set
-	 * @since 0.3.0.5
 	 */
 	public void setPosteriorProbability(double pdPosteriorProbability)
 	{
@@ -106,7 +95,6 @@ extends WordStats
 	/**
 	 * Allows querying for the current value of the prior probability.
 	 * @return the current prior probability of this observation
-	 * @since 0.3.0.5
 	 */
 	public double getPriorProbability()
 	{
@@ -116,7 +104,6 @@ extends WordStats
 	/**
 	 * Allows setting the new value of the prior probability.
 	 * @param pdPriorProbability the prior probability to set
-	 * @since 0.3.0.5
 	 */
 	public void setPriorProbability(double pdPriorProbability)
 	{
@@ -126,20 +113,10 @@ extends WordStats
 	/**
 	 * Implements Cloneable interface for the Observation object.
 	 * @see java.lang.Object#clone()
-	 * @since 0.3.0.5
 	 */
 	public Object clone()
 	{
 		return new Observation(this);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.13 $";
 	}
 }
 

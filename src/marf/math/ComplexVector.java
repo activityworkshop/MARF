@@ -8,11 +8,8 @@ import marf.util.Debug;
  * <p><b>NOTE:</b> this class has the same considerations as
  * <code>marf.math.ComplexMatrix</code>.</p>
  *
- * <p>$Id: ComplexVector.java,v 1.3 2007/12/18 03:45:42 mokhov Exp $</p>
- *
  * @author Serguei A. Mokhov
  * @since 0.3.0.6
- * @version $Revision: 1.3 $
  * @see ComplexMatrix
  */
 public class ComplexVector
@@ -327,15 +324,6 @@ extends ComplexMatrix
 	public Object clone()
 	{
 		return new ComplexVector(this);
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.3 $";
 	}
 }
 

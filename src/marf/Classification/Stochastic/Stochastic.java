@@ -11,11 +11,7 @@ import marf.util.NotImplementedException;
  * <p>Generic Stochastic Classification Module.</p>
  * <p>TODO: partially implemented.</p>
  *
- * $Id: Stochastic.java,v 1.26 2007/12/31 00:17:05 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.26 $
- * @since 0.0.1
  */
 public class Stochastic
 extends Classification
@@ -25,7 +21,6 @@ extends Classification
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -415255678695729045L;
 
@@ -67,21 +62,10 @@ extends Classification
 	/**
 	 * Retrieves the maximum-probability classification result.
 	 * @return Result object
-	 * @since 0.3.0.2
 	 */
 	public Result getResult()
 	{
 		return this.oResultSet.getMaximumResult();
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.26 $";
 	}
 }
 

@@ -16,8 +16,6 @@ import marf.util.BaseThread;
 /**
  * <p>Reads data from the input channel and writes to the output stream.</p>
  *
- * $Id: SampleRecorder.java,v 1.6 2006/03/13 15:11:28 mokhov Exp $
- *
  * @author Jimmy Nicolacopoulos
  * @since 0.3.0.6
  */

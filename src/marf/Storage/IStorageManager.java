@@ -5,16 +5,9 @@ import java.io.Serializable;
 
 /**
  * <p>Almost every concrete module must implement this interface
- * if it cannot extend from the StorageManager class. The interface
- * extends <code>Serializable</code>. Additionally, since 0.3.0.5
- * it also extends <code>Cloneable</code>.
- * </p>
- *
- * $Id: IStorageManager.java,v 1.12 2007/12/23 06:29:46 mokhov Exp $
+ * if it cannot extend from the StorageManager class.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.12 $
- * @since 0.3.0.2
  *
  * @see Serializable
  * @see Cloneable
@@ -53,11 +46,6 @@ extends Serializable, Cloneable
 	int DUMP_SQL         = 5;
 
 	/**
-	 * Interface source code revision.
-	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.12 $";
-
-	/**
 	 * Maps <code>DUMP_</code> constants to default filename extensions.
 	 * The order must follow the order of the constants as they are
 	 * used as indices for this array.
@@ -77,7 +65,6 @@ extends Serializable, Cloneable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	long serialVersionUID = -7137065556183693005L;
 

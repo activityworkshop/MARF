@@ -6,11 +6,7 @@ package marf.util;
  * a mismatch of a loader and file being loader or sample type
  * and its data.</p>
  * 
- * $Id: InvalidSampleFormatException.java,v 1.12 2007/12/23 06:29:47 mokhov Exp $
- * 
  * @author Serguei Mokhov
- * @version $Revision: 1.12 $
- * @since 0.0.1
  */
 public class InvalidSampleFormatException
 extends MARFException
@@ -20,7 +16,6 @@ extends MARFException
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -4262507209933509360L;
 
@@ -72,16 +67,6 @@ extends MARFException
 	public InvalidSampleFormatException(String pstrMessage, Exception poException)
 	{
 		super(pstrMessage, poException);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.12 $";
 	}
 }
 

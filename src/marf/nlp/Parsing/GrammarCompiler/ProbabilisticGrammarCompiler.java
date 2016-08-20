@@ -9,11 +9,7 @@ import marf.nlp.Parsing.SyntaxError;
  * a grammar enhanced with probability tokens
  * assigned to each production.</p>
  *
- * $Id: ProbabilisticGrammarCompiler.java,v 1.21 2006/01/30 04:21:57 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.21 $
- * @since 0.3.0.2
  */
 public class ProbabilisticGrammarCompiler
 extends GrammarCompiler
@@ -23,7 +19,6 @@ extends GrammarCompiler
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -5611774474809711992L;
 
@@ -170,15 +165,6 @@ extends GrammarCompiler
 				getBusted();
 			}
 		} // switch
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.21 $";
 	}
 }
 

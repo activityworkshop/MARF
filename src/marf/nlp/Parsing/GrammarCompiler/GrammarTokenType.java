@@ -6,11 +6,7 @@ import marf.nlp.Parsing.TokenSubType;
 /**
  * <p>Represents the data type of a grammar token.</p>
  *
- * $Id: GrammarTokenType.java,v 1.13 2006/01/19 04:13:17 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.13 $
- * @since 0.3.0.2
  */
 public class GrammarTokenType
 extends TokenSubType
@@ -100,7 +96,6 @@ extends TokenSubType
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -7553127246479223050L;
 
@@ -148,15 +143,6 @@ extends TokenSubType
 		soTokenSubTypes.put(new Integer(S_CHECK_DEFINED),			new String("@CHECK_MEMB_DEFINED"));
 
 		soTokenSubTypes.put(new Integer(SE_MISSING_SEMICOLON),	new String("$MISSING_SEMICOLON"));
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.13 $";
 	}
 }
 

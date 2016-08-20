@@ -8,10 +8,7 @@ import marf.util.MARFException;
  * exception processing of the GUI-related modules of MARF.
  * </p>
  *
- * $Id: GUIException.java,v 1.2 2007/12/31 00:17:05 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.2 $
  * @since 0.3.0.6
  */
 public class GUIException
@@ -59,15 +56,6 @@ extends MARFException
 	public GUIException(String pstrMessage, Exception poException)
 	{
 		super(pstrMessage, poException);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.2 $";
 	}
 }
 

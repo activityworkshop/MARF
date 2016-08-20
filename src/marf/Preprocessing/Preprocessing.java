@@ -16,11 +16,7 @@ import marf.util.NotImplementedException;
 /**
  * <p>Abstract Preprocessing Module.</p>
  *
- * $Id: Preprocessing.java,v 1.51 2010/06/28 10:14:57 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.51 $
- * @since 0.0.1
  */
 public abstract class Preprocessing
 extends StorageManager
@@ -60,7 +56,6 @@ implements IPreprocessing
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	private static final long serialVersionUID = 1311696194896319668L;
 
@@ -117,8 +112,6 @@ implements IPreprocessing
 	 *
 	 * @throws PreprocessingException if underlying <code>preprocess()</code> fails or
 	 * the parameter is null.
-	 *
-	 * @since 0.3.0.3
 	 *
 	 * @see #preprocess()
 	 * @see MARF
@@ -252,7 +245,6 @@ implements IPreprocessing
 	 * @return <code>true</code> if the sample has been successfully normalized;
 	 * <code>false</code> otherwise
 	 * @throws PreprocessingException if internal sample reference is null
-	 * @since 0.3.0
 	 *
 	 * @see #normalize(int, int)
 	 * @see marf.Preprocessing.FFTFilter.HighFrequencyBoost
@@ -282,7 +274,6 @@ implements IPreprocessing
 	 * <code>false</code> otherwise
 	 * @throws PreprocessingException if internal sample reference is null or one or
 	 * both indexes are out of range
-	 * @since 0.3.0
 	 */
 	public final boolean normalize(int piIndexFrom, int piIndexTo)
 	throws PreprocessingException
@@ -453,7 +444,6 @@ implements IPreprocessing
 	/**
 	 * Allows setting a sample object reference.
 	 * @param poSample new sample object
-	 * @since 0.3.0.4
 	 */
 	public void setSample(Sample poSample)
 	{
@@ -464,7 +454,6 @@ implements IPreprocessing
 
 	/**
 	 * Implementation of back-synchronization of Sample loaded object.
-	 * @since 0.3.0.2
 	 */
 	public void backSynchronizeObject()
 	{
@@ -533,16 +522,6 @@ implements IPreprocessing
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.51 $";
 	}
 }
 

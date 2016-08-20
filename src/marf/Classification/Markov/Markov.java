@@ -12,11 +12,7 @@ import marf.util.NotImplementedException;
  *
  * <p>Not Implemented.</p>
  *
- * $Id: Markov.java,v 1.24 2006/07/31 02:19:13 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.24 $
- * @since 0.0.1
  */
 public class Markov
 extends Stochastic
@@ -26,7 +22,6 @@ extends Stochastic
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 4931363558439103262L;
 
@@ -85,16 +80,6 @@ extends Stochastic
 	throws StorageException
 	{
 		throw new NotImplementedException("Markov.restore()");
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.24 $";
 	}
 }
 

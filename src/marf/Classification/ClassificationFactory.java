@@ -20,8 +20,6 @@ import marf.FeatureExtraction.IFeatureExtraction;
  * Provides a factory to instantiate requested classification module(s).
  *
  * @author Serguei Mokhov
- * @version $Id: ClassificationFactory.java,v 1.6 2012/06/17 19:12:29 mokhov Exp $
- * @since 0.3.0.5
  */
 public final class ClassificationFactory
 {
@@ -256,15 +254,6 @@ public final class ClassificationFactory
 				);
 			}
 		}
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.6 $";
 	}
 }
 

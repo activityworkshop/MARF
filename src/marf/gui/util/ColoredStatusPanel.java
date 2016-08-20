@@ -11,11 +11,7 @@ import marf.util.Debug;
  *
  * TODO: refactor.
  *
- * $Id: ColoredStatusPanel.java,v 1.11 2007/12/18 03:46:08 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.11 $
- * @since 0.3.0.2
  */
 public class ColoredStatusPanel
 extends SmartSizablePanel
@@ -25,7 +21,6 @@ extends SmartSizablePanel
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 2835022627059977227L;
 
@@ -232,15 +227,6 @@ extends SmartSizablePanel
 	public int getCurrentStatus()
 	{
 		return this.iCurrentStatus;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.11 $";
 	}
 }
 

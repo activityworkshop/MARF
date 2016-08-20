@@ -9,11 +9,7 @@ import marf.util.Debug;
 /**
  * <p>Bandpass Filter Implementation based on the FFTFilter.</p>
  *
- * $Id: BandpassFilter.java,v 1.26 2007/12/16 01:11:06 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.26 $
- * @since 0.2.0
  * @see FFTFilter
  */
 public class BandpassFilter
@@ -24,7 +20,6 @@ extends FFTFilter
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -8413024016319719417L;
 
@@ -77,10 +72,8 @@ extends FFTFilter
 	}
 
 	/**
-	 * Creates band-pass frequency response coefficients and sets applies
+	 * Creates band-pass frequency response coefficients and applies
 	 * them to the frequency response vector.
-	 *
-	 * @since 0.3.0
 	 */
 	public void generateResponseCoefficients()
 	{
@@ -96,16 +89,6 @@ extends FFTFilter
 		}
 
 		setFrequencyResponse(adResponse);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.26 $";
 	}
 }
 

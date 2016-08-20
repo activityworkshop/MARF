@@ -5,14 +5,9 @@ import marf.Stats.Ngram;
 
 
 /**
- * <p>Represents Witten-Bell Smoothing Algorithm.
- * </p>
- *
- * $Id: WittenBell.java,v 1.21 2007/12/18 21:57:15 mokhov Exp $
+ * <p>Represents Witten-Bell Smoothing Algorithm.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.21 $
- * @since 0.3.0.2
  */
 public class WittenBell
 extends Smoothing
@@ -22,7 +17,6 @@ extends Smoothing
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 4056635859068758735L;
 
@@ -236,15 +230,6 @@ extends Smoothing
 	public double p(Ngram poNgram)
 	{
 		return 0.0;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.21 $";
 	}
 }
 

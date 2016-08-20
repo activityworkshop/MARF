@@ -8,8 +8,6 @@ import java.util.Comparator;
  * <p>Sort Comparator is the base for all sorting operations in MARF.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: SortComparator.java,v 1.11 2012/07/18 02:45:45 mokhov Exp $
- * @since 0.3.0.2
  */
 public abstract class SortComparator
 implements Comparator<Object>, Serializable
@@ -17,6 +15,8 @@ implements Comparator<Object>, Serializable
 	/*
 	 * Constants to use for indication of the sorting order
 	 */
+
+	// TODO: Better to use an enum for ASCENDING and DESCENDING?
 
 	/**
 	 * Constant indicating to sort in the ascending order.
@@ -39,7 +39,6 @@ implements Comparator<Object>, Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	private static final long serialVersionUID = -3395493010875051653L;
 
@@ -75,20 +74,10 @@ implements Comparator<Object>, Serializable
 	 * @return the mode
 	 * @see #DESCENDING
 	 * @see #ASCENDING
-	 * @since 0.3.0.3
 	 */
 	public int getSortMode()
 	{
 		return this.iSortMode;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.11 $";
 	}
 }
 

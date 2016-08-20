@@ -10,7 +10,6 @@ import marf.Configuration;
  * 
  * @author Serguei Mokhov
  * @since 0.3.0.6; May 30, 2010
- * @version $Id: IDatabaseConnection.java,v 1.2 2010/05/31 08:17:10 mokhov Exp $
  */
 public interface IDatabaseConnection
 {

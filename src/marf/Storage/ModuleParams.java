@@ -5,16 +5,11 @@ import java.util.Vector;
 
 
 /**
- * <p>Class <code>ModuleParams</code> provides ability to pass module-specific parameters from an application.
- * The specific module should know in which order and how to downcast those params.
- * <code>ModuleParams</code> is <code>Cloneable</code> and starting 0.3.0.6 <code>Serializable</code>.
- * </p>
- *
- * $Id: ModuleParams.java,v 1.20 2010/03/06 02:36:47 mokhov Exp $
+ * <p>Class <code>ModuleParams</code> provides ability to pass module-specific parameters
+ * from an application.
+ * The specific module should know in which order and how to downcast those params.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.20 $
- * @since 0.0.1
  */
 public class ModuleParams
 implements Cloneable, Serializable
@@ -45,7 +40,6 @@ implements Cloneable, Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.6
 	 */
 	private static final long serialVersionUID = -4980315360455857956L;
 
@@ -80,7 +74,6 @@ implements Cloneable, Serializable
 
 	/**
 	 * Default Constructor.
-	 * Does nothing extra.
 	 */
 	public ModuleParams()
 	{
@@ -89,7 +82,6 @@ implements Cloneable, Serializable
 	/**
 	 * Copy-constructor.
 	 * @param poModuleParams object to make a copy of
-	 * @since 0.3.0.5
 	 */
 	@SuppressWarnings("unchecked")
 	public ModuleParams(final ModuleParams poModuleParams)
@@ -186,7 +178,7 @@ implements Cloneable, Serializable
 	}
 
 	/**
-	 * Returns for a given module it's parameters vector.
+	 * Returns for a given module its parameters vector.
 	 * @param piModuleType module type to get parameters for
 	 * @return Vector of parameters
 	 * @throws IllegalArgumentException if module type is invalid
@@ -318,10 +310,9 @@ implements Cloneable, Serializable
 	}
 
 	/**
-	 * Retrieves string version of all three types of parameters.  
+	 * Retrieves string version of all three types of parameters.
 	 * @return String representation of this ModuleParams object 
 	 * @see java.lang.Object#toString()
-	 * @since 0.3.0.5
 	 */
 	public synchronized String toString()
 	{
@@ -341,7 +332,6 @@ implements Cloneable, Serializable
 	 * module parameters.
 	 * 
 	 * @return the total number of parameters
-	 * @since 0.3.0.5
 	 */
 	public synchronized int size()
 	{
@@ -353,22 +343,11 @@ implements Cloneable, Serializable
 
 	/**
 	 * Implements Cloneable interface for ModuleParams.
-	 * @since 0.3.0.5
 	 * @see java.lang.Object#clone()
 	 */
 	public Object clone()
 	{
 		return new ModuleParams(this);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.20 $";
 	}
 }
 

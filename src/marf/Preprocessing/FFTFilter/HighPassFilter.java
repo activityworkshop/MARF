@@ -9,11 +9,7 @@ import marf.util.Debug;
 /**
  * <p>HighPassFilter class implements high-pass filtering the FFT Filter.</p>
  *
- * $Id: HighPassFilter.java,v 1.19 2007/12/18 03:45:56 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.19 $
- * @since 0.0.1
  */
 public class HighPassFilter
 extends FFTFilter
@@ -23,7 +19,6 @@ extends FFTFilter
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 6784418884789745008L;
 
@@ -42,7 +37,6 @@ extends FFTFilter
 	 * Preprocessing pipeline constructor.
 	 * @param poPreprocessing follow up preprocessing module
 	 * @throws PreprocessingException
-	 * @since 0.3.0.3
 	 */
 	public HighPassFilter(IPreprocessing poPreprocessing)
 	throws PreprocessingException
@@ -76,10 +70,8 @@ extends FFTFilter
 	}
 
 	/**
-	 * Creates high-pass frequency response coefficients and sets applies
+	 * Creates high-pass frequency response coefficients and applies
 	 * them to the frequency response vector.
-	 *
-	 * @since 0.3.0.2
 	 */
 	public void generateResponseCoefficients()
 	{
@@ -102,16 +94,6 @@ extends FFTFilter
 		}
 
 		setFrequencyResponse(adResponse);
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.19 $";
 	}
 }
 

@@ -9,13 +9,9 @@ import marf.util.Debug;
  * <p>Mahalanobis Distance Classification Module.</p>
  *
  * <p><b>NOTE</b>: Implemented as equivalent to Euclidean Distance in 0.2.0, i.e.
- * the Covariance matrix is always an Indentity one.</p>
- *
- * $Id: MahalanobisDistance.java,v 1.23 2006/12/11 22:56:34 mokhov Exp $
+ * the Covariance matrix is always an Identity one.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.23 $
- * @since 0.2.0
  */
 public class MahalanobisDistance
 extends Distance
@@ -30,7 +26,6 @@ extends Distance
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -6720267386878796592L;
 
@@ -82,16 +77,6 @@ extends Distance
 		dDistance = Math.sqrt(oDifferenceVector.multiply(this.oC).multiply(oTransposedVector).getElement(0, 0));
 
 		return dDistance;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.23 $";
 	}
 }
 

@@ -14,12 +14,8 @@ import marf.util.NotImplementedException;
 /**
  * <p>Class Spectrogram dumps a spectrogram to a PPM file.</p>
  *
- * $Id: Spectrogram.java,v 1.34 2012/05/30 16:24:18 mokhov Exp $
- *
  * @author Ian Clement
  * @author Serguei Mokhov
- * @version $Revision: 1.34 $
- * @since 0.0.1
  */
 public class Spectrogram
 extends StorageManager
@@ -29,7 +25,6 @@ extends StorageManager
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -8219029755014757254L;
 
@@ -252,16 +247,6 @@ extends StorageManager
 	throws StorageException
 	{
 		throw new NotImplementedException("Spectrogram.restore()");
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.34 $";
 	}
 }
 

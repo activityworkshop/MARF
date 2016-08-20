@@ -18,11 +18,7 @@ import marf.util.InvalidSampleFormatException;
 /**
  * <p>Provides a factory to instantiate requested SampleLoader module(s).</p>
  *
- * $Id: SampleLoaderFactory.java,v 1.3 2007/12/23 06:29:46 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.3 $
- * @since 0.3.0.5
  */
 public final class SampleLoaderFactory
 {
@@ -173,15 +169,6 @@ public final class SampleLoaderFactory
 		}
 	
 		return oSampleLoader;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.3 $";
 	}
 }
 

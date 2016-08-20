@@ -19,13 +19,9 @@ import marf.util.Debug;
  * styles and consistency in operators. Some missing features will be added/filled in as well.
  * Requires a lot of thorough testing and <code>MathTestApp</code> serves that purpose.</p>
  *
- * $Id: Matrix.java,v 1.47 2007/12/18 03:45:42 mokhov Exp $
- *
  * @author Serguei Mokhov
  * @author Shuxin Fan
  *
- * @version $Revision: 1.47 $
- * @since 0.3.0.1
  * @see marf.math.Vector
  */
 public class Matrix
@@ -70,7 +66,6 @@ implements Cloneable, Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -4663728617934529725L;
 
@@ -1193,7 +1188,7 @@ implements Cloneable, Serializable
 	protected Matrix getNewMatrix()
 	{
 		System.out.println("[[[ in default Matrix ]]]");
-		return new Matrix(this.iRows, this.iCols);		
+		return new Matrix(this.iRows, this.iCols);
 	}
 
 	/**
@@ -1966,7 +1961,7 @@ implements Cloneable, Serializable
 	 */
 	public Vector scale(Vector poPointToScale, double[] padScaleFactors)
 	{
-	 	return scale(poPointToScale, new Vector(padScaleFactors));
+		return scale(poPointToScale, new Vector(padScaleFactors));
 	}
 
 	/**
@@ -2203,16 +2198,6 @@ implements Cloneable, Serializable
 		};
 
 		return shear(poPointToShear, padShearFactors);
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.47 $";
 	}
 
 	/**

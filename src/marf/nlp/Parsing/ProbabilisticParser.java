@@ -56,11 +56,7 @@ import marf.util.Debug;
  *     return build_tree(back[1, num_words, 1]), [1, num_words, 1])
  * </pre>
  *
- * $Id: ProbabilisticParser.java,v 1.31 2007/12/18 21:37:54 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.31 $
- * @since 0.3.0.2
  */
 public class ProbabilisticParser
 extends StorageManager
@@ -100,7 +96,6 @@ extends StorageManager
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -2675525629027897961L;
 
@@ -517,15 +512,6 @@ extends StorageManager
 	public void backSynchronizeObject()
 	{
 		this.oGrammar = (Grammar)super.oObjectToSerialize;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.31 $";
 	}
 }
 

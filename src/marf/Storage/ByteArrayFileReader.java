@@ -18,7 +18,6 @@ import marf.util.NotImplementedException;
  * <p>Reads in a file contents into a byte array buffers.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: ByteArrayFileReader.java,v 1.7 2012/07/09 03:27:29 mokhov Exp $
  * @since 0.3.0.6
  */
 public class ByteArrayFileReader

@@ -20,15 +20,10 @@ import marf.util.InvalidSampleFormatException;
 
 
 /**
- * <p>Loads/stores samples if WAVE format.</p>
- *
- * $Id: WAVLoader.java,v 1.34 2009/02/22 02:16:01 mokhov Exp $
+ * <p>Loads/stores samples in WAVE format.</p>
  *
  * @author Jimmy Nicolacopoulos
  * @author Serguei Mokhov
- *
- * @version $Revision: 1.34 $
- * @since 0.0.1
  */
 public class WAVLoader
 extends AudioSampleLoader
@@ -282,7 +277,6 @@ extends AudioSampleLoader
 	 * Resets the marker for the audio and byte-array streams.
 	 * Used after writing audio data into the sample's audio stream.
 	 * @throws StorageException if there was an error resetting the streams
-	 * @since 0.3.0
 	 */
 	public void reset()
 	throws StorageException
@@ -328,16 +322,6 @@ extends AudioSampleLoader
 				+ " Hz) is not the same as required (" + this.fRequiredFrequency + " Hz)."
 			);
 		}
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.34 $";
 	}
 }
 

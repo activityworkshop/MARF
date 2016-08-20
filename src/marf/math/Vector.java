@@ -8,11 +8,7 @@ import marf.util.Debug;
  * <p><b>NOTE:</b> this class has the same considerations as
  * <code>marf.math.Matrix</code>.</p>
  *
- * $Id: Vector.java,v 1.14 2007/12/18 03:45:42 mokhov Exp $
- *
  * @author Serguei A. Mokhov
- * @since 0.3.0.1
- * @version $Revision: 1.14 $
  * @see Matrix
  */
 public class Vector
@@ -23,7 +19,6 @@ extends Matrix
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -220324533429950897L;
 
@@ -319,16 +314,6 @@ extends Matrix
 	public Object clone()
 	{
 		return new Vector(this);
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.14 $";
 	}
 }
 

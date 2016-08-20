@@ -5,11 +5,7 @@ package marf.util;
  * <p>Class MARFException.</p>
  * <p>This class extends Exception for MARF specifics.</p>
  *
- * $Id: MARFException.java,v 1.21 2007/12/23 06:29:47 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.21 $
- * @since 0.0.1
  */
 public class MARFException
 extends Exception
@@ -27,14 +23,12 @@ implements IMARFException
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -36051376447916491L;
 
 	/**
 	 * Default MARF exception.
 	 * Better be overridden for normal internal message.
-	 * @since 0.3.0.3
 	 */
 	public MARFException()
 	{
@@ -52,7 +46,7 @@ implements IMARFException
 	}
 
 	/**
-	 * This is used for debug purposes only with some unusual Exception's.
+	 * This is used for debug purposes only with some unusual Exceptions.
 	 * It allows the originating Exceptions stack trace to be returned.
 	 * @param pstrMessage Error message string
 	 * @param poException Exception object to dump
@@ -66,7 +60,6 @@ implements IMARFException
 	/**
 	 * Wraps Exception object around.
 	 * @param poException Exception to wrap around
-	 * @since 0.3.0.2
 	 */
 	public MARFException(Exception poException)
 	{
@@ -75,7 +68,6 @@ implements IMARFException
 
 	/**
 	 * Returns string representation of the error message.
-	 * Definalize in 0.3.0.6 to allow derivatives.
 	 * @return error string
 	 */
 	public String getMessage()
@@ -135,21 +127,10 @@ implements IMARFException
 	/**
 	 * Override <code>toString()</code> to display our message.
 	 * @return string representation of this exception
-	 * @since 0.3.0.3
 	 */
 	public String toString()
 	{
 		return getMessage();
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.21 $";
 	}
 }
 

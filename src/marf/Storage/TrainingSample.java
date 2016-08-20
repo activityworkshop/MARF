@@ -12,15 +12,10 @@ import marf.util.Arrays;
  * <p>TrainingSample contains one item in the training set.
  * Each training sample consists of the feature vector plus
  * information describing that feature vector.
- * Has been extracted from TrainingSet in 0.3.0.
- * TODO: fix CSV dumps.
- * </p>
+ * TODO: fix CSV dumps.</p>
  *
  * @author Stephen Sinclair
  * @author Serguei Mokhov
- *
- * @version $Id: TrainingSample.java,v 1.18 2015/03/08 19:47:22 mokhov Exp $
- * @since 0.0.1
  */
 public class TrainingSample
 implements ITrainingSample
@@ -30,7 +25,7 @@ implements ITrainingSample
 	 *
 	 * This is an application-independent ID within MARF to distinguish
 	 * from other subjects. Typical subjects may include speakers, languages
-	 * instruments, emotions, etc. that a give application is taken care of.
+	 * instruments, emotions, etc. that a given application is taking care of.
 	 */
 	protected int iSubjectID;
 
@@ -51,14 +46,11 @@ implements ITrainingSample
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 440451144821982021L;
 
 	/**
 	 * Default training sample constructor.
-	 * Explicitly appeared in 0.3.0.5.
-	 * @since 0.3.0.5
 	 */
 	public TrainingSample()
 	{
@@ -68,7 +60,6 @@ implements ITrainingSample
 	/**
 	 * Copy-constructor.
 	 * @param poTrainingSample TrainingSample object to copy
-	 * @since 0.3.0.5
 	 */
 	@SuppressWarnings("unchecked")
 	public TrainingSample(final TrainingSample poTrainingSample)
@@ -330,7 +321,6 @@ implements ITrainingSample
 	/**
 	 * Implements Cloneable interface for the TrainingSample object.
 	 * @see java.lang.Object#clone()
-	 * @since 0.3.0.5
 	 */
 	public Object clone()
 	{
@@ -350,20 +340,9 @@ implements ITrainingSample
 			.append("Subject ID: ").append(this.iSubjectID).append("\n")
 			.append("Data vector reference: ").append(this.adDataVector).append("\n")
 			.append("Size: ").append(size()).append("\n")
-			.append("Filenames: ").append(this.oFilenames).append("\n")
-			.append("TrainingSample Source code revision: ").append(getMARFSourceCodeRevision()).append("\n");
+			.append("Filenames: ").append(this.oFilenames).append("\n");
 
 		return oBuffer.toString();
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.18 $";
 	}
 }
 

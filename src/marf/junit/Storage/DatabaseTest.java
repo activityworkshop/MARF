@@ -9,12 +9,8 @@ import junit.framework.TestCase;
 /**
  * <p>Database data structure unit tests.</p>
  *
- * $Id: DatabaseTest.java,v 1.3 2006/02/23 01:16:47 mokhov Exp $
- *
  * @author Serguei Mokhov
  * @author Shuxin Fan
- *
- * @since 0.3.0.5
  */
 public class DatabaseTest
 extends TestCase

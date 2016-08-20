@@ -13,17 +13,13 @@ import marf.util.Arrays;
 /**
  * <p>General Continuous-Fraction Expansion (CFE) filter types.
  * Based on the Masters Thesis work of Shivani Bhat in
- * research of the 2D digital CFE filters.
- * </p>
+ * research of the 2D digital CFE filters.</p>
  *
  * <p>This implementation in MARF is used for 2D version in
  * the <code>TestFilters</code> application and the 1D version
  * in <code>SpeakerIdentApp</code>. Look at the apps for the
  * example usage. The exact meaning of the filter parameters is
- * defined in Shivani's thesis.
- * </p>
- * 
- * $Id: CFEFilter.java,v 1.12 2011/11/21 17:45:47 mokhov Exp $
+ * defined in Shivani's thesis.</p>
  * 
  * @author Serguei Mokhov
  * @author Shivani Haridas Bhat
@@ -218,16 +214,16 @@ extends Filter
 				//imgLPF_S=real(ifft2(Hlpf,L,W));
 				//double[] adOutputReal = new double[H.size()];
 				//double[] adOutputImag = new double[H.size()];
-//				System.out.println("Taking inverse FFT of the digital filter... " + new Date());			
+//				System.out.println("Taking inverse FFT of the digital filter... " + new Date());
 				ComplexMatrix oOutputMatrix = new ComplexMatrix(H.getRows(), H.getCols());
 				
 				//Algorithms.FFT.doFFT(H.getRealMatrixArray(), H.getImaginaryMatrixArray(), adOutputReal, adOutputImag, -1);
 				Algorithms.FFT.doFFT2(H, oOutputMatrix, -1);
-//				System.out.println("Inverse FFT Done:                           " + new Date());			
+//				System.out.println("Inverse FFT Done:                           " + new Date());
 
 				H = oOutputMatrix;
 				
-//				System.out.println("Dumping...");			
+//				System.out.println("Dumping...");
 				this.oObjectToSerialize = H;
 				
 				dump();
@@ -235,8 +231,8 @@ extends Filter
 
 			Matrix oSampleMatrix = new Matrix(padSample);
 
-//			System.out.println("H is a matrix of size: rows=" + H.getRows() + ", cols=" + H.getCols());			
-//			System.out.println("S is a matrix of size: rows=" + oSampleMatrix.getRows() + ", cols=" + oSampleMatrix.getCols());			
+//			System.out.println("H is a matrix of size: rows=" + H.getRows() + ", cols=" + H.getCols());
+//			System.out.println("S is a matrix of size: rows=" + oSampleMatrix.getRows() + ", cols=" + oSampleMatrix.getCols());
 	
 	
 			// Convoluting degraded sample and the filter in spatial domain

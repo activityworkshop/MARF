@@ -1,8 +1,3 @@
-/*
- * Token Class
- * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
-
 package marf.nlp.Parsing;
 
 import java.awt.Point;
@@ -14,11 +9,7 @@ import java.io.Serializable;
 /**
  * <p>This class denotes a Token data structure.</p>
  *
- * $Id: Token.java,v 1.26 2012/01/09 04:03:23 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.26 $
- * @since 0.3.0.2
  */
 public class Token
 implements Serializable
@@ -50,7 +41,6 @@ implements Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 3470336900324740404L;
 
@@ -228,15 +218,6 @@ implements Serializable
 	public void setTokenType(TokenSubType poTokenType)
 	{
 		this.oTokenType = poTokenType;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.26 $";
 	}
 }
 

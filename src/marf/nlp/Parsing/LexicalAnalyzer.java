@@ -1,8 +1,3 @@
-/*
- * LexicalAnalyzer Class
- * (C) 2001 - 2012 Serguei Mokhov, <mailto:mokhov@cs.concordia.ca>
- */
-
 package marf.nlp.Parsing;
 
 import java.awt.Point;
@@ -19,11 +14,7 @@ import marf.util.Debug;
  * <p>LexicalAnalyzer class encapsulates the functionality
  * required for lexical analysis of a MARF source program.</p>
  *
- * $Id: LexicalAnalyzer.java,v 1.25 2012/01/09 04:03:23 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.25 $
- * @since 0.3.0.2
  */
 public class LexicalAnalyzer
 extends GenericLexicalAnalyzer
@@ -388,7 +379,7 @@ extends GenericLexicalAnalyzer
 										Token oSecondPartToken = getNextToken();
 		
 										if(oSecondPartToken.getTokenType().iType == TokenType.NUM)
-									    {
+										{
 											oTokenSubType.iType = TokenType.NUM;
 											oTokenSubType.iSubtype = TokenSubType.REAL;
 											this.oStreamTokenizer.sval = strBackup + "." + oSecondPartToken.getLexeme();
@@ -802,15 +793,6 @@ extends GenericLexicalAnalyzer
 	public Vector getLexicalErrors()
 	{
 		return this.oLexicalErrors;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.25 $";
 	}
 }
 

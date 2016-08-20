@@ -9,12 +9,8 @@ import marf.junit.Storage.DatabaseTest;
 /**
  * <p>Performs cloneability unit tests.</p>
  *
- * $Id: CloneabilityTest.java,v 1.3 2006/02/23 01:15:34 mokhov Exp $
- *
  * @author Serguei Mokhov
  * @author Shuxin Fan
- *
- * @since 0.3.0.5
  */
 public class CloneabilityTest
 extends TestCase

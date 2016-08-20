@@ -12,12 +12,7 @@ import java.io.OutputStream;
  * should try their best to inherit from the SampleLoader class; otherwise,
  * they must implement this interface.</p>
  *
- * $Id: ISampleLoader.java,v 1.15 2015/04/05 00:20:53 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @since 0.3.0.2
- * @version $Revision: 1.15 $
- * 
  * @see SampleLoader
  */
 public interface ISampleLoader
@@ -35,8 +30,7 @@ public interface ISampleLoader
 	int DEFAULT_SAMPLE_BIT_SIZE = 16;
 
 	/**
-	 * Mono.
-	 * Default 1.
+	 * Default number of channels: 1 (Mono)
 	 */
 	int DEFAULT_CHANNELS = 1;
 
@@ -44,11 +38,6 @@ public interface ISampleLoader
 	 * Default sampling frequency of 8000 Hz.
 	 */
 	float DEFAULT_FREQUENCY = 8000;
-
-	/**
-	 * Interface source code revision.
-	 */
-	String MARF_INTERFACE_CODE_REVISION = "$Revision: 1.15 $";
 
 	/**
 	 * Reads sample data from the sample's stream into the parameter.

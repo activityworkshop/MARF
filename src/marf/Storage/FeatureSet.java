@@ -10,13 +10,10 @@ import marf.util.NotImplementedException;
 
 /**
  * <p>FeatureSet -- Encapsulates subject's feature vectors.
- * Additionally, can compute mean and median vectors off
- * the present feature vectors.
- * </p>
+ * Additionally, can compute mean and median vectors of
+ * the present feature vectors.</p>
  *
  * @author Serguei Mokhov
- * @version $Id: FeatureSet.java,v 1.21 2015/03/08 19:47:22 mokhov Exp $
- * @since 0.3.0.1
  */
 public class FeatureSet
 extends Cluster
@@ -64,7 +61,6 @@ extends Cluster
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -1931299425905008139L;
 
@@ -124,7 +120,7 @@ extends Cluster
 	}
 
 	/**
-	 * Sizes of the feature vectors set.
+	 * Size of the feature vectors set.
 	 * @return number of training samples in the set
 	 */
 	public int size()
@@ -137,7 +133,6 @@ extends Cluster
 	 * TODO: implement.
 	 * @throws StorageException
 	 * @throws NotImplementedException
-	 * @since 0.3.0.5
 	 */
 	public void restoreCSV()
 	throws StorageException
@@ -180,7 +175,6 @@ extends Cluster
 	 * TODO: implement.
 	 * @throws StorageException
 	 * @throws NotImplementedException
-	 * @since 0.3.0.5
 	 */
 	public void dumpCSV()
 	throws StorageException
@@ -326,33 +320,23 @@ extends Cluster
 	 * Implements Cloneable interface for the FeatureSet object.
 	 * Performs a "deep" copy of this object including all the feature vectors.
 	 * @see java.lang.Object#clone()
-	 * @since 0.3.0.5
 	 */
 	@SuppressWarnings("unchecked")
 	public Object clone()
 	{
-		//try
-		{
-			FeatureSet oClone = (FeatureSet)super.clone();
+		FeatureSet oClone = (FeatureSet)super.clone();
 
-			oClone.oFeatureVectors =
-				this.oFeatureVectors == null ?
-				null : (Vector<double[]>)this.oFeatureVectors.clone();
+		oClone.oFeatureVectors =
+			this.oFeatureVectors == null ?
+			null : (Vector<double[]>)this.oFeatureVectors.clone();
 
-			return oClone;
-		}
-		/*
-		catch(CloneNotSupportedException e)
-		{
-			throw new InternalError(e.getMessage());
-		}*/
+		return oClone;
 	}
 
 	/**
 	 * Provides string representation of the training set data in addition
 	 * to that of the parent Cluster.
 	 * @see marf.Storage.Cluster#toString()
-	 * @since 0.3.0.6
 	 */
 	public synchronized String toString()
 	{
@@ -361,20 +345,9 @@ extends Cluster
 		oBuffer
 			.append("Max Columns: ").append(this.iMaxColumns).append("\n")
 			.append("Last Type Vector Computed: ").append(this.iLastTypeVectorComputed).append("\n")
-			.append("Feature Vectors: ").append(this.oFeatureVectors).append("\n")
-			.append("FeatureSet Source code revision: ").append(getMARFSourceCodeRevision()).append("\n");
+			.append("Feature Vectors: ").append(this.oFeatureVectors).append("\n");
 
 		return oBuffer.toString();
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.21 $";
 	}
 }
 

@@ -16,8 +16,6 @@ import marf.util.Debug;
  *
  * @author Stephen Sinclair
  * @author Serguei Mokhov
- * @version $Id: FFTFilter.java,v 1.38 2011/11/21 20:47:05 mokhov Exp $
- * @since 0.0.1
  */
 public abstract class FFTFilter
 extends Filter
@@ -37,7 +35,6 @@ extends Filter
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.5
 	 */
 	private static final long serialVersionUID = 6541078445959523547L;
 
@@ -304,23 +301,12 @@ extends Filter
 	}
 
 	/**
-	 * Creates frequency response coefficients and sets applies
+	 * Creates frequency response coefficients and applies
 	 * them to the frequency response vector. Must be overridden
 	 * by individual filters.
-	 *
-	 * @since 0.3.0.2
 	 */
 	public abstract void generateResponseCoefficients();
 
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 * @since 0.3.0.2
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.38 $";
-	}
 }
 
 // EOF

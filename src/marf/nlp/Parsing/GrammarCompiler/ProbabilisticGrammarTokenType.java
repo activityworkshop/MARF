@@ -3,11 +3,7 @@ package marf.nlp.Parsing.GrammarCompiler;
 /**
  * <p>Probabilistic Grammar Token Type.</p>
  *
- * $Id: ProbabilisticGrammarTokenType.java,v 1.12 2007/12/18 21:37:57 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.12 $
- * @since 0.3.0.2
  */
 public class ProbabilisticGrammarTokenType
 extends GrammarTokenType
@@ -17,7 +13,6 @@ extends GrammarTokenType
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 2537398679757478875L;
 
@@ -40,15 +35,6 @@ extends GrammarTokenType
 
         soTokenTypes.put(new Integer(PROBABILITY), new String("PROBABILITY"));
 		soTokenSubTypes.put(new Integer(DICT_WORD),  new String("DICT_WORD"));
-	}
-
-    /**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.12 $";
 	}
 }
 

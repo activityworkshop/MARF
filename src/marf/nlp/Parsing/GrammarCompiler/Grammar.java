@@ -11,14 +11,9 @@ import marf.util.Debug;
  * <p>Represents the language Grammar data structure.
  * Encapsulates collections of terminals, non-terminals,
  * and rules of the current grammar that can be serialized
- * and reloaded on demand.
- * </p>
- *
- * $Id: Grammar.java,v 1.23 2010/06/27 22:18:12 mokhov Exp $
+ * and reloaded on demand.</p>
  *
  * @author Serguei Mokhov
- * @version $Revision: 1.23 $
- * @since 0.3.0.2
  */
 public class Grammar
 implements Serializable
@@ -73,7 +68,6 @@ implements Serializable
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 6609212530215315816L;
 
@@ -191,13 +185,13 @@ implements Serializable
 		// While at least one follow set has changed.
 		while(bThereAreChanges)
 		{
-		    bThereAreChanges = false;
+			bThereAreChanges = false;
 
-		    // Loop through each grammar rule (production).
+			// Loop through each grammar rule (production).
 			Rule oRule = null;
 
 			for(int k = 0; k < this.oRules.size(); k++)
-		    {
+			{
 				oRule = (Rule)this.oRules.elementAt(k);
 				Vector<GrammarElement> oRHSList = oRule.getRHS();
 
@@ -206,8 +200,8 @@ implements Serializable
 
 				int iRHSLen = oRHSList.size();
 
-		        for(int i = 0; i < iRHSLen; ++i)
-		        {
+				for(int i = 0; i < iRHSLen; ++i)
+				{
 					GrammarElement oRHSElem = (GrammarElement)oRHSList.elementAt(i);
 
 					// Skip Semantic Tokens
@@ -217,15 +211,15 @@ implements Serializable
 					}
 
 					if(oRHSElem.isNonTerminal() == true)
-		            {
+					{
 						// For all RHS elements after current RHS element from the above
 						// and add their first sets without an epsilon to the above
 						// RHS' follow set.
 
 						int j;
 
-		                for(j = i + 1; j < iRHSLen; ++j)
-		                {
+						for(j = i + 1; j < iRHSLen; ++j)
+						{
 							GrammarElement oNextRHSElem = (GrammarElement)oRHSList.elementAt(j);
 
 							Vector<GrammarElement> oNextRHSElemFirstSet = (Vector<GrammarElement>)oNextRHSElem.getFirstSet().clone();
@@ -247,23 +241,23 @@ implements Serializable
 							{
 								break;
 							}
-		                }
+						}
 
 						// If all the above first sets had epsilon, we should
 						// add to the current LHS' follow set the follow set of
 						// the RHS being processed.
-		                if(j == iRHSLen)
-		                {
+						if(j == iRHSLen)
+						{
 							Vector<GrammarElement> oLHSFollowSet = oRule.getLHS().getFollowSet();
 
 							if(((NonTerminal)oRHSElem).addToFollowSet(oLHSFollowSet))
 							{
 								bThereAreChanges = true;
 							}
-		                }
-		            }
-		        }
-		    }
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -664,15 +658,6 @@ implements Serializable
 	public final Vector<Rule> getRules()
 	{
 		return this.oRules;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.23 $";
 	}
 }
 

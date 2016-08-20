@@ -7,8 +7,6 @@ import marf.nlp.Parsing.Token;
  * Represents terminal symbol grammar element.
  *
  * @author Serguei Mokhov
- * @version $Id: Terminal.java,v 1.12 2012/07/18 02:45:45 mokhov Exp $
- * @since 0.3.0.2
  */
 public class Terminal
 extends GrammarElement
@@ -23,7 +21,6 @@ extends GrammarElement
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = 1691151577764029404L;
 
@@ -96,15 +93,6 @@ extends GrammarElement
 	public boolean isNonTerminal()
 	{
 		return false;
-	}
-
-	/**
-	 * Retrieves class' revision.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.12 $";
 	}
 }
 

@@ -8,11 +8,7 @@ import java.util.Vector;
 /**
  * <p>Maximum-Likelihood Statistical Estimator (MLE).</p>
  *
- * $Id: MLE.java,v 1.16 2006/01/15 01:50:57 mokhov Exp $
- *
  * @author Serguei Mokhov
- * @version $Revision: 1.16 $
- * @since 0.3.0.2
  */
 public class MLE
 extends AddDelta
@@ -22,7 +18,6 @@ extends AddDelta
 	 * When adding new members or make other structural
 	 * changes regenerate this number with the
 	 * <code>serialver</code> tool that comes with JDK.
-	 * @since 0.3.0.4
 	 */
 	private static final long serialVersionUID = -2490823052719390594L;
 
@@ -54,15 +49,6 @@ extends AddDelta
 	public double p(Vector poEventList)
 	{
 		return 0;
-	}
-
-	/**
-	 * Returns source code revision information.
-	 * @return revision string
-	 */
-	public static String getMARFSourceCodeRevision()
-	{
-		return "$Revision: 1.16 $";
 	}
 }
 

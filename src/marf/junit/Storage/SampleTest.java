@@ -14,8 +14,6 @@ import marf.util.Arrays;
 /**
  * <p>A unit test case for the Sample class' methods.</p>
  * 
- * $Id: SampleTest.java,v 1.3 2007/01/28 16:00:31 mokhov Exp $
- * 
  * @author Serguei Mokhov
  * @since 0.3.0.6
  * @see Sample
