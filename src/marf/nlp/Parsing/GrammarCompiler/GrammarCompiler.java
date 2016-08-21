@@ -178,7 +178,7 @@ extends StorageManager
 		// Create the epsilon token;
 		Terminal oEpsilon = new Terminal("&", 0);
 		this.oGrammarElement = oEpsilon; 
-		this.oGrammar.addTeminal(oEpsilon);
+		this.oGrammar.addTerminal(oEpsilon);
 
 		// Set the reference to epsilon
 		this.oGrammar.setEpsilonTerminal(oEpsilon);
@@ -437,7 +437,7 @@ extends StorageManager
 			else
 			{
 				// Get it from the list otherwise
-				oNonTerminal = (NonTerminal)this.oGrammar.getNonTerminalList().elementAt(iNonTerminalIndex);
+				oNonTerminal = this.oGrammar.getNonTerminalList().elementAt(iNonTerminalIndex);
 			}
 
 			// Add the guy to rule's RHS
@@ -469,12 +469,12 @@ extends StorageManager
 		{
 			// No, so create it and put it in
 			oTerminal = new Terminal(this.oToken, this.oGrammar.getTerminalList().size());
-			this.oGrammar.addTeminal(oTerminal);
+			this.oGrammar.addTerminal(oTerminal);
 		}
 		else
 		{
 			// Get it from the list otherwise
-			oTerminal = (Terminal)this.oGrammar.getTerminalList().elementAt(iTerminalIndex);
+			oTerminal = this.oGrammar.getTerminalList().elementAt(iTerminalIndex);
 		}
 
 		// Add the guy to rule's RHS
@@ -505,7 +505,7 @@ extends StorageManager
 	{
 		// EOF Terminal
 		this.oGrammar.setEOFTerminal(new Terminal("$", this.oGrammar.getTerminalList().size()));
-		this.oGrammar.addTeminal(this.oGrammar.getEOFTerminal());
+		this.oGrammar.addTerminal(this.oGrammar.getEOFTerminal());
 	}
 
 	/**
@@ -524,7 +524,7 @@ extends StorageManager
 		
 		for(int i = 0; i < this.oGrammar.getNonTerminalList().size(); i++)
 		{
-			NonTerminal oNonTerminal = (NonTerminal)this.oGrammar.getNonTerminalList().elementAt(i);
+			NonTerminal oNonTerminal = this.oGrammar.getNonTerminalList().elementAt(i);
 
 			if(oNonTerminal.isDefined())
 			{
@@ -619,7 +619,7 @@ extends StorageManager
 	}
 
 	/**
-	 * Returns a grammar element object by it's name
+	 * Returns a grammar element object by its name
 	 * (lexeme) if it exists; null otherwise. First, the 
 	 * terminals list is checked and then the non-terminals one.
 	 *
@@ -629,11 +629,11 @@ extends StorageManager
 	protected GrammarElement getGrammarElement(String pstrName)
 	{
 		// Search the terminal list.
-		Vector<GrammarElement> oTerminals = this.oGrammar.getTerminalList();
+		Vector<Terminal> oTerminals = this.oGrammar.getTerminalList();
 
 		for(int i = 0; i < oTerminals.size(); i++)
 		{
-			Terminal oTerminal = (Terminal)oTerminals.elementAt(i);
+			Terminal oTerminal = oTerminals.elementAt(i);
 
 			if(oTerminal.getName().equals(pstrName))
 			{
@@ -642,11 +642,11 @@ extends StorageManager
 		}
 
 		// Search the non-terminal list.
-		Vector<GrammarElement> oNonTerminals = this.oGrammar.getNonTerminalList();
+		Vector<NonTerminal> oNonTerminals = this.oGrammar.getNonTerminalList();
 
 		for(int i = 0; i < oNonTerminals.size(); i++)
 		{
-			NonTerminal oNonTerminal = (NonTerminal)oNonTerminals.elementAt(i);
+			NonTerminal oNonTerminal = oNonTerminals.elementAt(i);
 
 			if(oNonTerminal.getName().equals(pstrName))
 			{
@@ -807,7 +807,7 @@ extends StorageManager
 			// For all terminals...
 			for(int t = 0; t < this.oGrammar.getTerminalList().size(); t++)
 			{
-				Terminal loTerminal = (Terminal)this.oGrammar.getTerminalList().elementAt(t);
+				Terminal loTerminal = this.oGrammar.getTerminalList().elementAt(t);
 
 				if(loTerminal.getType().subtype == GrammarTokenType.EPSILON)
 				{
@@ -871,7 +871,7 @@ extends StorageManager
 				{
 					for(int t = 0; t < this.oGrammar.getTerminalList().size(); t++)
 					{
-						Terminal loTerminal = (Terminal)this.oGrammar.getTerminalList().elementAt(t);
+						Terminal loTerminal = this.oGrammar.getTerminalList().elementAt(t);
 
 						if(loTerminal.getType().subtype == GrammarTokenType.EPSILON)
 						{
@@ -925,11 +925,11 @@ extends StorageManager
 		 */
 		for(int r = 0; r < this.oGrammar.getNonTerminalList().size(); r++)
 		{
-			NonTerminal oCurrentNonTerminal = (NonTerminal)this.oGrammar.getNonTerminalList().elementAt(r);
+			NonTerminal oCurrentNonTerminal = this.oGrammar.getNonTerminalList().elementAt(r);
 
 			for(int t = 0; t < this.oGrammar.getTerminalList().size(); t++)
 			{
-				Terminal oCurrentTerminal = (Terminal)this.oGrammar.getTerminalList().elementAt(t);
+				Terminal oCurrentTerminal = this.oGrammar.getTerminalList().elementAt(t);
 
 				if(soTransitionTable.getEntryAt(oCurrentNonTerminal, oCurrentTerminal) == null)
 				{
@@ -1085,15 +1085,15 @@ extends StorageManager
 						oFileWriter.write
 						(
 							"First set of " +
-							((NonTerminal)this.oGrammar.getNonTerminalList().elementAt(i)).getName() +
+							this.oGrammar.getNonTerminalList().elementAt(i).getName() +
 							": { "
 						);
 
-						for(int j = 0; j < ((NonTerminal)this.oGrammar.getNonTerminalList().elementAt(i)).getFirstSet().size(); j++)
+						for(int j = 0; j < this.oGrammar.getNonTerminalList().elementAt(i).getFirstSet().size(); j++)
 						{
 							oFileWriter.write
 							(
-								((GrammarElement)((NonTerminal)this.oGrammar.getNonTerminalList().elementAt(i)).getFirstSet().elementAt(j)).getName()
+								this.oGrammar.getNonTerminalList().elementAt(i).getFirstSet().elementAt(j).getName()
 								+ " "
 							);
 
@@ -1139,18 +1139,17 @@ extends StorageManager
 						oFileWriter.write
 						(
 							"Follow set of " +
-							((NonTerminal)this.oGrammar.getNonTerminalList().elementAt(i)).getName() +
+							this.oGrammar.getNonTerminalList().elementAt(i).getName() +
 							": { "
 						);
 
-						for(int j = 0; j < ((NonTerminal)this.oGrammar.getNonTerminalList().elementAt(i)).getFollowSet().size(); j++)
+						for(int j = 0; j < this.oGrammar.getNonTerminalList().elementAt(i).getFollowSet().size(); j++)
 						{
 							oFileWriter.write
 							(
-								((GrammarElement)((NonTerminal)this.oGrammar.getNonTerminalList().elementAt(i)).getFollowSet().elementAt(j)).getName()
+								this.oGrammar.getNonTerminalList().elementAt(i).getFollowSet().elementAt(j).getName()
 								+ " "
 							);
-
 						}
 
 						oFileWriter.write("}\n");

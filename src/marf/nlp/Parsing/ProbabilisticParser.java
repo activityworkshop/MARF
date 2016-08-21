@@ -187,7 +187,8 @@ extends StorageManager
 			}
 
 			// CYK
-			Vector oNonTerminals = this.oGrammar.getNonTerminalList();
+			// TODO: Is the vector actually needed here or just its size?
+			Vector<NonTerminal> oNonTerminals = this.oGrammar.getNonTerminalList();
 
 			this.adParseMatrix = new double[this.oWords.size()][this.oWords.size()][oNonTerminals.size()];
 			this.aoBack        = new Vector[this.oWords.size()][this.oWords.size()][oNonTerminals.size()];
@@ -430,7 +431,7 @@ extends StorageManager
 	{
 		try
 		{
-			NonTerminal oLHS = (NonTerminal)this.oGrammar.getNonTerminalList().elementAt(piA);
+			NonTerminal oLHS = this.oGrammar.getNonTerminalList().elementAt(piA);
 
 			indent(piLevel);
 

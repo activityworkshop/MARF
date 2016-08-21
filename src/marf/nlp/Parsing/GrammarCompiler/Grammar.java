@@ -36,12 +36,12 @@ implements Serializable
 	/**
 	 * List of terminals.
 	 */
-	protected Vector<GrammarElement> oTerminalList = new Vector<GrammarElement>();
+	protected Vector<Terminal> oTerminalList = new Vector<Terminal>();
 
 	/**
 	 * List of non-terminals.
 	 */
-	protected Vector<GrammarElement> oNonTerminalList = new Vector<GrammarElement>();
+	protected Vector<NonTerminal> oNonTerminalList = new Vector<NonTerminal>();
 
 	/**
 	 * A vector of rules.
@@ -236,7 +236,7 @@ implements Serializable
 							}
 
 							// Terminate upon a given RHS here doesn't have
-							// the epsilon in it's first set
+							// the epsilon in its first set
 							if(((GrammarElement)oRHSList.elementAt(j)).getFirstSet().contains(this.oEpsilonTerminal) == false)
 							{
 								break;
@@ -271,7 +271,7 @@ implements Serializable
 	{
 		for(int i = 0; i < this.oNonTerminalList.size(); i++)
 		{
-			if(((GrammarElement)this.oNonTerminalList.elementAt(i)).getName().equals(pstrName))
+			if(this.oNonTerminalList.elementAt(i).getName().equals(pstrName))
 			{
 				return i;
 			}
@@ -290,7 +290,7 @@ implements Serializable
 	{
 		for(int i = 0; i < this.oTerminalList.size(); i++)
 		{
-			if(((GrammarElement)this.oTerminalList.elementAt(i)).getName().equals(pstrName))
+			if(this.oTerminalList.elementAt(i).getName().equals(pstrName))
 			{
 				return i;
 			}
@@ -302,7 +302,7 @@ implements Serializable
 	/**
 	 * Checks whether a grammar element with
 	 * a given name (lexeme) exists in the corresponding
-	 * list or not. If it does, returns it's index; -1 otherwise.
+	 * list or not. If it does, returns its index; -1 otherwise.
 	 * First, it searches for non-terminals, and if not found
 	 * then searches for terminals with the specified name.
 	 *
@@ -348,7 +348,7 @@ implements Serializable
 		}
 
 		// TODO: out of bounds handling
-		NonTerminal oLHS = (NonTerminal)this.oNonTerminalList.elementAt(piNonTerminalIndex);
+		NonTerminal oLHS = this.oNonTerminalList.elementAt(piNonTerminalIndex);
 
 		Rule oRule = null;
 
@@ -407,9 +407,9 @@ implements Serializable
 */
 		try
 		{
-			NonTerminal oNonTerminalLHS = (NonTerminal)this.oNonTerminalList.elementAt(piA);
-			NonTerminal oNonTerminalB   = (NonTerminal)this.oNonTerminalList.elementAt(piB);
-			NonTerminal oNonTerminalC   = (NonTerminal)this.oNonTerminalList.elementAt(piC);
+			NonTerminal oNonTerminalLHS = this.oNonTerminalList.elementAt(piA);
+			NonTerminal oNonTerminalB   = this.oNonTerminalList.elementAt(piB);
+			NonTerminal oNonTerminalC   = this.oNonTerminalList.elementAt(piC);
 
 			Debug.debug("A = " + oNonTerminalLHS + ", B = " + oNonTerminalB + ", C = " + oNonTerminalC);
 
@@ -474,7 +474,7 @@ implements Serializable
 
 		for(int i = 0; i < this.oTerminalList.size(); i++)
 		{
-			Terminal oTerminal = (Terminal)this.oTerminalList.elementAt(i);
+			Terminal oTerminal = this.oTerminalList.elementAt(i);
 			System.out.println("(" + oTerminal.getID() + ")" + oTerminal.getName());
 		}
 
@@ -482,7 +482,7 @@ implements Serializable
 
 		for(int i = 0; i < this.oNonTerminalList.size(); i++)
 		{
-			NonTerminal oNonTerminal = (NonTerminal)this.oNonTerminalList.elementAt(i);
+			NonTerminal oNonTerminal = this.oNonTerminalList.elementAt(i);
 			System.out.println("(" + oNonTerminal.getID() + ")" + oNonTerminal.getName());
 		}
 
@@ -500,15 +500,15 @@ implements Serializable
 			System.out.print
 			(
 				"First set of " +
-				((NonTerminal)this.oNonTerminalList.elementAt(i)).getName() +
+				this.oNonTerminalList.elementAt(i).getName() +
 				": { "
 			);
 
-			for(int j = 0; j < ((NonTerminal)this.oNonTerminalList.elementAt(i)).getFirstSet().size(); j++)
+			for(int j = 0; j < this.oNonTerminalList.elementAt(i).getFirstSet().size(); j++)
 			{
 				System.out.print
 				(
-					((GrammarElement)((NonTerminal)this.oNonTerminalList.elementAt(i)).getFirstSet().elementAt(j)).getName()
+					this.oNonTerminalList.elementAt(i).getFirstSet().elementAt(j).getName()
 					+ " "
 				);
 			}
@@ -523,15 +523,15 @@ implements Serializable
 			System.out.print
 			(
 				"Follow set of " +
-				((NonTerminal)this.oNonTerminalList.elementAt(i)).getName() +
+				this.oNonTerminalList.elementAt(i).getName() +
 				": { "
 			);
 
-			for(int j = 0; j < ((NonTerminal)this.oNonTerminalList.elementAt(i)).getFollowSet().size(); j++)
+			for(int j = 0; j < this.oNonTerminalList.elementAt(i).getFollowSet().size(); j++)
 			{
 				System.out.print
 				(
-					((GrammarElement)((NonTerminal)this.oNonTerminalList.elementAt(i)).getFollowSet().elementAt(j)).getName()
+					this.oNonTerminalList.elementAt(i).getFollowSet().elementAt(j).getName()
 					+ " "
 				);
 
@@ -547,7 +547,7 @@ implements Serializable
 	 * Adds a terminal to the set of terminals.
 	 * @param poTerminal the terminal to add; must not be null
 	 */
-	public void addTeminal(Terminal poTerminal)
+	public void addTerminal(Terminal poTerminal)
 	{
 		assert poTerminal != null;
 		this.oTerminalList.addElement(poTerminal);
@@ -637,7 +637,7 @@ implements Serializable
 	 * Allows querying for the collection of terminals of this grammar.
 	 * @return the collection of terminals
 	 */
-	public final Vector<GrammarElement> getTerminalList()
+	public final Vector<Terminal> getTerminalList()
 	{
 		return this.oTerminalList;
 	}
@@ -646,7 +646,7 @@ implements Serializable
 	 * Allows querying for the collection of non-terminals of this grammar.
 	 * @return the collection of non-terminals
 	 */
-	public final Vector<GrammarElement> getNonTerminalList()
+	public final Vector<NonTerminal> getNonTerminalList()
 	{
 		return this.oNonTerminalList;
 	}

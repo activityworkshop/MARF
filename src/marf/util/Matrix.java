@@ -76,7 +76,7 @@ extends FreeVector
 
 	/**
 	 * Retrieves a particular dimension value.
-	 * @param piDimensionNumber dimension number to the the value off
+	 * @param piDimensionNumber dimension number to get the value of
 	 * @return the dimension value
 	 * @throws ArrayIndexOutOfBoundsException if the parameter is out of range
 	 */

@@ -7,15 +7,8 @@ import java.io.UnsupportedEncodingException;
  *
  * @author Serguei Mokhov
  */
-public class ByteUtils
+public abstract class ByteUtils
 {
-	/**
-	 * Allow derivatives.
-	 */
-	protected ByteUtils()
-	{
-	}
-
 	/**
 	 * Converts a byte array to short value.
 	 * Equivalent to byteArrayToShort(paRawBytes, 0, pbBigEndian);
